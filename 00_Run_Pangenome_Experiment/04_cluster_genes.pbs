@@ -1,0 +1,75 @@
+#PBS -N PGE-04
+#PBS -l nodes=1:ppn=10
+#PBS -l mem=10gb
+#PBS -l walltime=12:00:00
+#PBS -q iw-shared-6
+#PBS -o ${log}04_PGE-cluster_genes.out
+#PBS -e ${log}04_PGE-cluster_genes.err
+
+# This script builds the gene clusters
+cd $PBS_O_WORKDIR
+
+# Zero pad experiment number
+printf -v exp "%04d" ${PBS_ARRAYID}
+
+# Set variables
+gd=PGE_${exp}_${org}/
+FNN=${gd}03_FNN/
+
+# future
+gns=${gd}01_${exp}_${org}_Combined_Genes.fnn
+o=${gd}02_${exp}_${org}_Clustered_Genes.fnn
+
+# current
+#gns=${gd}01_${org}_Combined_Genes.fnn
+#o=${gd}02_${org}_Clustered_Genes.fnn
+
+if [ ! -s "${o}.clstr" ]
+  then
+
+	# Check previous step completeness
+	if [ ! -d ${gd}03_FNA/ ]
+	  then
+		# Cleanup files
+                mkdir ${gd}03_FNA/
+                mv ${gd}*.fna ${gd}03_FNA/
+                rm -r ${gd}03_GFF
+	fi
+
+	pCount=`echo ${FNN}*.fnn | wc -w`    
+	aCount=`echo ${gd}00_ANI/*ani | wc -w`
+	gCount=`echo ${gd}03_FNA/*.fna | wc -w`
+
+	if [ ${pCount} -eq ${gCount} ] && [ ${aCount} -eq ${gCount} ]
+	  then
+		printf '\n\n  Coast is clear. Clustering genes.\n\n'
+
+		# concatenate predicted genes
+		if [ ! -s "$o" ]; then cat ${FNN}*.fnn > ${gns}; fi
+
+		# run gene clustering
+#		cd-hit-est -i ${gns} -o ${o} -c 0.9 -n 8 -G 0 -g 1 -aS 0.9 -M 10000 -d 0 -T 10
+
+		cd-hit-est -i ${gns} -o ${o} -c 0.9 -n 8 -G 0 -g 1 -aS 0.7 -M 10000 -d 0 -T 10
+
+		# remove concatenated predicted genes
+		if [ -s "$o" ]; then rm ${gns}; fi
+
+#	elif [ -s ${gns} ] && [ ! -s {o} ]
+#	  then
+#		printf '\n\n Coast is clear. Clustering genes.\n\n'
+		# run gene clustering
+#		cd-hit-est -i ${gns} -o ${o} -c 0.9 -n 8 -G 0 -g 1 -aS 0.9 -M 20000 -d 0 -T 20
+
+		# remove concatenated predicted genes
+ #               rm ${gns}
+
+	  else
+		printf "\n\n  It does not seem like all the files are here. Maybe something went wrong or this step is already complete?\n\n"
+	fi
+
+  else
+
+	printf "\n\n  Looks like the genes have already been clustered!\n\n"
+
+fi

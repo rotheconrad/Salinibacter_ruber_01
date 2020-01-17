@@ -78,6 +78,7 @@ def magicblast_filter(infile, pml, rl):
         a new file infile.filtered_best_hits.blst
     """
 
+    header = []
     d = {} # initialize dictionary for bitscore besthits
     dups = 0 # counter for number of duplicate matches for reads
     fails = 0 # counter for number of matches failing filters
@@ -87,7 +88,7 @@ def magicblast_filter(infile, pml, rl):
     with open(infile, 'r') as f:
 
         for l in f:
-            if l.startswith('#'): pass
+            if l.startswith('#'): header.append(l)
             else:
                 total += 1
                 X = l.rstrip().split('\t')
@@ -112,7 +113,7 @@ def magicblast_filter(infile, pml, rl):
     print('Number of duplicate blast matches passing filter:', dups)
     print('Number of best hit entries written to new file:', len(d))
 
-    return d
+    return header, d
 
 
 def main():
@@ -147,16 +148,16 @@ def main():
 
     # Do what you came here to do:
     print('Running Script...')
-    filtered_best_hits = magicblast_filter(
-                                        args['in_file'],
-                                        args['percent_match_length'],
-                                        args['read_length']
-                                        )
+    header, filtered_best_hits = magicblast_filter(
+                                            args['in_file'],
+                                            args['percent_match_length'],
+                                            args['read_length']
+                                            )
 
     outfile = args['in_file'].split('.')[0] + '.fltrdBstHts.blst'
     with open(outfile, 'w') as o:
-        for k,v in filtered_best_hits.items():
-            o.write(v)
+        for l in header: o.write(l)
+        for k,v in filtered_best_hits.items(): o.write(v)
 
 
 if __name__ == "__main__":

@@ -1,0 +1,46 @@
+#PBS -N PGE-01
+#PBS -l nodes=1:ppn=1
+#PBS -l mem=1gb
+#PBS -l walltime=2:00:00
+#PBS -q iw-shared-6
+#PBS -o ${log}01_PGE-Select_Genomes.out
+#PBS -e ${log}01_PGE-Select_Genomes.err
+
+cd $PBS_O_WORKDIR
+
+# Zero pad experiment number
+printf -v exp "%04d" ${PBS_ARRAYID}
+
+# Print variables to log for error checks
+echo Number of Experiments to Run: $exp
+echo Number of Genomes to Sample: $n
+echo Genome Directory to Sample from: $gd
+echo Abreviation of Organism Name: $org
+echo Lower ANI Threshold value: $atl
+echo Upper ANI Threshold value: $atu 
+echo Directory for Log Output: $log
+
+# Setup modules
+module unload python/2.7
+module load anaconda3/latest
+
+# Path to the script
+script=${spath}01_Select_Genomes_within_ANI_range.py
+
+n_genomes=`echo PGE_${exp}_${org}/*fna | wc -w`
+trys=0
+
+## Check if experiment already exists
+if [ ! -s PGE_${exp}_${org}/*.clstr ] && [ `echo PGE_${exp}_${org}/*fna | wc -w` -lt ${n} ]
+  then
+	## Select Genomes
+	while [ `echo PGE_${exp}_${org}/*fna | wc -w` -lt ${n} ] && [ ${trys} -lt 25 ]
+	  do
+		trys=$((trys+1))
+		printf '\n\nSelecting genomes attempt:' ${trys} '\n\n'
+		python ${script} -e ${exp} -n ${n} -gd ${gd} -org ${org} -atl ${atl} -atu ${atu}
+	  done
+  else
+	printf '\n\nLooks like all the genomes have already been selected.\n\n'
+fi
+

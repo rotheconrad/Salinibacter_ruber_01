@@ -1,0 +1,94 @@
+#PBS -N PGE-05
+#PBS -l nodes=1:ppn=1
+#PBS -l mem=1gb
+#PBS -l walltime=2:00:00
+#PBS -q iw-shared-6
+#PBS -o ${log}05_PGE-cluster_analysis.out
+#PBS -e ${log}05_PGE-cluster_analysis.err
+
+# This script builds the gene clusters
+cd $PBS_O_WORKDIR
+
+# Setup modules
+module unload python/2.7
+module load anaconda3/latest
+
+# Paths to scripts
+parser=${spath}05_cluster_analysis_parser.py
+rarefaction=${spath}05_cluster_analysis_rarefaction.py
+correlation=${spath}05_cluster_analysis_correlation.py
+
+# Zero pad experiment number
+printf -v exp "%04d" ${PBS_ARRAYID}
+
+# Set variables
+gd=PGE_${exp}_${org}/
+title=${name}_${exp}
+
+# Future 
+o=${gd}02_${exp}_${org}_Clustered_Genes.fnn.clstr
+gl=${gd}01_Genome_List.txt
+
+# current
+#o=${gd}02_${org}_Clustered_Genes.fnn.clstr
+
+# Echo varialbes
+echo Organism Title: ${title}
+echo Genome Directory: ${gd}
+echo Gene Cluster File: ${o}
+
+c=0
+while [ "$c" -lt 300 ]; do
+  if [ -s ${o} ]; then break; else sleep 10; fi
+  c=$((c+10))
+done
+
+if [ -s ${o} ]; then
+
+# Parser #
+  if [ ! -s  ${gd}03_${exp}_${org}_parsed_binary.tsv ]; then 
+	>&2 printf "\n\nParsing Cluster File\n\n"
+	printf "\n\nParsing Cluster File\n\n"
+	time python ${parser} -clstr ${o} -op ${gd}03_${exp}_${org}_parsed_binary
+	#time python ${parser} -clstr ${o} -op ${gd}03_${exp}_${org}_parsed_binary -gl ${gd}01_Genome_List.txt
+  else
+	printf "\n\n${gd}03_${org}_parsed_binary already exists!\n\n"
+  fi
+
+# Rarefaction #
+  if [ ! -s ${gd}03_${exp}_${org}_rarefaction_plot.pdf ]; then
+	>&2 printf "\n\nRunning Rarefaction\n\n"
+	printf "\n\nRunning Rarefaction\n\n"
+	time python ${rarefaction} -bf ${gd}03_${exp}_${org}_parsed_binary.tsv -org ${title} -prm ${prm} -op ${gd}03_${exp}_${org}_rarefaction
+  else
+        printf "\n\n${gd}03_${org}_rarefaction* already exists!\n\n"
+  fi
+
+# Correlation #
+  if [ ! -s ${gd}03_${exp}_${org}_correlation_plot.pdf ]; then
+	>&2 printf "\n\nComputing Correlation\n\n"
+	printf "\n\nComputing Correlation\n\n"
+	time python ${correlation} -fad ${gd}00_ANI/ -org ${title} -op ${gd}03_${exp}_${org}_correlation
+  else
+        printf "\n\n${gd}03_${org}_correlation* already exists!\n\n"
+  fi
+
+else
+
+  printf "\n\nFile ${o} does not exist!\n\n"
+
+fi
+
+sd=PGE_0000_Summary/
+A=${gd}03_${exp}_${org}_rarefaction_summary.tsv
+B=${gd}03_${exp}_${org}_rarefaction_results.tsv
+C=${gd}03_${exp}_${org}_correlation_summary.tsv
+D=${gd}02_${exp}_${org}_Clustered_Genes.fnn
+
+if [ -s ${A} ]; then mv ${A} ${sd}/A_${org}_Rarefaction_Summary/; fi
+if [ -s ${B} ]; then mv ${B} ${sd}/B_${org}_Rarefaction_Results/; fi
+if [ -s ${C} ]; then mv ${C} ${sd}/C_${org}_Correlation_Summary/; fi
+if [ -s ${D} ]; then mv ${D} ${sd}/D_${org}_Dereplicated_Genes/; fi
+
+
+>&2 printf "\n\nScript End"

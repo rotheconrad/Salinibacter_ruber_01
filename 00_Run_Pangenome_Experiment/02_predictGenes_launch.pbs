@@ -1,0 +1,92 @@
+#PBS -N PGE-02
+#PBS -l nodes=1:ppn=5
+#PBS -l mem=5gb
+#PBS -l walltime=2:00:00
+#PBS -q iw-shared-6
+#PBS -o ${log}02_PGE-predictGenes_launch.out
+#PBS -e ${log}02_PGE-predictGenes_launch.err
+
+## This script launches gene prediction using prodigal for all genomes in a directory using GNU Parallel
+## It also runs one vs all fastANI for all genomes in a directory using GNU Parallel.
+
+module load gnuparallel/20180822
+
+cd $PBS_O_WORKDIR
+
+# Path to the scripts
+rename=${spath}02_rename_genomes.py
+filter=${spath}02_len_filter_genes.py
+
+echo "Array ID:" ${PBS_ARRAYID}
+echo "Job Name:" ${PBS_JOBNAME}
+echo "Job ID:" ${PBS_JOBID}
+
+# Zero pad experiment number
+printf -v exp "%04d" ${PBS_ARRAYID}
+
+# Set Variables
+gd=PGE_${exp}_${org}/
+cd ${gd}
+
+gd_array=(*fna)
+gd_count=${#gd_array[@]}
+gList=01_Genome_List.txt
+mkdir 03_GFF 03_FNN 03_FAA log
+
+# Print variables to log for error checks
+echo Experiment Number: $exp
+echo Number of Genomes in experiment: $gd_count
+echo Experiment directory: $gd
+echo Directory for Log Output: $log
+echo List of genomes for experiment: $gList
+
+if [ `echo 03_FNN/*.fnn | wc -w` -lt "${gd_count}" ] && [ "${gd_count}" -eq ${g} ]
+  then
+	printf '\n\n  Coast is clear. Running gene prediction.\n\n'
+
+      	# Rename fasta deflines
+        printf "\n\n Renaming Genes \n\n"
+        >&2 printf "\n\n Renaming Genes \n\n"
+	parallel -j 5 --joblog log/parallel_rename_log.tsv 'python {}' ::: ${rename} ::: *.fna
+
+        # Predict genes with Prodigal
+        printf "\n\n Predicting Genes \n\n"
+        >&2 printf "\n\n Predicting Genes \n\n"
+	parallel -j 5 --joblog log/parallel_prodigal_log.tsv 'prodigal -q -f gff -i {} -o 03_GFF/{/.}.gff -d 03_FNN/{/.}.fnn -a 03_FAA/{/.}.faa; echo {} complete.' ::: *.fna
+
+        # Filter Prodigal gene predictions to ${len_filter}
+        printf "\n\n Filtering Gene Predictions \n\n"
+        >&2 printf "\n\n Filtering Gene Predictions \n\n"
+	parallel -j 5 --joblog log/parallel_len_filter_log.tsv 'python {}' ::: ${filter} ::: 03_FNN/*.fnn ::: ${len_filter}
+
+elif [ ${gd_count} -lt ${g} ]
+  then
+	printf '\n\n   Looks like not all of the genomes were selected.\n\n'
+
+  else
+	printf '\n\n  Looks like the genes have already been predicted!\n\n'
+
+fi
+
+if [ ! -d 00_ANI/ ]; then mkdir 00_ANI/; fi
+
+if [ `echo 00_ANI/*.ani | wc -w` -lt "${gd_count}" ] && [ `echo 03_FNN/*.fnn | wc -w` -eq ${gd_count} ]
+  then
+
+      	printf '\n\n  Coast is clear. Launching one verse all fastANI calculations.\n\n'
+
+        if [ ! -s $gList ]
+          then
+              	# write list of genomes to pass to fastANI
+                echo Writing ${gList} ...
+                for f in ${gd_array[@]}; do echo $f; done > ${gList}
+        fi
+
+        parallel -j 5 --joblog log/parallel_fastANI_log.tsv 'fastANI -r {1} --ql {2} -o 00_ANI/{1/.}.ani; echo {1}' ::: *.fna ::: ${gList}
+
+elif [ `echo 03_FNN/*.fnn | wc -w` -lt ${gd_count} ]
+  then
+      	printf '\n\n  Looks like not all of the genes were predicted.\n\n'
+  else
+      	printf '\n\n Looks like fastaANIs have already been computed!\n\n'
+fi
