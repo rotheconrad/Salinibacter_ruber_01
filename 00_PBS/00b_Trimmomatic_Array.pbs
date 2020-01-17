@@ -1,0 +1,34 @@
+#PBS -N Trimmomatic
+#PBS -l nodes=1:ppn=2
+#PBS -l mem=10gb
+#PBS -l walltime=1:00:00
+#PBS -q iw-shared-6
+#PBS -o 00_log/00b_Trimmomatic.out
+#PBS -e 00_log/00b_Trimmomatic.err
+
+cd $PBS_O_WORKDIR
+
+ME="/gpfs/pace2/project/bio-konstantinidis/rconrad6"
+adapters=${ME}/apps/Trimmomatic-0.39/adapters/NexteraPE-PE.fa
+trimmomatic="java -Xmx10g -jar ${ME}/apps/Trimmomatic-0.39/trimmomatic-0.39.jar"
+
+params="ILLUMINACLIP:$adapters:2:30:10:2:keepBothReads LEADING:3 TRAILING:3 MINLEN:36" # adapter clipping only
+#params="ILLUMINACLIP:$adapters:2:30:10:2:keepBothReads SLIDINGWINDOW:1:20 MINLEN:1" # SlidingWindow1bp
+#params="ILLUMINACLIP:$adapters:2:30:10:2:keepBothReads LEADING:3 TRAILING:3 MINLEN:50" # Default
+#params="ILLUMINACLIP:$adapters:2:30:10:2:keepBothReads LEADING:20 TRAILING:20 MINLEN:50" # Test 1
+#params="ILLUMINACLIP:$adapters:2:30:10:2:keepBothReads LEADING:20 TRAILING:20 SLIDINGWINDOW:5:20 MINLEN:50" # Test 2
+
+file_array=(${file_dir}/${file_ext})
+fastq=${file_array[$PBS_ARRAYID]}
+name=`basename $fastq | cut -d_ -f1-2`
+#name=`basename $fastq | cut -d_ -f1-2` # Adjust name to select before _R1...
+
+echo Input File Directory: $file_dir
+echo Output File Directory: $out_dir
+echo Input File Basename: $name
+
+# Paired Reads
+${trimmomatic} PE -threads 2 ${file_dir}/${name}* -baseout ${out_dir}/${name}.fastq ${params}
+
+# Single Read
+#${trimmomatic} SE -threads 2 ${file_dir}/${name}* ${out_dir}/${name}.fastq ${params}

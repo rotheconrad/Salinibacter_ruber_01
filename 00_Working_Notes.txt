@@ -1,0 +1,315 @@
+Working notes / commands:
+
+from: /gpfs/pace2/project/bio-konstantinidis/rconrad6/Salinibacter_Assemblies
+
+Adapter Clipping of Raw Reads
+
+# Did not do quality trimming. Using SPAdes read error correction
+# Adapter Clipping/light trimming only
+
+bash 00_PBS/00a_Launch_Trimmomatic_Array.sh 00_DataC *fastq 00_DataTrimmed
+
+########################################################
+########################################################
+
+SPAdes Assembly
+
+# SPAdes NoTrim: 01b_Assemble_SPAdes.pbs
+
+bash 00_PBS/01a_Launch_Assemble_SPAdes.sh 01_Sample_List.txt 00_DataC 01_SPAdes_Assemblies_NoTrim 0
+
+########################################################
+
+# Not using unpaired reads for now. Put them in their own directory
+mkdir 00_DataTrimmed/UnPaired
+mv 00_DataTrimmed/*U.fastq 00_DataTrimmed/UnPaired/
+
+# Test Trim Paired Only : 01c_Assemble_SPAdes.pbs
+bash 00_PBS/01a_Launch_Assemble_SPAdes.sh 01_Sample_List.txt 00_DataTrimmed 01_SPAdes_Assemblies_AdaptorTrimmed 1
+# After array jobs finish, check log files ( grep Error *out* )
+# Sometimes an assembly or two will fail abnormally and usually is fine when rerun.
+# In this instance, jobs in array positions 23, 25, and 102 failed and need to be rerun.
+# remove failed assembly folders
+cd 01_SPAdes_Assemblies_AdaptorTrimmed/
+rm UW03* CZ30* CZ32*
+# Rerun failed assemblies.
+qsub -t 23,25,102 -v sample_list=01_Sample_List.txt,data_dir=00_DataTrimmed,out_dir=01_SPAdes_Assemblies_AdaptorTrimmed 00_PBS/01c_Assemble_SPAdes.pbs
+
+########################################################
+
+# I decided to test using the unpaired data. You can pass these to spades separately for each paired end set.
+# Concatenate each unpaired set into single file and move unpaired data back with the paired data.
+
+from: /gpfs/pace2/project/bio-konstantinidis/rconrad6/Salinibacter_Assemblies/00_DataTrimmed/UnPaired
+
+for f in *fastq; do n=`basename $f | cut -d_ -f1-2`; echo $f; cat $f >> ../${n}_U.fastq; done
+
+# Test Trim Paired + Unpaired: 01d_Assemble_SPAdes.pbs
+
+bash 00_PBS/01a_Launch_Assemble_SPAdes.sh 01_Sample_List.txt 00_DataTrimmed 01_SPAdes_Assemblies_Trim 2
+
+# Rerun fails
+
+qsub -t 49 -v sample_list=01_Sample_List.txt,data_dir=00_DataTrimmed,out_dir=01_SPAdes_Assemblies_Trim 00_PBS/01d_Assemble_SPAdes.pbs
+
+########################################################
+
+# Filter and rename assemblies
+
+for f in */contigs.fasta; do n=`echo $f | cut -d_ -f1`; python ../00_Scripts/01_SPAdes_Assembly_Filter_Rename_Stats.py -i $f -o ${n}_Draft_Genome.fna -g $n -l 1000; done >> ../01_Sruber_SPAdes_Assembly_Stats.txt
+
+
+########################################################
+########################################################
+########################################################
+
+Mash Distance: 01_Sruber_Selected_Genomes
+
+# Compute all vs all Mash Distance Matrix
+bash 00_PBS/02a_Launch_Mash_sketch.sh 01_Sruber_Selected_Genomes fna 02_Mash_Analysis_Selected_31k 31 1000000
+qsub -v outDir=02_Mash_Analysis_Selected_31k 00_PBS/02c_Mash_paste.pbs
+qsub -v outDir=02_Mash_Analysis_Selected_31k,f=Pasted_Sketches.msh 00_PBS/02d_Mash_dist.pbs
+rm python 02_02_Mash_Analysis_Selected_31k_query_array.txt
+
+cd 02_Mash_Analysis_Trim
+
+# Rename col and row names of mash distance matrix
+python ../00_Scripts/02a_Mash_Rename_Dist_Matrix.py -i Mash_Distance_Matrix.dst -o Mash_Distance_Matrix_Renamed.dst
+
+# NMDS plot of all vs all Mash Distance Matrix
+python ../00_Scripts/02b_Mash_Plot_Dist_Matrix_NMDS.py -i Mash_Distance_Matrix_Renamed.dst -o Sruber_Draft_Genomes_Mash_NMDS.png
+
+Mash Distance for all genomes:
+
+# Compute all vs all Mash Distance Matrix
+bash 00_PBS/02a_Launch_Mash_sketch.sh 01_Sruber_All_Genomes fna 02_Mash_Analysis_All_31k 31 1000000
+bash 00_PBS/02a_Launch_Mash_sketch.sh 01_Sruber_All_Genomes fna 02_Mash_Analysis_All_21k 21 1000000
+qsub -v outDir=02_Mash_Analysis_All_31k 00_PBS/02c_Mash_paste.pbs
+qsub -v outDir=02_Mash_Analysis_All_21k 00_PBS/02c_Mash_paste.pbs
+qsub -v outDir=02_Mash_Analysis_All_31k,f=Pasted_Sketches.msh 00_PBS/02d_Mash_dist.pbs
+qsub -v outDir=02_Mash_Analysis_All_21k,f=Pasted_Sketches.msh 00_PBS/02d_Mash_dist.pbs
+
+rm 02_Mash_query_array.txt
+
+cd 02_Mash_Analysis_All
+
+# Rename col and row names of mash distance matrix
+python ../00_Scripts/02a_Mash_Rename_Dist_Matrix.py -i Mash_Distance_Matrix.dst -o Mash_Distance_Matrix_Renamed.dst
+
+# NMDS plot of all vs all Mash Distance Matrix
+python ../00_Scripts/02b_Mash_Plot_Dist_Matrix_NMDS.py -i Mash_Distance_Matrix_Renamed.dst -o Sruber_Draft_Genomes_Mash_NMDS.png# Compute all vs all Mash Distance Matrix
+
+
+########################################################
+########################################################
+########################################################
+
+MiGA Clade of our Draft Genomes:
+
+qsub -v 00_PBS/03_MiGA_Clade.pbs
+
+
+MiGA Clade including our MAGs from Control ponds E1_M13 E1_M15 and E1_M16 and 16 NCBI Salinibacter genus genomes
+
+Upload and rename NCBI genomes manually.
+
+Copy and rename our Draft Genomes:
+for f in 01_Sruber_Draft_Genomes_Trim/*fna; do n=`basename $f | cut -d_ -f1`; cp $f 01_Sruber_All_Genomes/Sruber_${n}_Draft.fna; done
+
+All vs All MiGA ANI vs Shared Fragment Ratio Correlation Plot
+uses the file: 03_MiGA_Clades_Selected/data/09.distances/03.ani/miga-project.txt.gz
+cd 03_MiGA_Clades_Selected/
+cp data/09.distances/03.ani/miga-project.txt.gz AllvsAll_ANI.tsv.gz
+gunzip AllvsAll_ANI.tsv.gz
+# remove outliers Ssp_10B_NCBI and Saltip
+grep -v Ssp_10B_NCBI AllvsAll_ANI.tsv | grep -v Saltip > AllvsAll_ANI_rmOutliers.tsv
+rm AllvsAll_ANI.tsv
+python ../00_Scripts/03b_AllvAll_ANIvFragments_Correlation.py -ani AllvsAll_ANI_rmOutliers.tsv -org Salinibacter_ruber -op AllvsAll_ANI
+
+
+########################################################
+########################################################
+########################################################
+
+Check Assemblies for Halorubrum
+
+bash 00_PBS/05a_Launch_Blast_Check.sh 01_Sruber_Selected_Genomes *fna 05_Blast_Check_Blasts 01_Halorubrum_NCBI_Genomes/00_Halorubrum_DB.fna
+
+- Filter for Length
+for f in *blast; do echo $f; python ../00_Scripts/05c_Blast_Check_Filter.py -b $f -a 700 -p 90.0; printf '\n##################################\n##################################\n\n'; done | tee 00_Blast_Check_Filter.log
+
+- Combine matches into single tsv file to view in Excel
+cat *blst >> 00_Filtered_Blast_Matches.tsv
+- Remove individual *filtered.blst file
+rm *blst
+
+
+########################################################
+########################################################
+########################################################
+
+16S Tree
+
+- Concatenate 16S sequences
+cat 00_SSU_Genes/* >> 01_SSU_Alignments/Cocnatenated_16S.fna
+
+- Align 16S sequences
+qsub -v input=01_SSU_Alignments,output=01_SSU_Alignments ../00_PBS/04b_Align_Sequence_Clustal_Omega.pbs 
+
+- Build Tree with RAxML
+qsub -v input=01_SSU_Alignments/Cocnatenated_16S.fna.clustalo.aln,output=02_SSU_Tree ../00_PBS/04d_RAxML_Single_Nucleotide_Gene_Tree.pbs
+
+
+########################################################
+########################################################
+########################################################
+
+Concatenate Gene Tree
+
+- Collect essential genes from MiGA.
+
+- Transpose files from Genome.faa to Genes.faa
+python ../00_Scripts/04a_Collect_MiGA_Ess_for_alignment.py -ess 00_EssentialGenes_byGenome -opd 01_EssentialGenes_byGene
+mv Collect_MiGA_Ess_Summary.tsv 01_Collect_MiGA_Ess_Summary.tsv 
+
+- Align each gene set with Clustal Omega
+qsub -v input=01_EssentialGenes_byGene,output=02_EssentialGenes_Alignments ../00_PBS/04b_Align_Sequence_Clustal_Omega.pbs 
+
+- Concatenate alignments
+mkdir 03_Concatenated_Tree
+Aln.cat.rb -I -m AUTO -c 03_Concatenated_Tree/Srube_All_Ess_Aln.cat.fa.raxml.coords 02_EssentialGenes_Alignments/*aln > 03_Concatenated_Tree/Srube_All_Ess_Aln.cat.fa
+Reading.
+Removing invariable sites.
+  Removed 40491 sites.
+Concatenating.
+  5500 columns.
+Generating coordinates.
+Done.
+
+- Build Tree with RAxML
+qsub -v input=Srube_All_Ess_Aln.cat.fa,output=03_Concatenated_Tree ../00_PBS/04c_RAxML_Compute_Concatenated_AA_Tree.pbs
+## 2 cpus and 24 hours was not enough time. Increasing to 20 cpus and 7 days to run again
+## qsub -v input=Srube_All_Ess_Aln.cat.fa,output=03_Concatenated_Tree ../00_PBS/04c_RAxML_Compute_Concatenated_AA_Tree.pbs
+
+
+########################################################
+########################################################
+########################################################
+
+Pangenome Analysis :: Sruber / Ecoli / Others
+
+bash 00_Run_Pangenome_Experiment/00_Run_Pangenome_Experiment.sh 1 100 01_Sruber_Group1_Genomes/ Salinibacter_ruber S_ruber 97.5 100 300
+
+
+########################################################
+########################################################
+########################################################
+
+Gene Annotation and compare Sruber to Ecoli
+
+Step 1: Collect Representative Amino Acid Sequence from CD-Hit clustered nucleotide sequence representatives
+	from: /gpfs/pace2/project/bio-konstantinidis/rconrad6/Salinibacter_Assemblies
+	mkdir 06_Annotations
+
+	1a: Concatenate all proteins into single file
+		cat PGE_0001_S_ruber/03_FAA/* >> 06_Annotations00_/Sruber_Combined_Proteins.faa
+
+	1b: Get CD-HIT Cluster representatives (nucleotide - because we clustered the nucleotide sequence)
+		cp PGE_0000_Summary/D_S_ruber_Dereplicated_Genes/02_0001_S_ruber_Clustered_Genes.fnn 06_Annotations/00_Sruber_Clustered_Representative_Genes.fnn
+
+	1c: Use python script to get the amino acid sequence matching the nucleotide sequence
+		cd 06_Annotations/
+		python ../00_Scripts/06a_Get_AA_Sequence_frm_Clstrd_Genes.py -f1 00_Sruber_Clustered_Genes.fnn -f2 00_Sruber_Combined_Proteins.faa -o 01_Sruber_Clustered_Representative_Proteins.faa
+		### Check for equal number of genes ###
+		grep -c '>' 00_Sruber_Clustered_Representative_Genes.fnn :: 12666
+		grep -c '>' 01_Sruber_Clustered_Representative_Proteins.faa :: 12666
+
+Step 2: Prepare for blastp annotation
+	2a: Splitting .faa file into 22 proteins per file
+		# My fasta files are formatted so each sequence is on 1 line only
+		mkdir 01_SPLIT_GENES 01_SPLIT_BLASTS 01_SPLIT_QUERY_LIST
+	2b: Setup to use GNU parallel 10 split faa files per job submission
+		for f in 01_SPLIT_GENES/*; do n=`echo $f | cut -d. -f3`; echo ${f},01_SPLIT_BLASTS/SwissProt_${n}.blst,01_SPLIT_BLASTS/TrEMBL_${n}.blst >> temp_split_gene_list.txt ; done
+		split -d -a 5 -l 10 temp_split_gene_list.txt 01_SPLIT_QUERY_LIST/temp_split_gene_list.txt.
+		rm temp_split_gene_list.txt
+
+Step 3: Run SwissProt and TrEMBL Annotations with Blastp
+	3a: Split files Qsub Array with GNU parallel 
+		bash ../00_PBS/06b_Launch_SwissProt_TrEMBL_Annotation_Blastp.pbs 01_SPLIT_QUERY_LIST 01_SPLIT_BLASTS
+	3b: Check for completion. Rurun if needed
+		echo 01_SPLIT_BLASTS/SwissProt_00*completed | wc -w
+		echo 01_SPLIT_BLASTS/TrEMBL_00*completed | wc -w
+		## Should equal: echo 01_SPLIT_QUERY_LIST/temp_split_gene_list.txt.000* | wc -w
+	3c: Concatenate Split files
+		cat 01_SPLIT_BLASTS/SwissProt_00*blst >> 02_Clustered_Representative_Proteins_SwissProt.blst
+		cat 01_SPLIT_BLASTS/TrEMBL_00*blst >> 02_Clustered_Representative_Proteins_TrEMBL.blst
+	3d: Filter blast results for best hit
+		python ../00_Scripts/06e_BlastTab_BestHit_Filter.py -i 02_Clustered_Representative_Proteins_SwissProt.blst -pml 50 -pid 40
+			Running Script...
+			Total number of entries in blast file: 61761
+			Number of reads failing the filters: 52636
+			Number of reads passing the filters: 9125
+			Number of duplicate blast matches passing filter: 7438
+			Number of best hit entries written to new file: 1687
+
+		python ../00_Scripts/06e_BlastTab_BestHit_Filter.py -i 02_Clustered_Representative_Proteins_TrEMBL.blst -pml 50 -pid 40
+			Running Script...
+			Total number of entries in blast file: 119032
+			Number of reads failing the filters: 46020
+			Number of reads passing the filters: 73012
+			Number of duplicate blast matches passing filter: 63484
+			Number of best hit entries written to new file: 9528
+	3e: Clean up / remove 01_SPLIT Files/folders
+		rm -r 01_SPLIT_*
+	3f: Retrieve gene annotation information from UniProt DBs
+		python ../00_Scripts/06f_BlastTab_UniProtID_to_Gene_Annotation.py -p /gpfs/pace2/project/bio-konstantinidis/rconrad6/dbases/uniprot_sprot.PARSED.dat.tsv -b 02_Clustered_Representative_Proteins_SwissProt.filtered_best_hits.blst -o 03_Clustered_Representative_Proteins_SwissProt_Annotated.tsv
+			Wrote  1687 gene annotations of  1687  blast entries from  1116  UniProt IDs
+		python ../00_Scripts/06f_BlastTab_UniProtID_to_Gene_Annotation.py -p /gpfs/pace2/project/bio-konstantinidis/rconrad6/dbases/uniprot_trembl.PARSED.dat.tsv -b 02_Clustered_Representative_Proteins_TrEMBL.filtered_best_hits.blst -o 03_Clustered_Representative_Proteins_TrEMBL_Annotated.tsv
+			Wrote  9528 gene annotations of  9528  blast entries from  6064  UniProt IDs
+
+Step 4: Run KEGG Annotations with KofamScan
+	4a: KofamScan
+		qsub -v q=01_Sruber_Clustered_Representative_Proteins.faa,o=02_Sruber_Clustered_Representative_Proteins_KEGG.tsv ../00_PBS/06d_KofamScan_KEGG_Annotations.pbs
+		rm -r tmp
+	4b: Filter for best hits and Convert KofamScan Output to match UniProt DB output
+		python ../00_Scripts/06g_KofamScan_Filter_Convert.py -i 02_Sruber_Clustered_Representative_Proteins_KEGG.tsv -o 03_Clustered_Representative_Proteins_KEGG_Annotated.tsv
+
+Step 5: Combine Annotation Results
+	python ../00_Scripts/06h_Combine_Annotations.py -trb 03_Clustered_Representative_Proteins_TrEMBL_Annotated.tsv -spb 03_Clustered_Representative_Proteins_SwissProt_Annotated.tsv -kfs 03_Clustered_Representative_Proteins_KEGG_Annotated.tsv -o 04_Sruber_Representative_Protein_Annotations.tsv
+		Total TrEMBL_KofamScan Double Annotation: 6681
+		Total TrEMBL Single Annotation: 1167
+		Total Triple Annotation: 1663
+		Total TrEMBL_SwissProt Double Annotation: 17
+		Total SwissProt_KofamScan Double Annotation: 7
+		Total KofamScan Single Annotation: 1973
+
+Step 6: Add Un-annotated genes as NoMatch Hypotheticals
+	python ../00_Scripts/06i_Add_Unannotated_Genes.py -a 04_Sruber_Representative_Protein_Annotations.tsv -q 01_Sruber_Clustered_Representative_Proteins.faa -o 04_Sruber_Representative_Protein_Annotations_NoMatch.tsv
+
+			
+########################################################
+########################################################
+########################################################
+
+Gene Abundance Analysis
+
+Step 1: Get trimmed metagenome reads
+	## I have these already in Salinibacter_New_Metagenome directory.
+	## I used trimmomatic for adapter clipping and combined all reads 1P, 2P, 1U, and 2U
+	cp /gpfs/pace2/project/bio-konstantinidis/rconrad6/Salinibacter_New_Metagenomes/00_ReadsTrimmed/E1_M1*combined.fastq .
+
+Step 2: Build Magic Blast Databases for the Group 1 Genomes
+	2a: Confirm the use of MagicBlast makeblastdb over Blast+ makeblastdb
+		which makeblastdb
+	2b: For loop # remember -parse_seqids flag or the contig names will be lost. We need them get gene coverages.
+		for f in *.fna; do makeblastdb -dbtype nucl -in $f -out $f -parse_seqids; done
+
+Step 3: Launch Magic Blast Array
+	bash 00_PBS/07a_Launch_MagicBlast.sh 00_Metagenome_ReadsTrimmed 01_Sruber_Group1_Genomes 07_MagicBlast_Metagenomes_to_Group1
+
+
+########################################################
+########################################################
+########################################################
+
+Deep dive into contigs and genes

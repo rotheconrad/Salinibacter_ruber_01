@@ -1,0 +1,32 @@
+#PBS -N Blast_Check
+#PBS -l nodes=1:ppn=2
+#PBS -l mem=5gb
+#PBS -l walltime=12:00:00
+#PBS -q iw-shared-6
+#PBS -o 00_log/05_Blast_Check.out
+#PBS -e 00_log/05_Blast_Check.err
+
+cd $PBS_O_WORKDIR
+
+module load python/2.7
+module load boost/1.53.0 ncbi_blast/2.2.29
+
+# Make a blast database if you haven't
+# from: /gpfs/pace2/project/bio-konstantinidis/rconrad6/Salinibacter_Assemblies/01_Halorubrum_NCBI_Genomes
+# cat *fna >> 00_Halorubrum_DB.fna
+# module load python/2.7 boost/1.53.0 ncbi_blast/2.2.29
+# makeblastdb -dbtype nucl -in 00_Halorubrum_DB.fna
+
+qList=(`cat 05_Blast_query_list_${out_dir}.txt`)
+query=${qList[$PBS_ARRAYID]}
+out=${out_dir}/`basename $db | cut -d. -f1`_`basename $query | cut -d. -f1`.blast
+
+echo Query: $query
+echo DB: $db
+echo OutDir: $out_dir
+echo OutFile: $out
+echo PercIdentity: $pid
+
+blastn -task 'blastn' -evalue 0.01 -num_threads 2 -db ${db} -query ${query} -out ${out} -perc_identity ${pid} -outfmt \
+'6 qseqid sseqid pident length mismatch gapopen qstart qend sstart send evalue bitscore qlen slen qseq sseq'
+

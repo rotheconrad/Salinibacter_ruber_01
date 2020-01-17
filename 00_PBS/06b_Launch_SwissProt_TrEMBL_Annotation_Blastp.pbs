@@ -1,0 +1,19 @@
+#/usr/bin/bash
+
+Script_Path=/gpfs/pace2/project/bio-konstantinidis/rconrad6/Salinibacter_Assemblies/00_PBS/06c_SwissProt_TrEMBL_Annotation_Blastp.pbs
+
+if [ ! -d 00_log/ ]; then mkdir 00_log; fi
+
+indir=$1
+outdir=$2
+
+query_array=(${indir}/temp*)
+query_count=${#query_array[@]}
+query_number=`expr $query_count - 1`
+
+echo 'The Query count is' $query_count '. The Array count is' $query_number
+
+qsub -t 0-${query_number} -v indir=$indir,outdir=$outdir ${Script_Path}
+
+## Run Log:
+## bash ../00_PBS/06b_Launch_SwissProt_TrEMBL_Annotation_Blastp.pbs 01_SPLIT_QUERY_LIST 01_SPLIT_BLASTS

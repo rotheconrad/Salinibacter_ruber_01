@@ -1,0 +1,50 @@
+#PBS -N MagicBlast
+#PBS -l nodes=1:ppn=10
+#PBS -l mem=20gb
+#PBS -l walltime=2:00:00
+#PBS -q iw-shared-6
+#PBS -o 00_log/07b_magicblast_${out_dir}.out
+#PBS -e 00_log/07b_magicblast_${out_dir}.err
+
+cd $PBS_O_WORKDIR
+
+filter=/gpfs/pace2/project/bio-konstantinidis/rconrad6/Salinibacter_Assemblies/00_Scripts/07c_MagicBlast_ShortRead_Filter.py
+
+db_array=(${db_dir}/*.fna)
+db=${db_array[$PBS_ARRAYID]}
+
+qID=`basename $query | cut -d. -f1`
+rID=`basename $db | cut -d. -f1`
+out=${out_dir}/${qID}_${rID}.blast
+filtered_out=${out_dir}/${qID}_${rID}.fltrdBstHts.blst
+
+echo 'qID=' $qID
+echo 'rID=' $rID
+echo 'query=' $query
+echo 'dbase=' $db
+echo 'out=' $out
+
+if [ ! -s $out ]
+  then
+	magicblast -query $query -db $db -infmt fastq -num_threads 10 -no_unaligned -splice F -outfmt tabular -parse_deflines T -out $out
+fi
+
+if [ -s $out ] && [ ! -s $filtered_out ]
+  then
+	printf '\n\nMagic Blast Complete. Filtering Results...\n\n'
+	python ${filter} -i ${out} -pml 0.9 -rl 70
+fi
+
+if [ -s $filtered_out ]
+  then
+	printf '\n\nResults Filtered. Removing unfiltered results...\n\n'
+	rm $out
+fi
+
+# Other Flags available:
+#  -perc_identity <Real, 0..100>
+#  -score <String> Cutoff score for accepting alignments. Can be expressed as a number or a function of read length: L,b,a for a * length + b. Default = `20'
+#  -paired Input query sequences are paired
+#  -no_query_id_trim Do not trim '.1', '/1', '.2', or '/2' at the end of read ids for SAM format and paired runs
+#  -no_discordant Suppress discordant alignments for paired reads
+

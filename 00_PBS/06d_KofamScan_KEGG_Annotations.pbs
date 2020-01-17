@@ -1,0 +1,29 @@
+#PBS -N KofamScan
+#PBS -l nodes=1:ppn=5
+#PBS -l mem=5gb
+#PBS -l walltime=12:00:00
+#PBS -q iw-shared-6
+#PBS -o 00_log/06d_KofamScan_${o}.out
+#PBS -e 00_log/06d_KofamScan_${o}.err
+
+cd $PBS_O_WORKDIR
+
+echo 'Input file:' ${q}
+echo 'Output file:' ${o}
+
+if [ ! -d 00_log ]; then mkdir 00_log; fi
+
+module purge
+module load gcc/4.9.0
+module load ruby/2.5.1
+module load hmmer/3.1b1
+module load gnuparallel/20180822
+
+
+kofamscan=/gpfs/pace2/project/bio-konstantinidis/rconrad6/apps/kofamscan/exec_annotation
+
+ruby ${kofamscan} --cpu 5 -o ${o} ${q}
+
+## Run Log:
+## qsub -v q=,o= ../00_PBS/06d_KofamScan_KEGG_Annotations.pbs
+## qsub -v q=01_Sruber_Clustered_Representative_Proteins.faa,o=01_Sruber_Clustered_Representative_Proteins_KEGG.tsv ../00_PBS/06d_KofamScan_KEGG_Annotations.pbs

@@ -1,0 +1,16 @@
+#PBS -N MiGA_CLADE
+#PBS -l nodes=1:ppn=1
+#PBS -l mem=1gb
+#PBS -l walltime=7:00:00:00
+#PBS -q microcluster
+#PBS -o 00_log/${output_dir}.out
+#PBS -e 00_log/${output_dir}.err
+
+cd $PBS_O_WORKDIR
+
+miga index_wf -m -o ${output_dir} ${input_dir}/*fna
+
+## Run Log:
+## qsub -v input_dir=01_Sruber_Draft_Genomes_Trim,output_dir=03_MiGA_Clades_Trim 00_PBS/03_MiGA_Clade.pbs
+## qsub -v input_dir=01_Sruber_All_Genomes_Trim,output_dir=03_MiGA_Clades_All 00_PBS/03_MiGA_Clade.pbs
+## qsub -v input_dir=01_Sruber_Selected_Genomes,output_dir=03_MiGA_Clades_Selected 00_PBS/03_MiGA_Clade.pbs

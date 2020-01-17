@@ -1,0 +1,11 @@
+#PBS -N RecPlot4-MgBlst
+#PBS -l nodes=1:ppn=1
+#PBS -l mem=1gb
+#PBS -l walltime=12:00:00
+#PBS -q iw-shared-6
+#PBS -o 00_log/07d_recPlot2_${indir}.out
+#PBS -e 00_log/07d_recPlot2_${indir}.err
+
+cd $PBS_O_WORKDIR
+
+

@@ -1,0 +1,14 @@
+#PBS -N MiGA_Clade_All
+#PBS -l nodes=1:ppn=1
+#PBS -l mem=1gb
+#PBS -l walltime=7:00:00:00
+#PBS -q microcluster
+#PBS -o 00_log/03b_MiGA_CLADE_All.out
+#PBS -e 00_log/03b_MiGA_CLADE_All.err
+
+cd $PBS_O_WORKDIR
+
+miga index_wf -m -o 03_MiGA_Clades_All 01_Sruber_All_Genomes/*fna
+
+## Run Log:
+## qsub 00_PBS/03_MiGA_Clade_All.pbs

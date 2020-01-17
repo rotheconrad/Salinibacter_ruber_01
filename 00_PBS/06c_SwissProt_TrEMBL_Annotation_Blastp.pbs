@@ -1,0 +1,63 @@
+#PBS -N Annotate Genes
+#PBS -l nodes=1:ppn=20
+#PBS -l mem=150gb
+#PBS -l walltime=12:00:00
+#PBS -q iw-shared-6
+#PBS -o 00_log/06c_SwissProt_TrEMBL_Blastp.out
+#PBS -e 00_log/06c_SwissProt_TrEMBL_Blastp.err
+
+cd $PBS_O_WORKDIR
+
+module load gnuparallel/20180822
+module load python/2.7
+module load boost/1.53.0 ncbi_blast/2.2.29
+
+# Make a blast database if you haven't
+# makeblastdb -dbtype prot -in uniprot_trembl.fasta 
+
+qList=(${indir}/temp*)
+query_list=${qList[$PBS_ARRAYID]}
+name=`echo ${query_list} | cut -d. -f3` ## temp_split_gene_list number
+
+SwissProt=/gpfs/pace2/project/bio-konstantinidis/rconrad6/dbases/SwissProt/uniprot_sprot.fasta
+TrEMBL=/gpfs/pace2/project/bio-konstantinidis/rconrad6/dbases/TrEMBL/uniprot_trembl.fasta
+swissout=${outdir}/SwissProt_${name}.completed
+tremblout=${outdir}/TrEMBL_${name}.completed
+
+glog1=00_log/00_sprot_gnu.log
+glog2=00_log/00_trembl_gnu.log
+cmmnd1="blastp -task 'blastp' -evalue 0.01 -max_target_seqs 10 -num_threads 2 -db ${SwissProt} -outfmt \
+'6 qseqid sseqid pident length mismatch gapopen qstart qend sstart send evalue bitscore qlen slen'"
+cmmnd2="blastp -task 'blastp' -evalue 0.01 -max_target_seqs 10 -num_threads 2 -db ${TrEMBL} -outfmt \
+'6 qseqid sseqid pident length mismatch gapopen qstart qend sstart send evalue bitscore qlen slen'"
+
+echo 'query=' $query_list
+echo 'name=' $name
+echo 'swissout=' $swissout
+echo 'tremblout=' $tremblout
+
+if [ ! -s $swissout ]
+  then
+
+	parallel -j 10 --joblog $glog1 --colsep ',' '{1} -query {2} -out {3}' ::: "${cmmnd1}" :::: ${query_list}
+	echo Finished > $swissout
+
+  else
+
+      	echo 'It looks like this blast was already completed.' $swissout 'file already exists.'
+
+
+fi
+
+if [ ! -s $tremblout ]
+  then
+
+	parallel -j 10 --joblog $glog2 --colsep ',' '{1} -query {2} -out {4}' ::: "${cmmnd2}" :::: ${query_list}
+	echo Finished > $tremblout
+
+  else
+
+      	echo 'It looks like this blast was already completed.' $tremblout 'file already exists.'
+
+
+fi

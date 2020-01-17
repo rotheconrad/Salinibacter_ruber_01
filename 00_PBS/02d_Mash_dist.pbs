@@ -1,0 +1,16 @@
+#PBS -N MASH_dist
+#PBS -l nodes=1:ppn=2
+#PBS -l mem=10gb
+#PBS -l walltime=1:00:00
+#PBS -q iw-shared-6
+#PBS -o 00_log/02d_${outDir}_dist.out
+#PBS -e 00_log/02d_${outDir}_dist.err
+
+cd $PBS_O_WORKDIR
+
+# for metagenomes after sketches are pasted together
+mash dist -p 2 -t ${outDir}/${f} ${outDir}/${f} > ${outDir}/Mash_Distance_Matrix.dst
+mash dist -p 2 ${outDir}/${f} ${outDir}/${f} > ${outDir}/Mash_Distance_List.dst
+
+# lauch with
+# qsub -v outDir=02_Mash_Analysis,f=Pasted_Sketches.msh 00_PBS/02d_Mash_dist.pbs

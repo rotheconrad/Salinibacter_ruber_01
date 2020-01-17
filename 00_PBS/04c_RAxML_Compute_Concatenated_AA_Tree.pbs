@@ -1,0 +1,30 @@
+#PBS -N RAxML
+#PBS -l nodes=1:ppn=20
+#PBS -l mem=100gb
+#PBS -l walltime=7:00:00:00
+#PBS -q microcluster
+#PBS -o 00_log/RAxML_${output}.out
+#PBS -e 00_log/RAxML_${output}.err
+
+cd $PBS_O_WORKDIR
+
+module load openmpi/1.8 raxml/8.0.19
+
+coords=${input}.raxml.coords
+gnm=`basename $input | cut -d. -f1`
+pre=`pwd`/${output}
+out=${gnm}.RAxML
+
+echo Input: $input
+echo Coords: $coords
+echo Gene Name: $gnm
+echo Output: $out
+echo OutDir: $pre
+
+raxmlHPC-PTHREADS-SSE3 -s ${output}/${input} -n ${out} -w ${pre} -q ${output}/${coords} -m PROTGAMMAAUTO -f a -N autoMRE -p 4564821 -T 20 -x 1235
+
+## Run Log:
+## qsub -v input=,output= ../00_PBS/04c_RAxML_Compute_Concatenated_AA_Tree.pbs
+## qsub -v input=Srube_All_Ess_Aln.cat.fa,output=03_Concatenated_Tree ../00_PBS/04c_RAxML_Compute_Concatenated_AA_Tree.pbs
+## 2 cpus and 24 hours was not enough time. Increasing to 20 cpus and 7 days to run again
+## qsub -v input=Srube_All_Ess_Aln.cat.fa,output=03_Concatenated_Tree_Attmpt2 ../00_PBS/04c_RAxML_Compute_Concatenated_AA_Tree.pbs

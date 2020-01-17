@@ -1,0 +1,26 @@
+#PBS -N MASH_sketch
+#PBS -l nodes=1:ppn=1
+#PBS -l mem=1gb
+#PBS -l walltime=1:00:00
+#PBS -q iw-shared-6
+#PBS -o 00_log/02b_${outDir}_sketch.out
+#PBS -e 00_log/02b_${outDir}_sketch.err
+
+cd $PBS_O_WORKDIR
+
+fList=(`cat 02_${outDir}_query_array.txt`)
+f=${fList[$PBS_ARRAYID]}
+n=`basename $f`
+
+if [ ! -s ${outDir}/Sketches/${n}.sketch ]
+  then
+	mash sketch -p 1 -k ${k} -s ${s} -o ${outDir}/Sketches/${n}.sketch ${f}
+  else
+	echo Sketch is already finished!
+fi
+
+# for Metagenomes
+#mash sketch -p 1 -k 31 -s 1000000 -o ${n} ${f}
+
+# Execute with for loop:
+# for f in file_array; do qsub -v f=metagenome.fa,n=metagenome.sketch

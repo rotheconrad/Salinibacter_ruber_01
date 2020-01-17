@@ -1,0 +1,28 @@
+#PBS -N RAxML
+#PBS -l nodes=1:ppn=2
+#PBS -l mem=10gb
+#PBS -l walltime=24:00:00
+#PBS -q microcluster
+#PBS -o 00_log/RAxML_${output}.out
+#PBS -e 00_log/RAxML_${output}.err
+
+cd $PBS_O_WORKDIR
+
+module load openmpi/1.8 raxml/8.0.19
+
+gnm=`basename $input | cut -d. -f1`
+pre=`pwd`/${output}
+out=${gnm}.RAxML
+
+if [ ! -d ${output} ]; then mkdir ${output}; fi
+
+echo Input: $input
+echo Gene Name: $gnm
+echo Output: $out
+echo OutDir: $pre
+
+raxmlHPC-PTHREADS-SSE3 -s ${input} -n ${out} -w ${pre} -m GTRGAMMA -f a -N autoMRE -p 4564821 -T 2 -x 1235
+
+## Run Log:
+## qsub -v input=,output= ../00_PBS/04c_RAxML_Compute_Concatenated_AA_Tree.pbs
+## qsub -v input=01_SSU_Alignments/Cocnatenated_16S.fna.clustalo.aln,output=02_SSU_Tree ../00_PBS/04d_RAxML_Single_Nucleotide_Gene_Tree.pbs

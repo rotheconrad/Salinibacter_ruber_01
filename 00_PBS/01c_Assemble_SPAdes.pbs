@@ -1,0 +1,63 @@
+#PBS -N SPAdes
+#PBS -l nodes=1:ppn=4
+#PBS -l mem=10gb
+#PBS -l walltime=12:00:00
+#PBS -q iw-shared-6 #microcluster
+#PBS -o 00_log/01_SPds_${out_dir}.out
+#PBS -e 00_log/01_SPds_${out_dir}.err
+
+spades=/gpfs/pace2/project/bio-konstantinidis/rconrad6/apps/SPAdes-3.13.0-Linux/bin/spades.py
+
+cd $PBS_O_WORKDIR
+
+sample_array=(`cat $sample_list`)
+sample=${sample_array[$PBS_ARRAYID]}
+
+r1=${data_dir}/Run1_${sample}_1P.fastq
+r2=${data_dir}/Run1_${sample}_2P.fastq
+r3=${data_dir}/Run2_${sample}_1P.fastq
+r4=${data_dir}/Run2_${sample}_2P.fastq
+r5=${data_dir}/Run3_${sample}_1P.fastq
+r6=${data_dir}/Run3_${sample}_2P.fastq
+
+if [ ! -s ${out_dir}/${sample}*/contigs.fasta ]; then
+if [ -s $r1 ] && [ -s $r3 ] && [ -s $r5 ]
+  then
+	echo $sample $r1 $r2 $r3 $r4 $r5 $r6
+	reads=`echo --pe1-1 ${r1} --pe1-2 ${r2} --pe2-1 ${r3} --pe2-2 ${r4} --pe3-1 ${r5} --pe3-2 ${r6}`
+	${spades} --careful -k 21,33,55,77,99,127 -t 4 -m 10 -o ${out_dir}/${sample}_r123 $reads
+
+elif [ -s $r1 ] && [ -s $r3 ]
+  then
+	echo $sample $r1 $r2 $r3 $r4
+	reads=`echo --pe1-1 ${r1} --pe1-2 ${r2} --pe2-1 ${r3} --pe2-2 ${r4}`
+	${spades} --careful -k 21,33,55,77,99,127 -t 4 -m 10 -o ${out_dir}/${sample}_r12 $reads
+
+elif [ -s $r1 ] && [ -s $r5 ]
+  then
+	echo $sample $r1 $r2 $r5 $r6
+	reads=`echo --pe1-1 ${r1} --pe1-2 ${r2} --pe2-1 ${r5} --pe2-2 ${r6}`
+	${spades} --careful -k 21,33,55,77,99,127 -t 4 -m 10 -o ${out_dir}/${sample}_r13 $reads
+
+elif [ -s $r3 ] && [ -s $r5 ]
+  then
+	echo $sample $r3 $r4 $r5 $r6
+	reads=`echo --pe1-1 ${r3} --pe1-2 ${r4} --pe2-1 ${r5} --pe2-2 ${r6}`
+	${spades} --careful -k 21,33,55,77,99,127 -t 4 -m 10 -o ${out_dir}/${sample}_r23 $reads
+
+elif [ -s $r1 ]
+  then
+	echo $sample $r1 $r2
+	reads=`echo -1 ${r1} -2 ${r2}`
+	${spades} --careful -k 21,33,55,77,99,127 -t 4 -m 10 -o ${out_dir}/${sample}_r1 $reads
+
+elif [ -s $r3 ]
+  then
+	echo $sample $r3 $r4
+	reads=`echo -1 ${r3} -2 ${r4}`
+	${spades} --careful -k 21,33,55,77,99,127 -t 4 -m 10 -o ${out_dir}/${sample}_r2 $reads
+
+else echo $sample FAIL $r1 $r3 $r5
+
+fi
+fi

@@ -1,0 +1,14 @@
+#PBS -N MASH_paste
+#PBS -l nodes=1:ppn=1
+#PBS -l mem=1gb
+#PBS -l walltime=1:00:00
+#PBS -q iw-shared-6
+#PBS -o 00_log/02c_${outDir}_paste.out
+#PBS -e 00_log/02c_${outDir}_paste.err
+
+cd $PBS_O_WORKDIR
+
+mash paste ${outDir}/Pasted_Sketches.msh ${outDir}/Sketches/*msh
+
+# Run log:
+# qsub -v outDir=02_Mash_Analysis 00_PBS/02c_Mash_paste.pbs
