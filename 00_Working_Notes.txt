@@ -150,6 +150,8 @@ rm *blst
 
 16S Tree
 
+from: /gpfs/pace2/project/bio-konstantinidis/rconrad6/Salinibacter_Assemblies/04_Alignments_Trees
+
 - Concatenate 16S sequences
 cat 00_SSU_Genes/* >> 01_SSU_Alignments/Cocnatenated_16S.fna
 
@@ -166,7 +168,11 @@ qsub -v input=01_SSU_Alignments/Cocnatenated_16S.fna.clustalo.aln,output=02_SSU_
 
 Concatenate Gene Tree
 
+from: /gpfs/pace2/project/bio-konstantinidis/rconrad6/Salinibacter_Assemblies/04_Alignments_Trees
+
 - Collect essential genes from MiGA.
+mkdir 00_EssentialGenes_byGenome
+cp ../03_MiGA_Clades_Selected/data/07.annotation/01.function/01.essential/*.ess.faa 00_EssentialGenes_byGenome/
 
 - Transpose files from Genome.faa to Genes.faa
 python ../00_Scripts/04a_Collect_MiGA_Ess_for_alignment.py -ess 00_EssentialGenes_byGenome -opd 01_EssentialGenes_byGene
@@ -191,6 +197,8 @@ qsub -v input=Srube_All_Ess_Aln.cat.fa,output=03_Concatenated_Tree ../00_PBS/04c
 ## 2 cpus and 24 hours was not enough time. Increasing to 20 cpus and 7 days to run again
 ## qsub -v input=Srube_All_Ess_Aln.cat.fa,output=03_Concatenated_Tree ../00_PBS/04c_RAxML_Compute_Concatenated_AA_Tree.pbs
 
+- Build Tree with FastTree
+qsub -v input=03_Concatenated_Tree/Srube_All_Ess_Aln.cat.fa,output=03_Concatenated_Tree/Srube_All_Ess_Aln.cat.fa.FastTree.nwk ../00_PBS/04e_FastTree.pbs
 
 ########################################################
 ########################################################
@@ -286,26 +294,50 @@ Step 5: Combine Annotation Results
 Step 6: Add Un-annotated genes as NoMatch Hypotheticals
 	python ../00_Scripts/06i_Add_Unannotated_Genes.py -a 04_Sruber_Representative_Protein_Annotations.tsv -q 01_Sruber_Clustered_Representative_Proteins.faa -o 04_Sruber_Representative_Protein_Annotations_NoMatch.tsv
 
-			
+Step 7: Compare to Ecoli Annotations
+	7a: Ecoli annotations are completed already.
+		Notes: /gpfs/pace2/project/bio-konstantinidis/rconrad6/Core-Pan_Genomes/01b-FILTERED-97.5/00_Ecoli_Annotation_Notes.txt
+	7b: Write python script to compare results.
+		## I still need to do this ##
+
+
 ########################################################
 ########################################################
 ########################################################
 
-Gene Abundance Analysis
+Gene, Contig, Genome  Coverage/Abundance Analysis
+
+from: /gpfs/pace2/project/bio-konstantinidis/rconrad6/Salinibacter_Assemblies
 
 Step 1: Get trimmed metagenome reads
 	## I have these already in Salinibacter_New_Metagenome directory.
 	## I used trimmomatic for adapter clipping and combined all reads 1P, 2P, 1U, and 2U
-	cp /gpfs/pace2/project/bio-konstantinidis/rconrad6/Salinibacter_New_Metagenomes/00_ReadsTrimmed/E1_M1*combined.fastq .
+	mkdir 00_Metagenome_ReadsTrimmed
+	cp /gpfs/pace2/project/bio-konstantinidis/rconrad6/Salinibacter_New_Metagenomes/00_ReadsTrimmed/E1_M1*combined.fastq 00_Metagenome_ReadsTrimmed/
 
 Step 2: Build Magic Blast Databases for the Group 1 Genomes
 	2a: Confirm the use of MagicBlast makeblastdb over Blast+ makeblastdb
 		which makeblastdb
 	2b: For loop # remember -parse_seqids flag or the contig names will be lost. We need them get gene coverages.
-		for f in *.fna; do makeblastdb -dbtype nucl -in $f -out $f -parse_seqids; done
+		for f in 01_Sruber_Group1_Genomes/*.fna; do makeblastdb -dbtype nucl -in $f -out $f -parse_seqids; done
 
-Step 3: Launch Magic Blast Array
-	bash 00_PBS/07a_Launch_MagicBlast.sh 00_Metagenome_ReadsTrimmed 01_Sruber_Group1_Genomes 07_MagicBlast_Metagenomes_to_Group1
+Step 3: Launch Magic Blast Array - includes Magic Blast Short Read Filter for results
+	bash 00_PBS/07a_Launch_MagicBlast.sh 00_Metagenome_ReadsTrimmed 01_Sruber_Group1_Genomes 07a_MagicBlast_Metagenomes_to_Group1
+
+Step 4: Build RecPlots for visual inspection
+	## RecPlot version 4 from: https://github.com/KGerhardt/Recplot_4
+	
+Step 5: Calculate TAD80 coverage using my python TAD by gene script
+	Working.
+
+
+########################################################
+########################################################
+########################################################
+
+Combine Gene Coverage and Annotation inforation
+
+Working.
 
 
 ########################################################
@@ -313,3 +345,4 @@ Step 3: Launch Magic Blast Array
 ########################################################
 
 Deep dive into contigs and genes
+	## I still need to do this.

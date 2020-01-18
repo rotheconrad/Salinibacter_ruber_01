@@ -1,11 +1,33 @@
-#PBS -N RecPlot4-MgBlst
+#PBS -N RecPlot4-MgcBlst
 #PBS -l nodes=1:ppn=1
 #PBS -l mem=1gb
 #PBS -l walltime=12:00:00
 #PBS -q iw-shared-6
-#PBS -o 00_log/07d_recPlot2_${indir}.out
-#PBS -e 00_log/07d_recPlot2_${indir}.err
+#PBS -o 00_log/07d_recPlot2.out
+#PBS -e 00_log/07d_recPlot2.err
 
 cd $PBS_O_WORKDIR
 
 
+prep=/gpfs/pace2/project/bio-konstantinidis/rconrad6/apps/Recplot_4/Recplot_Prep.py
+recplot=/gpfs/pace2/project/bio-konstantinidis/rconrad6/apps/Recplot_4/Recplot4_Static.R
+
+if [ ! -d $outdir ]; then mkdir $outdir; fi
+
+## Run Recplot_Prep.py to build .rec and .lim files.
+for f in ${magicblasts}/*blst
+  do
+	# grab the name of the genome.fna file from the name of the magic blast output.
+	# Adjust the cut parameters to your naming and delimiting scheme.
+	o=`basename $f | cut -d. -f1`
+	c=${genomes}/`echo $o | cut -d_ -f5-`.fna
+	python $prep -c $c -r $f -f 'magic' -o ${outdir}/$o
+done
+
+source activate RecPlot4
+
+Rscript $recplot -dir $outdir -sep T -lin_hist T
+
+
+## Run Log:
+## qsub -v magicblasts=07a_MagicBlast_Metagenomes_to_Group1,genomes=01_Sruber_Group1_Genomes,outdir=07b_RecPlot_RecLim 00_PBS/07d_RecPlot.pbs
