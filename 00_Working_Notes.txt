@@ -294,12 +294,6 @@ Step 5: Combine Annotation Results
 Step 6: Add Un-annotated genes as NoMatch Hypotheticals
 	python ../00_Scripts/06i_Add_Unannotated_Genes.py -a 04_Sruber_Representative_Protein_Annotations.tsv -q 01_Sruber_Clustered_Representative_Proteins.faa -o 04_Sruber_Representative_Protein_Annotations_NoMatch.tsv
 
-Step 7: Compare to Ecoli Annotations
-	7a: Ecoli annotations are completed already.
-		Notes: /gpfs/pace2/project/bio-konstantinidis/rconrad6/Core-Pan_Genomes/01b-FILTERED-97.5/00_Ecoli_Annotation_Notes.txt
-	7b: Write python script to compare results.
-		## I still need to do this ##
-
 
 ########################################################
 ########################################################
@@ -315,27 +309,50 @@ Step 1: Get trimmed metagenome reads
 	mkdir 00_Metagenome_ReadsTrimmed
 	cp /gpfs/pace2/project/bio-konstantinidis/rconrad6/Salinibacter_New_Metagenomes/00_ReadsTrimmed/E1_M1*combined.fastq 00_Metagenome_ReadsTrimmed/
 
-Step 2: Build Magic Blast Databases for the Group 1 Genomes
+Step 2: Build Magic Blast Databases for the 100 randomly selected Group 1 Genomes
+	## These genomes were selected as part of the pangenome analysi pipeline
+	## They are located in the folder: PGE_0001_S_ruber/03_FNA/
+
 	2a: Confirm the use of MagicBlast makeblastdb over Blast+ makeblastdb
 		which makeblastdb
+
 	2b: For loop # remember -parse_seqids flag or the contig names will be lost. We need them get gene coverages.
+
+		## For All Group1 genomes
 		for f in 01_Sruber_Group1_Genomes/*.fna; do makeblastdb -dbtype nucl -in $f -out $f -parse_seqids; done
 
+		## For Random Group1 Genomes from the Pangenome Clustering Experiment
+		for f in PGE_0001_S_ruber/03_FNA/*.fna; do makeblastdb -dbtype nucl -in $f -out $f -parse_seqids; done
+
 Step 3: Launch Magic Blast Array - includes Magic Blast Short Read Filter for results
+	
+	## For All Group1 genomes
 	bash 00_PBS/07a_Launch_MagicBlast.sh 00_Metagenome_ReadsTrimmed 01_Sruber_Group1_Genomes 07a_MagicBlast_Metagenomes_to_Group1
+
+	## For Random Group1 Genomes from the Pangenome Clustering Experiment
+	bash 00_PBS/07a_Launch_MagicBlast.sh 00_Metagenome_ReadsTrimmed PGE_0001_S_ruber/03_FNA 07a_MagicBlast_Metagenomes_RandomGroup1
 
 Step 4: Build RecPlots for visual inspection
 	## RecPlot version 4 from: https://github.com/KGerhardt/Recplot_4
-	
-Step 5: Calculate TAD80 coverage using my python TAD by gene script
-	Working.
+	qsub -v magicblasts=07a_MagicBlast_Metagenomes_to_Group1,genomes=01_Sruber_Group1_Genomes,outdir=07b_RecPlot_RecLim 00_PBS/07d_RecPlot.pbs
+
+Step 5: Calculate Coverage: 07e_MagicBlast_CoveragePlus.py
+	## Show script options: python 00_Scripts/07e_MagicBlast_CoveragePlus.py -h
+	## Coverage is reported as TAD80 by genome, contig, and gene. Relative abundance is also reported.
+	## The metagenomes are located in folder: 00_Metagenome_ReadsTrimmed
+	## The reference genomes are the draft genome assemblies located in folder: PGE_0001_S_ruber/03_FNA
+	## The tabular blast files are the filtered best hits magic blast files in folder: 07a_MagicBlast_Metagenomes_RandomGroup1
+	## the prodigal gene fasta files are were computer during the PGE: PGE_0001_S_ruber/03_FNN
+	## The tabular blast file names are underscore delimited with the first 4 positions indicating the metagenome and the second 4 positions indicating the reference genome or prodigal file.
+
+	bash 00_PBS/07f_Launch_CoveragePlus.pbs 00_Metagenome_ReadsTrimmed PGE_0001_S_ruber/03_FNA 07a_MagicBlast_Metagenomes_RandomGroup1 PGE_0001_S_ruber/03_FNN 95 80 07d_CoveragePlus
 
 
 ########################################################
 ########################################################
 ########################################################
 
-Combine Gene Coverage and Annotation inforation
+Combine Gene Coverage and Annotation information
 
 Working.
 
@@ -346,3 +363,15 @@ Working.
 
 Deep dive into contigs and genes
 	## I still need to do this.
+
+
+########################################################
+########################################################
+########################################################
+
+Compare to Ecoli Annotations
+	Step 1: Ecoli annotations are completed already.
+		Notes: /gpfs/pace2/project/bio-konstantinidis/rconrad6/Core-Pan_Genomes/01b-FILTERED-97.5/00_Ecoli_Annotation_Notes.txt
+
+	Step 2: Write python script to compare results.
+		## I still need to do this ##

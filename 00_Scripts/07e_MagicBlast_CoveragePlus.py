@@ -69,7 +69,7 @@ def read_genome_lengths(rgf):
 
     # read through genome fasta and build dictionary of dictionary
     # Containing base pair position for length of each contig.
-    with open(gf, 'r') as f:
+    with open(rgf, 'r') as f:
         for name, seq in read_fasta(f):
 
             contig_name = name.split(' ')[0].split('_')[-1] 
@@ -92,6 +92,9 @@ def calc_genome_coverage(tbf, rgf_tad, rgf_ani, thrshld):
 
     with open(tbf, 'r') as f:
         for l in f:
+            # Skip magic blast header
+            if l.startswith('#'): continue
+
             # split each line and define variables of interest
             X = l.rstrip().split('\t')
             pident = float(X[2])
@@ -234,9 +237,13 @@ def get_relative_abundance(wg_tad, mtg):
 
     total_metagenome_bp = 0
 
+    line_count = 0
+
     with open(mtg, 'r') as f:
-        for name, seq in read_fasta(f):
-            total_metagenome_bp += len(seq)
+        for l in f:
+            line_count += 1
+            if line_count%4 == 0:
+                total_metagenome_bp += len(l.rstrip())
 
     relabndc = (sum(wg_tad) / total_metagenome_bp) * 100
 
@@ -370,42 +377,42 @@ def main():
         formatter_class=argparse.RawDescriptionHelpFormatter
         )
     parser.add_argument(
-        '-mtg', '--metagenome_file',
+        '-m', '--metagenome_file',
         help='Please specify the query metagenome fasta file!',
         metavar='',
         type=str,
-        #required=True
+        required=True
         )
     parser.add_argument(
-        '-rgf', '--ref_genome_file',
+        '-g', '--ref_genome_file',
         help='Please specify the genome fasta file!',
         metavar='',
         type=str,
         required=True
         )
     parser.add_argument(
-        '-tbf', '--tabular_blast_file',
+        '-b', '--tabular_blast_file',
         help='Please specify the tabular blast file!',
         metavar='',
         type=str,
         required=True
         )
     parser.add_argument(
-        '-pgf', '--prodigal_gene_fasta_file',
+        '-p', '--prodigal_gene_fasta_file',
         help='Please specify the prodigal gene fasta file!',
         metavar='',
         type=str,
         required=True
         )
     parser.add_argument(
-        '-thd', '--pIdent_threshold_cutoff',
+        '-c', '--pIdent_threshold_cutoff',
         help='Please specify pIdent threshold to use! (ie: 95)',
         metavar='',
         type=float,
         required=True
         )
     parser.add_argument(
-        '-tad', '--truncated_avg_depth_value',
+        '-d', '--truncated_avg_depth_value',
         help='Please specify TAD value! (ie: 80 or 90)',
         metavar='',
         type=float,
