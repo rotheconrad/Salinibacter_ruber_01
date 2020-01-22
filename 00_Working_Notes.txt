@@ -192,9 +192,7 @@ Concatenating.
 Generating coordinates.
 Done.
 
-- Build Tree with RAxML
-qsub -v input=Srube_All_Ess_Aln.cat.fa,output=03_Concatenated_Tree ../00_PBS/04c_RAxML_Compute_Concatenated_AA_Tree.pbs
-## 2 cpus and 24 hours was not enough time. Increasing to 20 cpus and 7 days to run again
+- Build Tree with RAxML - Running for 147 hours - Did it ever finish?
 ## qsub -v input=Srube_All_Ess_Aln.cat.fa,output=03_Concatenated_Tree ../00_PBS/04c_RAxML_Compute_Concatenated_AA_Tree.pbs
 
 - Build Tree with FastTree
@@ -204,16 +202,34 @@ qsub -v input=03_Concatenated_Tree/Srube_All_Ess_Aln.cat.fa,output=03_Concatenat
 ########################################################
 ########################################################
 
-Pangenome Analysis :: Sruber / Ecoli / Others
+PGE: Pangenome Analysis (Pangenome Experiment - PGE) :: Sruber / Ecoli / Others
 
 bash 00_Run_Pangenome_Experiment/00_Run_Pangenome_Experiment.sh 1 100 01_Sruber_Group1_Genomes/ Salinibacter_ruber S_ruber 97.5 100 300
 
 
+## Ecoli and others. Downloaded from NCBI Assembly database Oct 28 2019
+## Located in directory: /gpfs/pace2/project/bio-konstantinidis/rconrad6/Core-Pan_Genomes
+## All draft genomes to match our Sruber draft genomes plus closed Ecoli genomes into addition to Ecoli draft to assess difference between closed and draft.
+
+bash 00_Run_Pangenome_Experiment/00_Run_Pangenome_Experiment.sh 100 100 GENOMES/Escherichia_coli_Complete/ Escherichia_coli E_coli 97.5 100 300
+
+bash 00_Run_Pangenome_Experiment/00_Run_Pangenome_Experiment.sh 100 100 GENOMES/Salmonella_enterica_Scaffold/ Salmonella_enterica S_enterica 97.5 100 300
+
+bash 00_Run_Pangenome_Experiment/00_Run_Pangenome_Experiment.sh 100 100 GENOMES/Mycobacterium_tuberculosis_Contigs/ Mycobacterium_tuberculosis M_tuber 97.5 100 300
+
+bash 00_Run_Pangenome_Experiment/00_Run_Pangenome_Experiment.sh 100 100 GENOMES/Pseudomonas_aeruginosa_Contig/ Pseudomonas_aeruginosa P_aerug 97.5 100 300
+
+bash 00_Run_Pangenome_Experiment/00_Run_Pangenome_Experiment.sh 100 100 GENOMES/Bacillus_thuringiensis_Both/ Bacillus_thuringiensis B_thur 97.5 100 300
+
+bash 00_Run_Pangenome_Experiment/00_Run_Pangenome_Experiment.sh 100 100 GENOMES/Escherichia_coli_Contig/ Escherichia_coli E_coli 97.5 100 300
+
+
+
 ########################################################
 ########################################################
 ########################################################
 
-Gene Annotation and compare Sruber to Ecoli
+Gene Annotation - did the same for Ecoli: /gpfs/pace2/project/bio-konstantinidis/rconrad6/Core-Pan_Genomes/01b-FILTERED-97.5/00_Ecoli_Annotation_Notes.txt
 
 Step 1: Collect Representative Amino Acid Sequence from CD-Hit clustered nucleotide sequence representatives
 	from: /gpfs/pace2/project/bio-konstantinidis/rconrad6/Salinibacter_Assemblies
@@ -299,7 +315,7 @@ Step 6: Add Un-annotated genes as NoMatch Hypotheticals
 ########################################################
 ########################################################
 
-Gene, Contig, Genome  Coverage/Abundance Analysis
+07x: Gene, Contig, Genome  Coverage/Abundance Analysis
 
 from: /gpfs/pace2/project/bio-konstantinidis/rconrad6/Salinibacter_Assemblies
 
@@ -347,14 +363,37 @@ Step 5: Calculate Coverage: 07e_MagicBlast_CoveragePlus.py
 
 	bash 00_PBS/07f_Launch_CoveragePlus.pbs 00_Metagenome_ReadsTrimmed PGE_0001_S_ruber/03_FNA 07a_MagicBlast_Metagenomes_RandomGroup1 PGE_0001_S_ruber/03_FNN 95 80 07d_CoveragePlus
 
+Step 6: Average Coverage/Abundance of genomes across samples.
+	python 00_Scripts/07h_Genome_Stats.py -gtd 07d_CoveragePlus/GenomeSummary/ -out 07d_CoveragePlus/07h_GenomeStats
+
 
 ########################################################
 ########################################################
 ########################################################
 
-Combine Gene Coverage and Annotation information
+08x: Combine Gene Coverage and Annotation information
 
-Working.
+For this section we need to retrieve data from our prior analysis:
+
+1) pangenome analysis (PGE)
+2) Gene Annotations
+3) Coverage/Abundance
+
+Then we need to run some scripts I wrote to combine these outputs.
+
+from: /gpfs/pace2/project/bio-konstantinidis/rconrad6/Salinibacter_Assemblies
+mkdir 08_Gene_TAD_Annotation_PanCat
+
+Step 00: Get genes, gene clusters, and pangenome category (PanCat) from PGE
+	python 00_Scripts/08a_Get_Genes_Clusters_PanCat.py -bnry PGE_0001_S_ruber/03_0001_S_ruber_parsed_binary.tsv -clstr PGE_0001_S_ruber/02_0001_S_ruber_Clustered_Genes.fnn.clstr -out 08_Gene_TAD_Annotation_PanCat/00_Genes_Clusters_PanCats.tsv
+
+Step 01: Get Averaged, Normalized Average TAD for each gene cluster (4 steps in 1 script)
+	a. Get TAD for each gene from each sample (metagenome).
+	b. Calculate Average TAD for each gene Cluster in each sample.
+	c. Normalize averaged gene cluster TAD by average genome TAD for each sample.
+	d. Average the averaged normalized TAD of each gene cluster across samples.
+
+	python 00_Scripts/08b_Get_Averaged_Normalized_Average_TADs.py -t 07d_CoveragePlus/TADgene/ -g 08_Gene_TAD_Annotation_PanCat/00_Genes_Clusters_PanCats.tsv -s 07d_CoveragePlus/07h_GenomeStats.tsv -o 08_Gene_TAD_Annotation_PanCat/00_PanCats_ANATADs
 
 
 ########################################################
@@ -375,3 +414,14 @@ Compare to Ecoli Annotations
 
 	Step 2: Write python script to compare results.
 		## I still need to do this ##
+
+########################################################
+########################################################
+########################################################
+
+Update pangenome rarefaction curve with open/close model. remove intermediate pangenome categories.
+
+
+
+
+
