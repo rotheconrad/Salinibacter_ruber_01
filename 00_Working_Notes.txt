@@ -239,11 +239,11 @@ Step 1: Collect Representative Amino Acid Sequence from CD-Hit clustered nucleot
 		cat PGE_0001_S_ruber/03_FAA/* >> 06_Annotations00_/Sruber_Combined_Proteins.faa
 
 	1b: Get CD-HIT Cluster representatives (nucleotide - because we clustered the nucleotide sequence)
-		cp PGE_0000_Summary/D_S_ruber_Dereplicated_Genes/02_0001_S_ruber_Clustered_Genes.fnn 06_Annotations/00_Sruber_Clustered_Representative_Genes.fnn
+		cp PGE_0000_Summary/D_S_ruber_Dereplicated_Genes/02_0001_S_ruber_Clustered_Genes.fnn 06_Annotations/00_Sruber_ClstrRepSeq_Genes.fnn
 
 	1c: Use python script to get the amino acid sequence matching the nucleotide sequence
 		cd 06_Annotations/
-		python ../00_Scripts/06a_Get_AA_Sequence_frm_Clstrd_Genes.py -f1 00_Sruber_Clustered_Genes.fnn -f2 00_Sruber_Combined_Proteins.faa -o 01_Sruber_Clustered_Representative_Proteins.faa
+		python ../00_Scripts/06a_Get_AA_Sequence_frm_Clstrd_Genes.py -f1 00_Sruber_ClstrRepSeq_Genes.fnn -f2 00_Sruber_Combined_Proteins.faa -o 01_Sruber_ClstrRepSeq_Proteins.faa
 		### Check for equal number of genes ###
 		grep -c '>' 00_Sruber_Clustered_Representative_Genes.fnn :: 12666
 		grep -c '>' 01_Sruber_Clustered_Representative_Proteins.faa :: 12666
@@ -265,10 +265,10 @@ Step 3: Run SwissProt and TrEMBL Annotations with Blastp
 		echo 01_SPLIT_BLASTS/TrEMBL_00*completed | wc -w
 		## Should equal: echo 01_SPLIT_QUERY_LIST/temp_split_gene_list.txt.000* | wc -w
 	3c: Concatenate Split files
-		cat 01_SPLIT_BLASTS/SwissProt_00*blst >> 02_Clustered_Representative_Proteins_SwissProt.blst
-		cat 01_SPLIT_BLASTS/TrEMBL_00*blst >> 02_Clustered_Representative_Proteins_TrEMBL.blst
+		cat 01_SPLIT_BLASTS/SwissProt_00*blst >> 02_ClstrRepSeq_SwissProt.blst
+		cat 01_SPLIT_BLASTS/TrEMBL_00*blst >> 02_ClstrRepSeq_TrEMBL.blst
 	3d: Filter blast results for best hit
-		python ../00_Scripts/06e_BlastTab_BestHit_Filter.py -i 02_Clustered_Representative_Proteins_SwissProt.blst -pml 50 -pid 40
+		python ../00_Scripts/06e_BlastTab_BestHit_Filter.py -i 02_ClstrRepSeq_SwissProt.blst -pml 50 -pid 40
 			Running Script...
 			Total number of entries in blast file: 61761
 			Number of reads failing the filters: 52636
@@ -276,7 +276,7 @@ Step 3: Run SwissProt and TrEMBL Annotations with Blastp
 			Number of duplicate blast matches passing filter: 7438
 			Number of best hit entries written to new file: 1687
 
-		python ../00_Scripts/06e_BlastTab_BestHit_Filter.py -i 02_Clustered_Representative_Proteins_TrEMBL.blst -pml 50 -pid 40
+		python ../00_Scripts/06e_BlastTab_BestHit_Filter.py -i 02_ClstrRepSeq_TrEMBL.blst -pml 50 -pid 40
 			Running Script...
 			Total number of entries in blast file: 119032
 			Number of reads failing the filters: 46020
@@ -286,20 +286,20 @@ Step 3: Run SwissProt and TrEMBL Annotations with Blastp
 	3e: Clean up / remove 01_SPLIT Files/folders
 		rm -r 01_SPLIT_*
 	3f: Retrieve gene annotation information from UniProt DBs
-		python ../00_Scripts/06f_BlastTab_UniProtID_to_Gene_Annotation.py -p /gpfs/pace2/project/bio-konstantinidis/rconrad6/dbases/uniprot_sprot.PARSED.dat.tsv -b 02_Clustered_Representative_Proteins_SwissProt.filtered_best_hits.blst -o 03_Clustered_Representative_Proteins_SwissProt_Annotated.tsv
+		python ../00_Scripts/06f_BlastTab_UniProtID_to_Gene_Annotation.py -p /gpfs/pace2/project/bio-konstantinidis/rconrad6/dbases/uniprot_sprot.PARSED.dat.tsv -b 02_ClstrRepSeq_SwissProt.filtered_best_hits.blst -o 03_ClstrRepSeq_SwissProt_Annotated.tsv
 			Wrote  1687 gene annotations of  1687  blast entries from  1116  UniProt IDs
-		python ../00_Scripts/06f_BlastTab_UniProtID_to_Gene_Annotation.py -p /gpfs/pace2/project/bio-konstantinidis/rconrad6/dbases/uniprot_trembl.PARSED.dat.tsv -b 02_Clustered_Representative_Proteins_TrEMBL.filtered_best_hits.blst -o 03_Clustered_Representative_Proteins_TrEMBL_Annotated.tsv
+		python ../00_Scripts/06f_BlastTab_UniProtID_to_Gene_Annotation.py -p /gpfs/pace2/project/bio-konstantinidis/rconrad6/dbases/uniprot_trembl.PARSED.dat.tsv -b 02_ClstrRepSeq_TrEMBL.filtered_best_hits.blst -o 03_ClstrRepSeq_TrEMBL_Annotated.tsv
 			Wrote  9528 gene annotations of  9528  blast entries from  6064  UniProt IDs
 
 Step 4: Run KEGG Annotations with KofamScan
 	4a: KofamScan
-		qsub -v q=01_Sruber_Clustered_Representative_Proteins.faa,o=02_Sruber_Clustered_Representative_Proteins_KEGG.tsv ../00_PBS/06d_KofamScan_KEGG_Annotations.pbs
+		qsub -v q=01_Sruber_ClstrRepSeq_Proteins.faa,o=02_ClstrRepSeq_KEGG.tsv ../00_PBS/06d_KofamScan_KEGG_Annotations.pbs
 		rm -r tmp
 	4b: Filter for best hits and Convert KofamScan Output to match UniProt DB output
-		python ../00_Scripts/06g_KofamScan_Filter_Convert.py -i 02_Sruber_Clustered_Representative_Proteins_KEGG.tsv -o 03_Clustered_Representative_Proteins_KEGG_Annotated.tsv
+		python ../00_Scripts/06g_KofamScan_Filter_Convert.py -i 02_Sruber_ClstrRepSeq_KEGG.tsv -o 03_ClstrRepSeq_KEGG_Annotated.tsv
 
 Step 5: Combine Annotation Results
-	python ../00_Scripts/06h_Combine_Annotations.py -trb 03_Clustered_Representative_Proteins_TrEMBL_Annotated.tsv -spb 03_Clustered_Representative_Proteins_SwissProt_Annotated.tsv -kfs 03_Clustered_Representative_Proteins_KEGG_Annotated.tsv -o 04_Sruber_Representative_Protein_Annotations.tsv
+	python ../00_Scripts/06h_Combine_Annotations.py -trb 03_ClstrRepSeq_TrEMBL_Annotated.tsv -spb 03_ClstrRepSeq_SwissProt_Annotated.tsv -kfs 03_ClstrRepSeq_KEGG_Annotated.tsv -o 04_ClstrRepSeq_Annotations.tsv
 		Total TrEMBL_KofamScan Double Annotation: 6681
 		Total TrEMBL Single Annotation: 1167
 		Total Triple Annotation: 1663
@@ -308,7 +308,7 @@ Step 5: Combine Annotation Results
 		Total KofamScan Single Annotation: 1973
 
 Step 6: Add Un-annotated genes as NoMatch Hypotheticals
-	python ../00_Scripts/06i_Add_Unannotated_Genes.py -a 04_Sruber_Representative_Protein_Annotations.tsv -q 01_Sruber_Clustered_Representative_Proteins.faa -o 04_Sruber_Representative_Protein_Annotations_NoMatch.tsv
+	python ../00_Scripts/06i_Add_Unannotated_Genes.py -a 04_Sruber_Representative_Protein_Annotations.tsv -q 01_Sruber_ClstrRepSeq.faa -o 04_Sruber_ClstrRepSeq_Annotations_NoMatch.tsv
 
 
 ########################################################
@@ -371,7 +371,7 @@ Step 6: Average Coverage/Abundance of genomes across samples.
 ########################################################
 ########################################################
 
-08x: Combine Gene Coverage and Annotation information
+08x: Combine Gene Coverage, Pangenome Analysis, and Annotation information
 
 For this section we need to retrieve data from our prior analysis:
 
@@ -404,8 +404,10 @@ Step 01: Get Averaged, Normalized Average TAD for each gene cluster (4 steps in 
 	python 00_Scripts/08b_Get_Averaged_Normalized_Average_TADs.py -t 07d_CoveragePlus/TADgene/ -g 08_Gene_TAD_Annotation_PanCat/00_Genes_Clusters_PanCats.tsv -s 07d_CoveragePlus/07h_GenomeStats.tsv -o 08_Gene_TAD_Annotation_PanCat/
 
 Step 02: Match ANA-TAD to Gene Cluster Annotation
+	python 00_Scripts/08c_Match_ANA-TADs_toAnnotations.py -t 08_Gene_TAD_Annotation_PanCat/02_PanCats_ANATADs_byCluster.tsv -a 06_Annotations/04_ClstrRepSeq_Annotations_NoMatch.tsv -p 08_Gene_TAD_Annotation_PanCat/00_Genes_Clusters_PanCats.tsv -o 08_Gene_TAD_Annotation_PanCat/04_ClstrRepSeq_PanCat_ANATAD_Annotation.tsv
 
 Step 03: Summarize Annotations by PanCat and Abundant Specific and Rare Genes
+	python 00_Scripts/08d_Summarize_Annotations_above_ANA-TAD.py -a 08_Gene_TAD_Annotation_PanCat/04_ClstrRepSeq_PanCat_ANATAD_Annotation.tsv -t 0.25 -o 08_Gene_TAD_Annotation_PanCat/05_ANA-TAD-0.25_Annotation_Summary
 
 
 ########################################################

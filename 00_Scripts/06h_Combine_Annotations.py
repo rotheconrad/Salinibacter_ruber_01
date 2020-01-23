@@ -176,8 +176,8 @@ def compare_annotations(trembl, sprot, kofamscan, outfile):
             f'DataBase\tGene_Name\tUniprot_ID\tPercent_Match\t'
             f'Alignment_Length/thrshld\tQuery_Length/score\t'
             f'Subject_Length/Evalue\tLong_Gene_Name\tShort_Gene_Name\t'
-            f'KO\tInterPro\tPfam\tCOGG(eggNOG)\tGO_F\tGO_CAnnotations\t'
-            f'Etc...\n'
+            f'KO\tInterPro\tPfam\tCOGG(eggNOG)\tGO_F\tGO_C\t'
+            f'Additional Annotation Information\n'
             )
 
         _ = o.write(header)

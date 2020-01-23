@@ -31,31 +31,37 @@ def read_fasta(fp):
             seq.append(line)
     if name: yield (name, ''.join(seq))
 
-def Add_NoMatch_to_UniProt_Annotations(ta, qf, outfile):
+
+def Add_NoMatch_to_UniProt_Annotations(a, q, outfile):
     ''' This function adds unannotated genes to the output tsv'''
 
-    d = defaultdict(list)
-
-    with open(ta, 'r') as f:
+    # Build dictionary of {genes: {database: entry}}
+    d = defaultdict(lambda: defaultdict())
+    with open(a, 'r') as f:
             header = f.readline()
             for l in f:
                     X = l.split('\t')
-                    id = X[1]
-                    d[id].append(l)
+                    database = X[0]
+                    genename = X[1]
+                    d[database][genename] = l
 
-    with open(qf, 'r') as f, open(outfile, 'w') as o:
+    # Read through fasta file of all representative genes
+    # Write annotation for each gene for each database
+    # if database annotation not available, write No_Match.
+    with open(q, 'r') as f, open(outfile, 'w') as o:
         o.write(header)
         for name, seq in read_fasta(f):
-            id = name[1:].split(' ')[0]
-            if id in d:
-                for i in d[id]:
-                    o.write(i)
-            elif id not in d:
-                o.write(
-                    f'NoMatch\t{id}\tn/a\tn/a\tn/a\t{len(seq)}\t'
-                    f'n/a\tHypothetical Gene\tn/a\tn/a\tn/a\tn/a\t'
-                    f'n/a\tn/a\tn/a\tn/a\n'
-                    )
+            genename = name[1:].split(' ')[0]
+            for database, genes in d.items():
+                if genename in genes:
+                    o.write(genes[genename])
+                else:
+                    o.write(
+                        f'{database}\t{genename}\tn/a\tn/a\tn/a\t'
+                        f'{len(seq)}\tn/a\tHypothetical Gene\tn/a\t'
+                        f'n/a\tn/a\tn/a\tn/a\tn/a\tn/a\tn/a\n'
+                        )
+
 
 def main():
 
