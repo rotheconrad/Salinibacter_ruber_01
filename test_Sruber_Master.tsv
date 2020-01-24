@@ -1,0 +1,192 @@
+RepSeqName	U-ID	TrEMBL	T-KO	KEGG	K-KO	U-ID.1	SwissProt	S-KO
+S_ruber_randomG_0001_1_52	A0A1V0DGT5_9BACT	Beta-N-acetylglucosaminidase	K12373	* hexosaminidase [EC:3.2.1.52]	K12373	HEXA_PORGI	Beta-hexosaminidase;	K12373
+S_ruber_randomG_0001_2_73	A0A2T2TGP7_9BACT	Large-conductance mechanosensitive channel	No_Match	* large conductance mechanosensitive channel	K03282	MSCL_CHLPM	Large-conductance mechanosensitive channel	K03282
+S_ruber_randomG_0001_2_76	D5H8R4_SALRM	MscS Mechanosensitive ion channel	K03442	* small conductance mechanosensitive channel	K03442	MSCS_EDWI9	Small-conductance mechanosensitive channel;	K03442
+S_ruber_randomG_0001_4_13	Q2S2H8_SALRD	Phosphoribosylformylglycinamidine cyclo-ligase	K01933	* phosphoribosylformylglycinamidine cyclo-ligase [EC:6.3.3.1]	K01933	PUR5_ALKMQ	Phosphoribosylformylglycinamidine cyclo-ligase	K01933
+S_ruber_randomG_0001_4_29	Q2S2G4_SALRD	Segregation and condensation protein B	K06024	* segregation and condensation protein B	K06024	SCPB_MOOTA	Segregation and condensation protein B	K06024
+S_ruber_randomG_0001_4_39	D5H9B8_SALRM	Kynurenine formamidase	K07130	* arylformamidase [EC:3.5.1.9]	K07130	KYNB_SALRD	Kynurenine formamidase	K07130
+S_ruber_randomG_0001_4_82	D5H9G0_SALRM	Putative 3-methyladenine DNA glycosylase	K03652	* DNA-3-methyladenine glycosylase [EC:3.2.2.21]	K03652	3MGH_SALRD	Putative 3-methyladenine DNA glycosylase	K03652
+S_ruber_randomG_0001_5_9	Q2S250_SALRD	Fumarate hydratase class II	No_Match	* fumarate hydratase, class II [EC:4.2.1.2]	K01679	FUMC_HALSA	Fumarate hydratase class II	K01679
+S_ruber_randomG_0001_5_40	D5H9K4_SALRM	Magnesium chelatase subunit ChlI	K07391	* magnesium chelatase family protein	K07391	COMM_HAEIN	Competence protein ComM;	K07391
+S_ruber_randomG_0001_6_19	D5HD76_SALRM	Beta-glucanase [Precursor]	No_Match	* licheninase [EC:3.2.1.73]	K01216	GUB_RHOMR	Beta-glucanase;	No_Match
+S_ruber_randomG_0001_6_20	Q2RYP6_SALRD	Xylosidase	K05349	* beta-glucosidase [EC:3.2.1.21]	K05349	GLUA_DICDI	Lysosomal beta glucosidase;	K05349
+S_ruber_randomG_0001_6_43	D5HDA0_SALRM	Lactoylglutathione lyase	K15975	* glyoxalase family protein	K15975	MHQO_BACSU	Putative ring-cleaving dioxygenase MhqO;	K15975
+S_ruber_randomG_0001_6_57	D5H4H8_SALRM	Preprotein translocase subunit YajC	K03210	* preprotein translocase subunit YajC	K03210	YAJC_BACHD	Sec translocon accessory complex subunit YajC;	K03210
+S_ruber_randomG_0001_7_31	D5HB09_SALRM	Glycine cleavage system H protein	K02437	* glycine cleavage system H protein	K02437	GCSH_SALRD	Glycine cleavage system H protein	K02437
+S_ruber_randomG_0001_7_37	D5HB14_SALRM	GTPase Era	K03595	* GTPase	K03595	ERA1_MAIZE	GTPase ERA1, chloroplastic	K03595
+S_ruber_randomG_0001_8_14	Q2RZG2_SALRD	NAD-dependent protein deacylase	K12410	* NAD-dependent deacetylase [EC:3.5.1.-]	K12410	NPD2_PYRAE	NAD-dependent protein deacylase 2	K12410
+S_ruber_randomG_0001_8_68	Q2RZL5_SALRD	Putative cytidine and deoxycytidylate deaminase	No_Match	tRNA(adenine34) deaminase [EC:3.5.4.33]	K11991	FCYS_SCHPO	Probable cytosine deaminase;	No_Match
+S_ruber_randomG_0001_9_22	D5H821_SALRM	Protein translocase subunit SecY	K03076	* preprotein translocase subunit SecY	K03076	SECY_STRGB	Protein translocase subunit SecY	No_Match
+S_ruber_randomG_0001_9_79	Q2S3H2_SALRD	Lysine 2,3-aminomutase YodO family protein	K01843	* lysine 2,3-aminomutase [EC:5.4.3.2]	K01843	KAMA_FUSNN	L-lysine 2,3-aminomutase	K01843
+S_ruber_randomG_0001_10_40	D5H9X4_SALRM	Uroporphyrinogen decarboxylase	K01599	* uroporphyrinogen decarboxylase [EC:4.1.1.37]	K01599	DCUP_SALRD	Uroporphyrinogen decarboxylase	K01599
+S_ruber_randomG_0001_10_46	D5H9Y1_SALRM	Tryptophanase	K01667	* tryptophanase [EC:4.1.99.1]	K01667	TNAA_SALRD	Tryptophanase	K01667
+S_ruber_randomG_0001_10_47	D5H9Y2_SALRM	Asparaginase	K01424	60kDa lysophospholipase [EC:3.1.1.5 3.1.1.47 3.5.1.1]	K13278	ASPG1_ECOLI	L-asparaginase 1;	K01424
+S_ruber_randomG_0001_10_61	Q2S1T9_SALRD	Superoxide dismutase	K04564	* superoxide dismutase, Fe-Mn family [EC:1.15.1.1]	K04564	SODM_GEOSE	Superoxide dismutase [Mn];	No_Match
+S_ruber_randomG_0001_14_43	D5H5C9_SALRM	Lipoate--protein ligase	K03800	* lipoate---protein ligase [EC:6.3.1.20]	K03800	LPLJ_BACSU	Lipoate-protein ligase LplJ;	K03800
+S_ruber_randomG_0001_15_27	Q2S3B9_SALRD	DNA processing protein DprA	K04096	* DNA processing protein	K04096	DPRA_HAEIN	DNA-processing protein A;	K04096
+S_ruber_randomG_0001_15_28	D5H8D7_SALRM	GTPase Obg	K03979	* GTPase [EC:3.6.5.-]	K03979	OBG_SALRD	GTPase Obg	K03979
+S_ruber_randomG_0001_15_35	Q2S3C6_SALRD	Deoxyribodipyrimidine photolyase	K01669	* deoxyribodipyrimidine photo-lyase [EC:4.1.99.3]	K01669	CRYD_NATPD	Cryptochrome DASH;	K01669
+S_ruber_randomG_0001_15_37	D5H8C9_SALRM	LexA repressor	K01356	* repressor LexA [EC:3.4.21.88]	K01356	LEXA_VERSI	LexA repressor	No_Match
+S_ruber_randomG_0001_15_46	D5H8B9_SALRM	D-aminoacyl-tRNA deacylase	K07560	* D-aminoacyl-tRNA deacylase [EC:3.1.1.96]	K07560	DTD_SALRD	D-aminoacyl-tRNA deacylase	K07560
+S_ruber_randomG_0001_17_28	D5H610_SALRM	Biotin carboxylase	K01965	propionyl-CoA carboxylase alpha chain [EC:6.4.1.3]	K01965	PYCA_METTH	Pyruvate carboxylase subunit A;	K01959
+S_ruber_randomG_0001_18_10	Q2S2K0_SALRD	Pyrazinamidase/nicotinamidase	K08281	* nicotinamidase/pyrazinamidase [EC:3.5.1.19 3.5.1.-]	K08281	PNCA_ECOLI	Nicotinamidase	K08281
+S_ruber_randomG_0001_18_34	D5H941_SALRM	dCTP deaminase	K01494	* dCTP deaminase [EC:3.5.4.13]	K01494	DCD_KORVE	dCTP deaminase	K01494
+S_ruber_randomG_0001_19_37	D5HAD6_SALRM	Phosphoribosylamine--glycine ligase	K01945	* phosphoribosylamine---glycine ligase [EC:6.3.4.13]	K01945	PUR2_AQUAE	Phosphoribosylamine--glycine ligase	K01945
+S_ruber_randomG_0001_20_28	D5HBW1_SALRM	Adenine deaminase	K01486	* adenine deaminase [EC:3.5.4.2]	K01486	ADEC_SALRD	Adenine deaminase	K01486
+S_ruber_randomG_0001_21_5	Q2S5P6_SALRD	GTPase Der	K03977	* GTPase	K03977	DER_BACV8	GTPase Der	K03977
+S_ruber_randomG_0001_22_25	Q2S425_SALRD	UDP-N-acetylmuramate:L-alanyl-gamma-D-glutamyl-meso-diaminopimelate ligase	K02558	* UDP-N-acetylmuramate: L-alanyl-gamma-D-glutamyl-meso-diaminopimelate ligase [EC:6.3.2.45]	K02558	MPL_ECOLI	UDP-N-acetylmuramate--L-alanyl-gamma-D-glutamyl-meso-2,6-diaminoheptandioate ligase	K02558
+S_ruber_randomG_0001_22_37	D5H7P4_SALRM	Elongation factor P	K02356	* elongation factor P	K02356	EFP_SALRD	Elongation factor P	K02356
+S_ruber_randomG_0001_23_2	D5H7Z7_SALRM	Elongation factor G	K02355	* elongation factor G	K02355	EFG_SALRD	Elongation factor G	K02355
+S_ruber_randomG_0001_23_13	D5H7Y7_SALRM	Mitochondrial benzodiazepine receptor/sensory transduction protein	K05770	* translocator protein	K05770	TSPO_CHLTE	Tryptophan-rich protein TspO	K05770
+S_ruber_randomG_0001_27_6	Q2S1M2_SALRD	Methylmalonyl-CoA mutase, beta subunit	K01847	* methylmalonyl-CoA mutase [EC:5.4.99.2]	K01847	MUTB_PORGI	Methylmalonyl-CoA mutase large subunit;	K01847
+S_ruber_randomG_0001_27_18	Q2S1N4_SALRD	Peptide chain release factor 2	K02836	* peptide chain release factor 2	K02836	RF2_THEP1	Peptide chain release factor 2	K02836
+S_ruber_randomG_0001_30_11	D5H781_SALRM	Enolase	K01689	* enolase [EC:4.2.1.11]	K01689	ENO_SALRD	Enolase	K01689
+S_ruber_randomG_0001_30_25	D5H795_SALRM	Protein translocase subunit SecA	K03070	* preprotein translocase subunit SecA [EC:7.4.2.8]	K03070	SECA_SALRD	Protein translocase subunit SecA	K03070
+S_ruber_randomG_0001_31_10	D5HAI3_SALRM	Fructose-bisphosphate aldolase class I	K11645	* fructose-bisphosphate aldolase, class I [EC:4.1.2.13]	K11645	ALF1_ECOLI	Fructose-bisphosphate aldolase class 1;	K11645
+S_ruber_randomG_0001_34_29	Q2S4D3_SALRD	Putative K(+)-stimulated pyrophosphate-energized sodium pump	K15987	* K(+)-stimulated pyrophosphate-energized sodium pump	K15987	HPPA1_MOOTA	Putative K(+)-stimulated pyrophosphate-energized sodium pump	K15987
+S_ruber_randomG_0001_37_6	D5H8X5_SALRM	Peptide chain release factor 1	K02835	* peptide chain release factor 1	K02835	RF1_SALRD	Peptide chain release factor 1	K02835
+S_ruber_randomG_0001_37_12	Q2S2T7_SALRD	4-hydroxyphenylpyruvate dioxygenase	K00457	* 4-hydroxyphenylpyruvate dioxygenase [EC:1.13.11.27]	K00457	HPPD_STRCO	4-hydroxyphenylpyruvate dioxygenase;	K00457
+S_ruber_randomG_0001_37_28	Q2S2S0_SALRD	FeS assembly protein SufB	K09014	* Fe-S cluster assembly protein SufB	K09014	Y074_SYNY3	UPF0051 protein slr0074;	K09014
+S_ruber_randomG_0001_37_29	D5H8Z9_SALRM	Iron-sulfur cluster assembly accessory protein	K13628	iron-sulfur cluster assembly protein	K13628	Y1857_AQUAE	Protein aq_1857;	K13628
+S_ruber_randomG_0001_38_27	D5H6W4_SALRM	Sec-independent protein translocase protein TatA	K03116	* sec-independent protein translocase protein TatA	K03116	TATA_CORJK	Sec-independent protein translocase protein TatA	K03116
+S_ruber_randomG_0001_39_6	Q2S2Y4_SALRD	Probable cytidine deaminase	No_Match	tRNA(adenine34) deaminase [EC:3.5.4.33]	K11991	GUAD_BACSU	Guanine deaminase;	K01487
+S_ruber_randomG_0001_40_10	Q2S3E4_SALRD	Cystathionine beta-lyase MetC	K01739	cystathionine gamma-lyase [EC:4.4.1.1]	K01758	METC_LACLM	Cystathionine beta-lyase;	K01760
+S_ruber_randomG_0001_40_26	D5H891_SALRM	Ferredoxin	K05524	* ferredoxin	K05524	FER1_AZOVI	Ferredoxin-1;	No_Match
+S_ruber_randomG_0001_40_28	D5H889_SALRM	Penicillin amidase superfamily	K07116	* acyl-homoserine-lactone acylase [EC:3.5.1.97]	K07116	G7AC_PSEU7	Glutaryl-7-aminocephalosporanic-acid acylase;	No_Match
+S_ruber_randomG_0001_43_13	D5H5S8_SALRM	Adenylosuccinate lyase	K01756	* adenylosuccinate lyase [EC:4.3.2.2]	K01756	PUR8_BACSU	Adenylosuccinate lyase;	K01756
+S_ruber_randomG_0001_44_10	Q2S1S9_SALRD	Orotidine 5'-phosphate decarboxylase	K01591	* orotidine-5'-phosphate decarboxylase [EC:4.1.1.23]	K01591	PYRF_VARPS	Orotidine 5'-phosphate decarboxylase	K01591
+S_ruber_randomG_0001_44_16	D5HA18_SALRM	Glutamate-1-semialdehyde 2,1-aminomutase	K01845	* glutamate-1-semialdehyde 2,1-aminomutase [EC:5.4.3.8]	K01845	GSA_SALRD	Glutamate-1-semialdehyde 2,1-aminomutase	K01845
+S_ruber_randomG_0001_44_24	D5HA26_SALRM	Spore maturation protein B	K06374	* spore maturation protein B	K06374	SPMB_BACSU	Spore maturation protein B;	K06374
+S_ruber_randomG_0001_44_31	Q2S1Q9_SALRD	Deoxyribodipyrimidine photolyase	K01669	deoxyribodipyrimidine photo-lyase [EC:4.1.99.3]	K01669	PHR_METTH	Deoxyribodipyrimidine photo-lyase;	K01669
+S_ruber_randomG_0001_46_2	D5H6A8_SALRM	UDP-N-acetylmuramoyl-L-alanyl-D-glutamate--2,6-diaminopimelate ligase	K01928	* UDP-N-acetylmuramoyl-L-alanyl-D-glutamate--2,6-diaminopimelate ligase [EC:6.3.2.13]	K01928	MURE_BACV8	UDP-N-acetylmuramoyl-L-alanyl-D-glutamate--2,6-diaminopimelate ligase	K01928
+S_ruber_randomG_0001_46_4	D5H6B0_SALRM	UDP-N-acetylmuramoylalanine--D-glutamate ligase	K01925	* UDP-N-acetylmuramoylalanine--D-glutamate ligase [EC:6.3.2.9]	K01925	MURD_SALRD	UDP-N-acetylmuramoylalanine--D-glutamate ligase	K01925
+S_ruber_randomG_0001_46_8	D5H6B3_SALRM	Cell division protein FtsQ	K03589	* cell division protein FtsQ	K03589	FTSQ_SALRD	Cell division protein FtsQ	K03589
+S_ruber_randomG_0001_46_9	Q2S525_SALRD	Cell division protein FtsA	K03590	* cell division protein FtsA	K03590	FTSA_PSEAE	Cell division protein FtsA	K03590
+S_ruber_randomG_0001_46_10	Q2S524_SALRD	Cell division protein FtsZ	K03531	* cell division protein FtsZ	K03531	FTSZ_BACHD	Cell division protein FtsZ	K03531
+S_ruber_randomG_0001_47_13	D5HBU1_SALRM	2,3-bisphosphoglycerate-independent phosphoglycerate mutase	K15633	* 2,3-bisphosphoglycerate-independent phosphoglycerate mutase [EC:5.4.2.12]	K15633	GPMI_SALRD	2,3-bisphosphoglycerate-independent phosphoglycerate mutase	K15633
+S_ruber_randomG_0001_47_18	Q2S021_SALRD	Fumarylacetoacetase	K01555	* fumarylacetoacetase [EC:3.7.1.2]	K01555	FAAA_BOVIN	Fumarylacetoacetase;	K01555
+S_ruber_randomG_0001_47_21	Q2S018_SALRD	Cys/Met metabolism PLP-dependent enzyme superfamily	No_Match	* cystathionine gamma-lyase [EC:4.4.1.1]	K01758	METC_COXBU	Cystathionine beta-lyase;	K01760
+S_ruber_randomG_0001_48_15	D5H7E5_SALRM	1,4-alpha-glucan branching enzyme GlgB	K00700	* 1,4-alpha-glucan branching enzyme [EC:2.4.1.18]	K00700	GLGB_SALRD	1,4-alpha-glucan branching enzyme GlgB	K00700
+S_ruber_randomG_0001_49_12	Q2S3X9_SALRD	DNA primase	K02316	* DNA primase [EC:2.7.7.101]	K02316	DNAG_BACHD	DNA primase	K02316
+S_ruber_randomG_0001_53_6	D5H9S7_SALRM	Peptide chain release factor 3	K02837	* peptide chain release factor 3	K02837	RF3_SALRD	Peptide chain release factor 3	K02837
+S_ruber_randomG_0001_53_16	Q2S214_SALRD	Carbonic anhydrase	No_Match	* gamma-carbonic anhydrase [EC:4.2.1.-]	K01726	GCA2_ARATH	Gamma carbonic anhydrase 2, mitochondrial;	K01726
+S_ruber_randomG_0001_53_23	D5H9Q8_SALRM	Cell shape determining protein, MreB/Mrl family	K03569	* rod shape-determining protein MreB and related proteins	K03569	MREB_CAUVN	Cell shape-determining protein MreB	K03569
+S_ruber_randomG_0001_54_3	D5H4M5_SALRM	tRNA uridine 5-carboxymethylaminomethyl modification enzyme MnmG	K03495	* tRNA uridine 5-carboxymethylaminomethyl modification enzyme	K03495	MNMG_SALRD	tRNA uridine 5-carboxymethylaminomethyl modification enzyme MnmG	K03495
+S_ruber_randomG_0001_54_8	D5H4M0_SALRM	tRNA modification GTPase MnmE	K03650	* tRNA modification GTPase [EC:3.6.-.-]	K03650	MNME_SALRD	tRNA modification GTPase MnmE	K03650
+S_ruber_randomG_0001_55_2	D5HCS2_SALRM	Ferrochelatase	K01772	* protoporphyrin/coproporphyrin ferrochelatase [EC:4.99.1.1 4.99.1.9]	K01772	HEMH_CYAP8	Ferrochelatase	K01772
+S_ruber_randomG_0001_56_9	D5HBZ4_SALRM	DNA gyrase subunit B	K02470	* DNA gyrase subunit B [EC:5.6.2.2]	K02470	GYRB_HALL2	DNA gyrase subunit B	No_Match
+S_ruber_randomG_0001_56_13	D5HBZ8_SALRM	GTPase HflX	K03665	* GTPase	K03665	HFLX_FLAPJ	GTPase HflX	K03665
+S_ruber_randomG_0001_57_18	Q2S5W0_SALRD	Transketolase	K00615	* transketolase [EC:2.2.1.1]	K00615	TKT_GEOSE	Transketolase	No_Match
+S_ruber_randomG_0001_61_6	D5H8R1_SALRM	CinA-like protein	K03742	* nicotinamide-nucleotide amidase [EC:3.5.1.42]	K03742	CINAL_SALRD	CinA-like protein	K03742
+S_ruber_randomG_0001_61_22	D5H8S7_SALRM	Iron-sulfur cluster assembly accessory protein, putative	K13628	* iron-sulfur cluster assembly protein	K13628	ERPA_MARHV	Iron-sulfur cluster insertion protein ErpA	K15724
+S_ruber_randomG_0001_67_4	D5HBE0_SALRM	Dihydroorotase	K01465	* dihydroorotase [EC:3.5.2.3]	K01465	PYRC_DESRM	Dihydroorotase	K01465
+S_ruber_randomG_0001_67_5	D5HBD9_SALRM	D-alanine--D-alanine ligase	K01921	* D-alanine-D-alanine ligase [EC:6.3.2.4]	K01921	DDL_CALS4	D-alanine--D-alanine ligase	K01921
+S_ruber_randomG_0001_68_9	D5HCQ6_SALRM	Trigger factor	K03545	* trigger factor	K03545	TIG_SALRD	Trigger factor	K03545
+S_ruber_randomG_0001_71_6	D5HBA9_SALRM	Signal recognition particle receptor FtsY	K03110	* fused signal recognition particle receptor	K03110	FTSY_BACSU	Signal recognition particle receptor FtsY	K03110
+S_ruber_randomG_0001_73_6	D5H9P6_SALRM	Signal recognition particle protein	K03106	* signal recognition particle subunit SRP54 [EC:3.6.5.4]	K03106	SRP54_BACSU	Signal recognition particle protein	K03106
+S_ruber_randomG_0001_73_12	D5H9P0_SALRM	SsrA-binding protein	K03664	* SsrA-binding protein	K03664	SSRP_SALRD	SsrA-binding protein	K03664
+S_ruber_randomG_0001_74_14	D5HCK3_SALRM	Flagellar hook-basal body complex protein FliE	K02408	* flagellar hook-basal body complex protein FliE	K02408	FLIE_PSEU5	Flagellar hook-basal body complex protein FliE	K02408
+S_ruber_randomG_0001_74_16	D5HCK1_SALRM	Flagellar motor switch protein fliG	K02410	* flagellar motor switch protein FliG	K02410	FLIG_BACSU	Flagellar motor switch protein FliG;	K02410
+S_ruber_randomG_0001_83_9	D5HC75_SALRM	RNA-splicing ligase RtcB	K14415	* tRNA-splicing ligase RtcB (3'-phosphate/5'-hydroxy nucleic acid ligase) [EC:6.5.1.8]	K14415	RTCB_ARCFU	tRNA-splicing ligase RtcB;	K14415
+S_ruber_randomG_0001_84_9	D5HAB6_SALRM	5'-nucleotidase SurE	K03787	* 5'-nucleotidase [EC:3.1.3.5]	K03787	SURE_SALRD	5'-nucleotidase SurE	K03787
+S_ruber_randomG_0001_85_4	D5HAX1_SALRM	Mov34/MPN/PAD-1 family	No_Match	desampylase [EC:3.4.19.15]	K20110	JAMM1_HALVD	Desampylase;	K20110
+S_ruber_randomG_0001_85_6	D5HAW8_SALRM	Deoxyribodipyrimidine photolyase-related protein	K06876	* deoxyribodipyrimidine photolyase-related protein	K06876	PHRB_AGRFC	(6-4) photolyase	K06876
+S_ruber_randomG_0001_87_9	D5HAM7_SALRM	Diadenylate cyclase	No_Match	* diadenylate cyclase [EC:2.7.7.85]	K18672	DACA_LISMO	Diadenylate cyclase	K18672
+S_ruber_randomG_0001_97_7	Q2S388_SALRD	Propionyl-CoA carboxylase, beta subunit, putative	No_Match	* 3-methylcrotonyl-CoA carboxylase beta subunit [EC:6.4.1.4]	K01969	MCCB_MOUSE	Methylcrotonoyl-CoA carboxylase beta chain, mitochondrial;	K01969
+S_ruber_randomG_0001_103_4	D5HAA6_SALRM	Lysophospholipase	No_Match	* acylglycerol lipase [EC:3.1.1.23]	K01054	MGLL_MYCTU	Monoacylglycerol lipase	No_Match
+S_ruber_randomG_0001_110_2	Q2S411_SALRD	Biotin carboxylase	K01961	* acetyl-CoA carboxylase, biotin carboxylase subunit [EC:6.4.1.2 6.3.4.14]	K01961	ACCC_NOSS1	Biotin carboxylase;	K01961
+S_ruber_randomG_0001_113_3	D5H717_SALRM	Histidine ammonia-lyase	K01745	* histidine ammonia-lyase [EC:4.3.1.3]	K01745	HUTH_MYXXD	Histidine ammonia-lyase	K01745
+S_ruber_randomG_0001_115_2	D5HCM9_SALRM	Flagellar basal-body rod protein FlgG	K02392	* flagellar basal-body rod protein FlgG	K02392	FLGG_ECOLI	Flagellar basal-body rod protein FlgG;	K02392
+S_ruber_randomG_0001_116_4	Q2S330_SALRD	Twitching motility protein PilT	K02669	twitching motility protein PilT	K02669	PILT_PSEAE	Twitching mobility protein;	K02669
+S_ruber_randomG_0001_118_4	Q2RZ76_SALRD	Thioredoxin	K03671	* thioredoxin 1	K03671	TRXM_PEA	Thioredoxin M-type, chloroplastic;	No_Match
+S_ruber_randomG_0001_122_4	D5H4J9_SALRM	Elongation factor Ts	K02357	* elongation factor Ts	K02357	EFTS_SALRD	Elongation factor Ts	K02357
+S_ruber_randomG_0001_130_5	D5H8P4_SALRM	Sodium/alanine symporter	K03310	* alanine or glycine:cation symporter, AGCS family	K03310	DAGA_PSEHA	Na(+)-linked D-alanine glycine permease;	No_Match
+S_ruber_randomG_0001_142_1	D5H8P9_SALRM	Peptide deformylase	K01462	* peptide deformylase [EC:3.5.1.88]	K01462	DEF_SALRD	Peptide deformylase	K01462
+S_ruber_randomG_0001_146_4	Q2S483_SALRD	6-phosphogluconolactonase	K01057	* 6-phosphogluconolactonase [EC:3.1.1.31]	K01057	6PGL_SYNY3	6-phosphogluconolactonase;	K01057
+S_ruber_randomG_0001_150_4	D5HCJ2_SALRM	Chemotaxis protein cheW	K03408	* purine-binding chemotaxis protein CheW	K03408	CHEW_KLEAK	Chemotaxis protein CheW;	K03408
+S_ruber_randomG_0002_1_70	Q2S6J8_SALRD	Uracil-DNA glycosylase, family 4	K21929	* uracil-DNA glycosylase [EC:3.2.2.27]	K21929	UDGA_THET8	Type-4 uracil-DNA glycosylase	K21929
+S_ruber_randomG_0002_32_16	D5H735_SALRM	Probable beta-carotene 15,15'-dioxygenase	K21817	* beta-carotene 15,15'-dioxygenase [EC:1.13.11.63]	K21817	BRP_HALSA	Probable beta-carotene 15,15'-dioxygenase Brp	K21817
+S_ruber_randomG_0002_36_5	D5H7Z9_SALRM	Elongation factor Tu	K02358	* elongation factor Tu	K02358	EFTU_SALRD	Elongation factor Tu	K02358
+S_ruber_randomG_0003_22_8	D5H7E8_SALRM	Glycogen debranching enzyme GlgX	K01214	* isoamylase [EC:3.2.1.68]	K01214	GLGX_MYCTU	Glycogen operon protein GlgX homolog;	K01214
+S_ruber_randomG_0003_87_7	D5H6B2_SALRM	UDP-N-acetylmuramate--L-alanine ligase	K01924	* UDP-N-acetylmuramate--alanine ligase [EC:6.3.2.8]	K01924	MURC_SALRD	UDP-N-acetylmuramate--L-alanine ligase	K01924
+S_ruber_randomG_0004_9_22	D5H7J3_SALRM	DNA ligase	K01972	* DNA ligase (NAD+) [EC:6.5.1.2]	K01972	DNLJ_SALRD	DNA ligase	K01972
+S_ruber_randomG_0004_48_5	D5H7S0_SALRM	Phosphatidylserine decarboxylase proenzyme	K01613	* phosphatidylserine decarboxylase [EC:4.1.1.65]	K01613	PSD_SALRD	Phosphatidylserine decarboxylase proenzyme	K01613
+S_ruber_randomG_0004_56_4	F7PLF4_9EURY	Amylosucrase protein	K05341	* amylosucrase [EC:2.4.1.4]	K05341	AMYS_NEIME	Amylosucrase;	No_Match
+S_ruber_randomG_0004_58_13	D5HBE1_SALRM	DNA gyrase subunit A	K02469	* DNA gyrase subunit A [EC:5.6.2.2]	K02469	GYRA_BACHD	DNA gyrase subunit A	K02469
+S_ruber_randomG_0004_77_3	Q2S1F3_SALRD	Aconitate hydratase	K01681	* aconitate hydratase [EC:4.2.1.3]	K01681	ACNA_DEIRA	Aconitate hydratase A	K01681
+S_ruber_randomG_0004_217_2	D5HCM6_SALRM	Flagellar P-ring protein	K02394	* flagellar P-ring protein precursor FlgI	K02394	FLGI1_VIBPA	Flagellar P-ring protein 1	K02394
+S_ruber_randomG_0005_46_14	D5H920_SALRM	Aspartate 1-decarboxylase	K01579	* aspartate 1-decarboxylase [EC:4.1.1.11]	K01579	PAND_SALRD	Aspartate 1-decarboxylase	K01579
+S_ruber_randomG_0006_17_8	D5HD35_SALRM	Translation initiation factor IF-3	K02520	* translation initiation factor IF-3	K02520	IF3_BACV8	Translation initiation factor IF-3	K02520
+S_ruber_randomG_0006_142_5	Q2S385_SALRD	Hemolysin, putative	K11068	* hemolysin III	K11068	HLY3_BACCE	Hemolysin-3;	No_Match
+S_ruber_randomG_0006_262_2	Q2RYS4_SALRD	Death on curing protein	K07341	* death on curing protein	K07341	DOC_MYCS2	Toxin Doc;	K07341
+S_ruber_randomG_0007_1_15	Q2S240_SALRD	N5-carboxyaminoimidazole ribonucleotide mutase	K01588	* 5-(carboxyamino)imidazole ribonucleotide mutase [EC:5.4.99.18]	K01588	PURE_PYRAB	N5-carboxyaminoimidazole ribonucleotide mutase	K01588
+S_ruber_randomG_0007_2_8	D5H6E0_SALRM	Multifunctional fusion protein	K00955	* bifunctional enzyme CysN/CysC [EC:2.7.7.4 2.7.1.25]	K00955	CYSNC_RHOBA	Bifunctional enzyme CysN/CysC;	K00955
+S_ruber_randomG_0007_5_56	Q2RYS4_SALRD	Death on curing protein	K07341	* death on curing protein	K07341	DOC_MYCS2	Toxin Doc;	K07341
+S_ruber_randomG_0007_65_4	D5H5D3_SALRM	Ferredoxin	No_Match	* ferredoxin	K05524	FER1_AZOVI	Ferredoxin-1;	No_Match
+S_ruber_randomG_0007_105_2	Q2S1P9_SALRD	Protein translocase subunit SecE	K03073	* preprotein translocase subunit SecE	K03073	SECE_RICMO	Protein translocase subunit SecE	No_Match
+S_ruber_randomG_0007_129_1	A0A2T2T572_9BACT	Sodium:alanine symporter family protein	No_Match	* alanine or glycine:cation symporter, AGCS family	K03310	DAGA_PSEHA	Na(+)-linked D-alanine glycine permease;	No_Match
+S_ruber_randomG_0008_9_25	D5H7P4_SALRM	Elongation factor P	K02356	elongation factor P	K02356	EFP_SALRD	Elongation factor P	K02356
+S_ruber_randomG_0008_16_36	Q2RZQ8_SALRD	CHY zinc finger family	No_Match	RING finger and CHY zinc finger domain-containing protein 1 [EC:2.3.2.27]	K10144	HOT13_YEAST	Helper of Tim protein 13;	No_Match
+S_ruber_randomG_0011_30_11	Q2S6D5_SALRD	Phosphoenolpyruvate carboxylase	K01595	* phosphoenolpyruvate carboxylase [EC:4.1.1.31]	K01595	CAPP_RHOMR	Phosphoenolpyruvate carboxylase;	No_Match
+S_ruber_randomG_0011_101_7	D5H9W0_SALRM	Fused isobutyryl-CoA mutase	K11942	* isobutyryl-CoA mutase [EC:5.4.99.13]	K11942	ICMF_GEOKA	Fused isobutyryl-CoA mutase	K11942
+S_ruber_randomG_0013_33_7	D5H9N5_SALRM	DNA translocase ftsK	K03466	* DNA segregation ATPase FtsK/SpoIIIE, S-DNA-T family	K03466	FTSK_OCEIH	DNA translocase FtsK;	K03466
+S_ruber_randomG_0016_4_2	A0A2P6BZC0_9BACT	Glucosamine-6-phosphate deaminase	No_Match	* glucosamine-6-phosphate deaminase [EC:3.5.99.6]	K02564	NAGB_ALKOO	Glucosamine-6-phosphate deaminase	K02564
+S_ruber_randomG_0017_190_2	D5HCJ0_SALRM	Chemotaxis protein cheY homolog	K03413	* two-component system, chemotaxis family, chemotaxis protein CheY	K03413	CHEY_HELPY	Chemotaxis protein CheY homolog;	K03413
+S_ruber_randomG_0019_3_11	Q2S3K4_SALRD	Putative type i restriction enzyme hindviip m protein	K03427	* type I restriction enzyme M protein [EC:2.1.1.72]	K03427	T1MH_METJA	Putative type I restriction enzyme MjaXP M protein;	K03427
+S_ruber_randomG_0020_7_14	A0A2P6C3H2_9BACT	Glycogen debranching enzyme GlgX	No_Match	* isoamylase [EC:3.2.1.68]	K01214	GLGX_MYCTU	Glycogen operon protein GlgX homolog;	K01214
+S_ruber_randomG_0020_13_4	Q2S2N4_SALRD	L-allo-threonine aldolase	K01620	* threonine aldolase [EC:4.1.2.48]	K01620	LTAA_AERJA	L-allo-threonine aldolase;	K20801
+S_ruber_randomG_0021_30_20	A0A2P6BWL8_9BACT	dTDP-4-amino-4,6-dideoxygalactose transaminase	No_Match	* dTDP-4-amino-4,6-dideoxygalactose transaminase [EC:2.6.1.59]	K02805	WECE_ECOLI	dTDP-4-amino-4,6-dideoxygalactose transaminase	K02805
+S_ruber_randomG_0021_281_1	M1XSD8_NATM8	SufB domain protein	K09014	* Fe-S cluster assembly protein SufB	K09014	Y1857_STAS1	UPF0051 protein SSP1857;	K09014
+S_ruber_randomG_0022_1_89	A0A2P6BWA4_9BACT	Death-on-curing protein	No_Match	* death on curing protein	K07341	DOC_MYCS2	Toxin Doc;	K07341
+S_ruber_randomG_0024_48_3	D5H6C9_SALRM	Alanine racemase	K01775	* alanine racemase [EC:5.1.1.1]	K01775	ALR_DESRM	Alanine racemase	K01775
+S_ruber_randomG_0025_92_8	D5HCB3_SALRM	Glucosamine-6-phosphate deaminase	K02564	* glucosamine-6-phosphate deaminase [EC:3.5.99.6]	K02564	Y258_BACTN	Putative glucosamine-6-phosphate deaminase-like protein BT_0258;	K02564
+S_ruber_randomG_0028_7_29	A0A2T2T8C3_9BACT	Copper resistance protein CopB	No_Match	* copper resistance protein B	K07233	COPB_PSEUB	Copper resistance protein B;	No_Match
+S_ruber_randomG_0029_251_1	D5H889_SALRM	Penicillin amidase superfamily	K07116	glutaryl-7-aminocephalosporanic-acid acylase [EC:3.5.1.93]	K12748	G7AC_PSEU7	Glutaryl-7-aminocephalosporanic-acid acylase;	No_Match
+S_ruber_randomG_0031_35_4	D5H505_SALRM	Methyl-accepting chemotaxis protein	No_Match	* methyl-accepting chemotaxis protein	K03406	MALCR_PSEAE	Methyl-accepting chemotaxis protein PA2652;	K03406
+S_ruber_randomG_0031_65_5	A0A2T2U2Y2_9BACT	Type II toxin-antitoxin system death-on-curing family toxin	No_Match	* death on curing protein	K07341	DOC_MYCS2	Toxin Doc;	K07341
+S_ruber_randomG_0034_161_5	A0A2P6BWL8_9BACT	dTDP-4-amino-4,6-dideoxygalactose transaminase	No_Match	* dTDP-4-amino-4,6-dideoxygalactose transaminase [EC:2.6.1.59]	K02805	WECE_ECOLI	dTDP-4-amino-4,6-dideoxygalactose transaminase	K02805
+S_ruber_randomG_0039_5_18	A0A164FFB0_GEOSE	Type-1 restriction enzyme R protein	No_Match	* type I restriction enzyme, R subunit [EC:3.1.21.3]	K01153	T1RA_ECOLX	Type I restriction enzyme EcoAI R protein;	No_Match
+S_ruber_randomG_0039_5_19	A0A0K8J4L3_9FIRM	Type I restriction enzyme EcoEI M protein	K03427	* type I restriction enzyme M protein [EC:2.1.1.72]	K03427	T1ME_ECOLX	Type I restriction enzyme EcoEI M protein;	No_Match
+S_ruber_randomG_0039_35_12	A0A2P6BWL8_9BACT	dTDP-4-amino-4,6-dideoxygalactose transaminase	No_Match	* dTDP-4-amino-4,6-dideoxygalactose transaminase [EC:2.6.1.59]	K02805	WECE_ECOLI	dTDP-4-amino-4,6-dideoxygalactose transaminase	K02805
+S_ruber_randomG_0041_21_25	A0A2P6BWL8_9BACT	dTDP-4-amino-4,6-dideoxygalactose transaminase	No_Match	* dTDP-4-amino-4,6-dideoxygalactose transaminase [EC:2.6.1.59]	K02805	WECE_ECOLI	dTDP-4-amino-4,6-dideoxygalactose transaminase	K02805
+S_ruber_randomG_0046_90_6	Q2RZ22_SALRD	Putative multidrug resistance protein NorM	K03327	* multidrug resistance protein, MATE family	K03327	NORM_PSEAE	Probable multidrug resistance protein NorM;	K03327
+S_ruber_randomG_0054_20_9	A0A343TKF9_9ARCH	Halocyanin	No_Match	plastocyanin	K02638	HCY_NATPH	Halocyanin;	No_Match
+S_ruber_randomG_0055_59_3	D5H5B3_SALRM	60 kDa chaperonin	K04077	* chaperonin GroEL	K04077	CH601_SALRD	60 kDa chaperonin 1	K04077
+S_ruber_randomG_0055_125_5	Q2S3G6_SALRD	Adenosylhomocysteinase	K01251	* adenosylhomocysteinase [EC:3.3.1.1]	K01251	SAHH_SULTO	Adenosylhomocysteinase	K01251
+S_ruber_randomG_0055_206_1	D5HCH4_SALRM	Flagellar biosynthetic protein FliP	K02419	* flagellar biosynthetic protein FliP	K02419	FLIP_BACSU	Flagellar biosynthetic protein FliP;	K02419
+S_ruber_randomG_0056_117_4	A0A2H5VYE6_9BACT	Transketolase	No_Match	* transketolase [EC:2.2.1.1]	K00615	TKT_GEOSE	Transketolase	No_Match
+S_ruber_randomG_0058_28_32	D5H8I3_SALRM	Deoxyribose-phosphate aldolase	K01619	* deoxyribose-phosphate aldolase [EC:4.1.2.4]	K01619	DEOC_MOUSE	Deoxyribose-phosphate aldolase;	K01619
+S_ruber_randomG_0061_36_1	Q2S5B8_SALRD	Biotin carboxylase	No_Match	propionyl-CoA carboxylase alpha chain [EC:6.4.1.3]	K01965	PYCA_METTH	Pyruvate carboxylase subunit A;	K01959
+S_ruber_randomG_0063_36_5	A0A2P6BWL8_9BACT	dTDP-4-amino-4,6-dideoxygalactose transaminase	No_Match	* dTDP-4-amino-4,6-dideoxygalactose transaminase [EC:2.6.1.59]	K02805	WECE_ECOLI	dTDP-4-amino-4,6-dideoxygalactose transaminase	K02805
+S_ruber_randomG_0063_123_1	D5H6W5_SALRM	Adenosine deaminase	K01488	* adenosine deaminase [EC:3.5.4.4]	K01488	ADD_MYCSS	Adenosine deaminase	K01488
+S_ruber_randomG_0064_45_15	Q2S3X9_SALRD	DNA primase	K02316	* DNA primase [EC:2.7.7.101]	K02316	DNAG_PSEPU	DNA primase	No_Match
+S_ruber_randomG_0068_2_9	A0A2T2SXR8_9BACT	Formylglycine-generating enzyme family protein	No_Match	* formylglycine-generating enzyme [EC:1.8.3.7]	K13444	SUMF1_MOUSE	Formylglycine-generating enzyme	K13444
+S_ruber_randomG_0068_2_13	A0A286RJF3_9PLAN	Choline-sulfatase	No_Match	arylsulfatase A [EC:3.1.6.8]	K01134	GALSF_BACTN	N-acetylgalactosamine-6-O-sulfatase	No_Match
+S_ruber_randomG_0068_12_31	D5HB26_SALRM	Putative cold shock-like protein	K03704	* cold shock protein	K03704	CSPD_SHIFL	Cold shock-like protein CspD;	K03704
+S_ruber_randomG_0068_98_1	A0A3D3UTZ3_9BACT	Beta-galactosidase	No_Match	evolved beta-galactosidase subunit alpha [EC:3.2.1.23]	K12111	BGAL_BACMD	Beta-galactosidase;	K01190
+S_ruber_randomG_0068_198_5	D5H712_SALRM	Phenylalanine and histidine ammonia-lyase	K01745	tyrosine ammonia-lyase [EC:4.3.1.23]	K10774	TALY_CUPMC	Tyrosine ammonia-lyase	K10774
+S_ruber_randomG_0068_217_1	A0A066X0Q2_9FLAO	Beta-galactosidase	No_Match	evolved beta-galactosidase subunit alpha [EC:3.2.1.23]	K12111	BGAL_PECAS	Beta-galactosidase	K01190
+S_ruber_randomG_0069_251_4	D5HBG4_SALRM	Argininosuccinate lyase	K01755	* argininosuccinate lyase [EC:4.3.2.1]	K01755	ARLY_THENN	Argininosuccinate lyase	K01755
+S_ruber_randomG_0071_1_79	Q2S4Z1_SALRD	UDP-glucuronate decarboxylase	K01710	UDP-glucuronate decarboxylase [EC:4.1.1.35]	K08678	UXS1_PONAB	UDP-glucuronic acid decarboxylase 1;	K08678
+S_ruber_randomG_0075_17_2	A0A3M2F182_9BACT	Beta-xylanase	No_Match	* endo-1,4-beta-xylanase [EC:3.2.1.8]	K01181	XYNA_BACOV	Endo-1,4-beta-xylanase A;	No_Match
+S_ruber_randomG_0075_17_3	A0A3M2F1F7_9BACT	Xylan alpha-1,2-glucuronidase	No_Match	* alpha-glucuronidase [EC:3.2.1.139]	K01235	AGUA_CELJU	Extracellular xylan exo-alpha-(1->2)-glucuronosidase;	K01235
+S_ruber_randomG_0075_17_31	Q2S687_SALRD	Methyl-accepting chemotaxis protein (MCP) signaling domain	K03406	* methyl-accepting chemotaxis protein	K03406	CTPL_PSEAE	Methyl-accepting chemotaxis protein CtpL	No_Match
+S_ruber_randomG_0075_36_9	A0A2V8IGH1_9BACT	Endoglucanase	No_Match	* endoglucanase [EC:3.2.1.4]	K01179	BGH9A_BACO1	Xyloglucan-specific endo-beta-1,4-glucanase BoGH9A;	No_Match
+S_ruber_randomG_0075_36_10	A0A3M2GTQ4_9BACT	Beta-glucosidase	No_Match	* beta-glucosidase [EC:3.2.1.21]	K05349	GLUA_DICDI	Lysosomal beta glucosidase;	K05349
+S_ruber_randomG_0075_36_11	A0A2N5RI44_9THEM	Beta-xylanase	No_Match	* endo-1,4-beta-xylanase [EC:3.2.1.8]	K01181	XYNZ_CLOTH	Endo-1,4-beta-xylanase Z;	K01181
+S_ruber_randomG_0075_36_21	A0A150TS80_SORCE	Xylan 1,4-beta-xylosidase	No_Match	* xylan 1,4-beta-xylosidase [EC:3.2.1.37]	K01198	XYLB_BUTFI	Xylosidase/arabinosidase;	No_Match
+S_ruber_randomG_0077_7_13	D5HA55_SALRM	Translation initiation factor IF-2	K02519	* translation initiation factor IF-2	K02519	IF2_SALRD	Translation initiation factor IF-2	K02519
+S_ruber_randomG_0078_22_36	A0A345UMI6_9BACT	dTDP-4-amino-4,6-dideoxygalactose transaminase	No_Match	dTDP-4-amino-4,6-dideoxy-D-glucose transaminase [EC:2.6.1.33]	K20429	VIOA_SHIDY	dTDP-4-amino-4,6-dideoxy-D-glucose transaminase;	K20429
+S_ruber_randomG_0078_82_8	Q2S3K4_SALRD	Putative type i restriction enzyme hindviip m protein	K03427	* type I restriction enzyme M protein [EC:2.1.1.72]	K03427	T1MH_METJA	Putative type I restriction enzyme MjaXP M protein;	K03427
+S_ruber_randomG_0079_181_5	D5H4N1_SALRM	N-acetylmuramic acid 6-phosphate etherase	K07106	* N-acetylmuramic acid 6-phosphate etherase [EC:4.2.1.126]	K07106	MURQ_SALRD	N-acetylmuramic acid 6-phosphate etherase	K07106
+S_ruber_randomG_0084_3_78	D5HD58_SALRM	Cation efflux system protein czcA	K15726	* cobalt-zinc-cadmium resistance protein CzcA	K15726	CZCA_ALCSC	Cation efflux system protein CzcA;	No_Match
+S_ruber_randomG_0084_121_1	Q2RZ89_SALRD	Flagellar basal-body rod protein	K02392	flagellar basal-body rod protein FlgG	K02392	FLHO_BACSU	Flagellar hook-basal body complex protein FlhO;	K02392
+S_ruber_randomG_0090_11_41	Q2S2P3_SALRD	PhoH family protein	K06217	* phosphate starvation-inducible protein PhoH and related proteins	K06217	PHOL_BACSU	PhoH-like protein;	K06217
+S_ruber_randomG_0090_17_38	A0A2T2U2Y2_9BACT	Type II toxin-antitoxin system death-on-curing family toxin	No_Match	* death on curing protein	K07341	DOC_MYCS2	Toxin Doc;	K07341
+S_ruber_randomG_0090_111_5	D5HAA4_SALRM	Protein translocase subunit SecD	K03072	SecD/SecF fusion protein	K12257	SECD_RHOM4	Protein translocase subunit SecD	K03072
+S_ruber_randomG_0093_74_10	Q2S6D5_SALRD	Phosphoenolpyruvate carboxylase	K01595	* phosphoenolpyruvate carboxylase [EC:4.1.1.31]	K01595	CAPP_RHOMR	Phosphoenolpyruvate carboxylase;	No_Match
+S_ruber_randomG_0095_18_24	Q2S4Z1_SALRD	UDP-glucuronate decarboxylase	K01710	UDP-glucuronate decarboxylase [EC:4.1.1.35]	K08678	UXS1_HUMAN	UDP-glucuronic acid decarboxylase 1;	K08678
+S_ruber_randomG_0095_64_1	D5HCW7_SALRM	Glyoxalase family protein	K15975	* glyoxalase family protein	K15975	MHQO_BACSU	Putative ring-cleaving dioxygenase MhqO;	K15975
+S_ruber_randomG_0098_2_86	Q2S507_SALRD	Multifunctional fusion protein	K00955	* bifunctional enzyme CysN/CysC [EC:2.7.7.4 2.7.1.25]	K00955	CYSNC_RHOBA	Bifunctional enzyme CysN/CysC;	K00955
+S_ruber_randomG_0098_2_118	A0A345UMI6_9BACT	dTDP-4-amino-4,6-dideoxygalactose transaminase	No_Match	dTDP-4-amino-4,6-dideoxy-D-glucose transaminase [EC:2.6.1.33]	K20429	VIOA_SHIDY	dTDP-4-amino-4,6-dideoxy-D-glucose transaminase;	K20429
+S_ruber_randomG_0098_87_13	D5HB57_SALRM	A/G-specific adenine DNA glycosylase	K03575	* A/G-specific adenine glycosylase [EC:3.2.2.31]	K03575	MUTY_GEOSE	Adenine DNA glycosylase	No_Match

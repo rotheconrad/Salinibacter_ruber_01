@@ -296,7 +296,7 @@ Step 4: Run KEGG Annotations with KofamScan
 		qsub -v q=01_Sruber_ClstrRepSeq_Proteins.faa,o=02_ClstrRepSeq_KEGG.tsv ../00_PBS/06d_KofamScan_KEGG_Annotations.pbs
 		rm -r tmp
 	4b: Filter for best hits and Convert KofamScan Output to match UniProt DB output
-		python ../00_Scripts/06g_KofamScan_Filter_Convert.py -i 02_Sruber_ClstrRepSeq_KEGG.tsv -o 03_ClstrRepSeq_KEGG_Annotated.tsv
+		python ../00_Scripts/06g_KofamScan_Filter_Convert.py -i 02_ClstrRepSeq_KEGG.tsv -o 03_ClstrRepSeq_KEGG_Annotated.tsv
 
 Step 5: Combine Annotation Results
 	python ../00_Scripts/06h_Combine_Annotations.py -trb 03_ClstrRepSeq_TrEMBL_Annotated.tsv -spb 03_ClstrRepSeq_SwissProt_Annotated.tsv -kfs 03_ClstrRepSeq_KEGG_Annotated.tsv -o 04_ClstrRepSeq_Annotations.tsv
@@ -308,7 +308,7 @@ Step 5: Combine Annotation Results
 		Total KofamScan Single Annotation: 1973
 
 Step 6: Add Un-annotated genes as NoMatch Hypotheticals
-	python ../00_Scripts/06i_Add_Unannotated_Genes.py -a 04_Sruber_Representative_Protein_Annotations.tsv -q 01_Sruber_ClstrRepSeq.faa -o 04_Sruber_ClstrRepSeq_Annotations_NoMatch.tsv
+	python ../00_Scripts/06i_Add_Unannotated_Genes.py -a 04_ClstrRepSeq_Annotations.tsv -q 01_Sruber_ClstrRepSeq_Proteins.faa -o 04_ClstrRepSeq_Annotations_NoMatch.tsv
 
 
 ########################################################
@@ -414,20 +414,74 @@ Step 03: Summarize Annotations by PanCat and Abundant Specific and Rare Genes
 ########################################################
 ########################################################
 
-Deep dive into contigs and genes
-	## I still need to do this.
-
-
-########################################################
-########################################################
-########################################################
-
 Compare to Ecoli Annotations
-	Step 1: Ecoli annotations are completed already.
+	Step 1: Get Ecoli Annotations.
+		# Draft Ecoli genomes were ran through the PGE pipeline in the same way as the Sruber genomes.
+		# Since we have 10,000+ Draft ecoli genomes, the experiment was repeated 100 times.
+		# Resulting Representative gene sequences from the gene clusters of all 100 experiments were selected and clustered again.
+		# The Final representative gene sequences were annotated and used for comparison.
+		# There are 80,308 gene clusters (from 90% nucleotide sequence identity clusters)
 		Notes: /gpfs/pace2/project/bio-konstantinidis/rconrad6/Core-Pan_Genomes/01b-FILTERED-97.5/00_Ecoli_Annotation_Notes.txt
 
-	Step 2: Write python script to compare results.
-		## I still need to do this ##
+	1a:	from: /gpfs/pace2/project/bio-konstantinidis/rconrad6/Salinibacter_Assemblies
+		mkdir 09_Ecoli_vs_Sruber_Annotations
+		cd 09_Ecoli_vs_Sruber_Annotations
+
+		# Start with unfiltered annotation output
+		cp /gpfs/pace2/project/bio-konstantinidis/rconrad6/Core-Pan_Genomes/01b-FILTERED-97.5/PGE_0000_clstrExpRpGns_Ecoli/Ecoli_combined_clustered_pangenome.clstrd.faa 00_Ecoli_ClstrRepSeq.faa
+		cp /gpfs/pace2/project/bio-konstantinidis/rconrad6/Core-Pan_Genomes/01b-FILTERED-97.5/PGE_0000_clstrExpRpGns_Ecoli/*SwissProt.blst 00_Ecoli_ClstrRepSeq_SwissProt.blst
+		cp /gpfs/pace2/project/bio-konstantinidis/rconrad6/Core-Pan_Genomes/01b-FILTERED-97.5/PGE_0000_clstrExpRpGns_Ecoli/*TrEMBL.blst 00_Ecoli_ClstrRepSeq_TrEMBL.blst
+		cp /gpfs/pace2/project/bio-konstantinidis/rconrad6/Core-Pan_Genomes/01b-FILTERED-97.5/PGE_0000_clstrExpRpGns_Ecoli/*KEGG.tsv 00_Ecoli_ClstrRepSeq_KEGG.tsv
+
+	1b: Filter blast results for best hit
+		python ../00_Scripts/06e_BlastTab_BestHit_Filter.py -i 00_Ecoli_ClstrRepSeq_SwissProt.blst -pml 50 -pid 40
+			Total number of entries in blast file: 401421
+			Number of reads failing the filters: 245525
+			Number of reads passing the filters: 155896
+			Number of duplicate blast matches passing filter: 123104
+			Number of best hit entries written to new file: 32792
+
+		python ../00_Scripts/06e_BlastTab_BestHit_Filter.py -i 00_Ecoli_ClstrRepSeq_TrEMBL.blst -pml 50 -pid 40
+			Total number of entries in blast file: 862475
+			Number of reads failing the filters: 113052
+			Number of reads passing the filters: 749423
+			Number of duplicate blast matches passing filter: 671354
+			Number of best hit entries written to new file: 78069
+
+	1c: Retrieve gene annotation information from UniProt DBs
+		python ../00_Scripts/06f_BlastTab_UniProtID_to_Gene_Annotation.py -p /gpfs/pace2/project/bio-konstantinidis/rconrad6/dbases/uniprot_sprot.PARSED.dat.tsv -b 00_Ecoli_ClstrRepSeq_SwissProt.filtered_best_hits.blst -o 01_Ecoli_ClstrRepSeq_SwissProt_Annotated.tsv
+			Wrote  32792 gene annotations of  32792  blast entries from  13178  UniProt IDs to  01_Ecoli_ClstrRepSeq_SwissProt_Annotated.tsv file.
+
+		python ../00_Scripts/06f_BlastTab_UniProtID_to_Gene_Annotation.py -p /gpfs/pace2/project/bio-konstantinidis/rconrad6/dbases/uniprot_trembl.PARSED.dat.tsv -b 00_Ecoli_ClstrRepSeq_TrEMBL.filtered_best_hits.blst -o 01_Ecoli_ClstrRepSeq_TrEMBL_Annotated.tsv
+			Wrote  78069 gene annotations of  78069  blast entries from  72406  UniProt IDs to  01_Ecoli_ClstrRepSeq_TrEMBL_Annotated.tsv  file.
+
+	1d: Filter for best hits and Convert KofamScan Output to match UniProt DB output
+		python ../00_Scripts/06g_KofamScan_Filter_Convert.py -i 00_Ecoli_ClstrRepSeq_KEGG.tsv -o 01_Ecoli_ClstrRepSeq_KEGG_Annotated.tsv
+
+	1e: Combine Annotation Results
+		python ../00_Scripts/06h_Combine_Annotations.py -spb 01_Ecoli_ClstrRepSeq_SwissProt_Annotated.tsv -kfs 01_Ecoli_ClstrRepSeq_KEGG_Annotated.tsv -trb 01_Ecoli_ClstrRepSeq_TrEMBL_Annotated.tsv -o 02_Ecoli_ClstrRepSeq_Annotations.tsv
+			Total TrEMBL Single Annotation: 15059
+			Total TrEMBL_KofamScan Double Annotation: 30256
+			Total Triple Annotation: 29025
+			Total TrEMBL_SwissProt Double Annotation: 3729
+			Total SwissProt_KofamScan Double Annotation: 33
+			Total SwissProt Single Annotation: 5
+			Total KofamScan Single Annotation: 1142
+
+	1f: Add Un-annotated genes as NoMatch Hypotheticals
+		python ../00_Scripts/06i_Add_Unannotated_Genes.py -a 02_Ecoli_ClstrRepSeq_Annotations.tsv -q 00_Ecoli_ClstrRepSeq.faa -o 03_Ecoli_ClstrRepSeq_Annotations_NoMatch.tsv
+
+	1g: Copy Sruber annotions
+		cp ../06_Annotations/04_ClstrRepSeq_Annotations_NoMatch.tsv 03_Sruber_ClstrRepSeq_Annotations_NoMatch.tsv
+
+	Step 2: Compare annotations.
+		2a: Transform annotations results for pandas and plotting
+			python ../00_Scripts/09a_Transform_Annotation_Results.py -a 03_Sruber_ClstrRepSeq_Annotations_NoMatch.tsv -o 04_Sruber_Transformed_Annotations.tsv
+			python ../00_Scripts/09a_Transform_Annotation_Results.py -a 03_Ecoli_ClstrRepSeq_Annotations_NoMatch.tsv -o 04_Ecoli_Transformed_Annotations.tsv
+
+		2b: Build Plots
+			python ../00_Scripts/09b_Compare_Annotation_Results.py -f1 04_Ecoli_Transformed_Annotations.tsv -f2 04_Sruber_Transformed_Annotations.tsv -o 05_Annotations_Comparison_Summary
+			
 
 ########################################################
 ########################################################
@@ -436,6 +490,11 @@ Compare to Ecoli Annotations
 Update pangenome rarefaction curve with open/close model. remove intermediate pangenome categories.
 
 
+########################################################
+########################################################
+########################################################
 
+Deep dive into contigs and genes
+	## I still need to do this.
 
 

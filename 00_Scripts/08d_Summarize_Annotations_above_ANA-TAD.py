@@ -58,8 +58,10 @@ def get_summaries(annoTAD, TAD_thld):
 
         for g in gn: # for each gene category in gn list calculation for total
 
-            geneD = other[other[d].str.lower().str.contains(g)] # Select gene category
-            other = other[~other[d].str.lower().str.contains(g)] # Select remaining genes
+             # Select gene category
+            geneD = other[other[d].str.contains(g, case=False, regex=True)]
+            # Select remaining genes
+            other = other[~other[d].str.contains(g, case=False, regex=True)]
 
             geneD_high = geneD[geneD['ANA-TAD'] >= TAD_thld] # High TAD genes
             geneD_low = geneD[geneD['ANA-TAD'] < TAD_thld] # Low TAD genes
@@ -128,14 +130,20 @@ def Plot_Annotation_Summary(df, post, out):
             )
         ax.set_axisbelow(True)
 
+    handles1, labels1 = ax1.get_legend_handles_labels()
     ax1.legend(
+        handles1[::-1],
+        labels1[::-1],
         loc='center left',
         bbox_to_anchor=(0.98, 0.5),
         fancybox=True,
         shadow=True,
         fontsize=18
         )
+    handles2, labels2 = ax2.get_legend_handles_labels()
     ax2.legend(
+        handles2[::-1],
+        labels2[::-1],
         loc='center left',
         bbox_to_anchor=(0.98, 0.5),
         fancybox=True,
