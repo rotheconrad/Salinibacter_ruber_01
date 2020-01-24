@@ -108,12 +108,12 @@ def get_summaries(f1, f2, out):
         data['other'].append(float(len(other2)))
 
         ### Write other category for each db to file ###
-        other1.to_csv(f'{out}_{s1}_{d}.tsv', sep='\t')
-        other2.to_csv(f'{out}_{s2}_{d}.tsv', sep='\t')
+        other1.to_csv(f'{out}_{s1}_{d}_other.tsv', sep='\t')
+        other2.to_csv(f'{out}_{s2}_{d}_other.tsv', sep='\t')
 
     ### Write master other category to file ###
-    Master_other1.to_csv(f'{out}_{s1}_Master.tsv', sep='\t')
-    Master_other2.to_csv(f'{out}_{s2}_Master.tsv', sep='\t')
+    Master_other1.to_csv(f'{out}_{s1}_Master_other.tsv', sep='\t')
+    Master_other2.to_csv(f'{out}_{s2}_Master_other.tsv', sep='\t')
 
     ### Convert Dictionaries to DataFrames ####
     df = pd.DataFrame.from_dict(data, orient='index', columns=colnames)
