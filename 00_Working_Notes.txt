@@ -481,7 +481,7 @@ Compare to Ecoli Annotations
 
 		2b: Build Plots
 			python ../00_Scripts/09b_Compare_Annotation_Results.py -f1 04_Ecoli_Transformed_Annotations.tsv -f2 04_Sruber_Transformed_Annotations.tsv -o 05_Annotations_Comparison_Summary
-			
+
 
 ########################################################
 ########################################################
@@ -498,3 +498,4 @@ Deep dive into contigs and genes
 	## I still need to do this.
 
 
+* Update / Rerun 08d once annotation gene list is finalized
