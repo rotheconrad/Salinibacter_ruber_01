@@ -305,7 +305,7 @@ def model_pangenome_curve(dfout, Column):
     # Initialize dictionary to store model results
     params = {} # PowerLawModel for Pangenome curve
     # Model the Pangenome curve using a Powerlaw function: Ps = κn^γ
-    print('\n\nFitting PowerLaw function to {Column}')
+    print(f'\n\nFitting PowerLaw function to {Column}')
     print('Using Power Law Function K*N^\u03B3 ...')
     PLM = PowerLawModel() # Initialize the model
     # Guess starting values from the data
@@ -335,10 +335,8 @@ def calculate_pangenome_curve(binary_matrix, prm, c, out):
             'Trial', 'n', 'n/N', 'Pangenome', 'CoreGenome',
             'GenomeSpecific', 'NewGenes', 'NewGeneRatio', 'GenomeLength'
             ]
-    # Initialize output data frame
-    dfout = pd.DataFrame(columns=colout)
-    # Initialize row counter for ouput dataframe
-    rowcount = 0
+    # Initialize list to store new rows
+    data = []
     # Set the total number of genomes to n
     N = df.shape[1]
     # Calculate the total number of genes per genome
@@ -388,12 +386,12 @@ def calculate_pangenome_curve(binary_matrix, prm, c, out):
                 nratio = 100.00
                 panprev = pan
             # Define new row for dfout dataframe.
-            z = [j+1, n+1, nN, pan, core, gspec, ngenes, nratio, genlen]
-            # Add new row to dfout dataframe
-            dfout.loc[rowcount] = z
-            # increment the rowcount
-            rowcount += 1
-
+            newrow = [j+1, n+1, nN, pan, core, gspec, ngenes, nratio, genlen]
+            # Add new row to data list
+            data.append(newrow)
+    # Convert data list to data frame
+    dfout = pd.DataFrame(data=data, columns=colout)
+    # Write Data Frame to file
     dfout.to_csv(f'{out}_Pangenome_data.tsv', sep='\t')
 
     return dfout

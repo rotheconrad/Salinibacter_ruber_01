@@ -229,7 +229,7 @@ bash 00_Run_Pangenome_Experiment/00_Run_Pangenome_Experiment.sh 100 100 GENOMES/
 ########################################################
 ########################################################
 
-Gene Annotation - did the same for Ecoli: /gpfs/pace2/project/bio-konstantinidis/rconrad6/Core-Pan_Genomes/01b-FILTERED-97.5/00_Ecoli_Annotation_Notes.txt
+06x: Gene Annotation - did the same for Ecoli: /gpfs/pace2/project/bio-konstantinidis/rconrad6/Core-Pan_Genomes/01b-FILTERED-97.5/00_Ecoli_Annotation_Notes.txt
 
 Step 1: Collect Representative Amino Acid Sequence from CD-Hit clustered nucleotide sequence representatives
 	from: /gpfs/pace2/project/bio-konstantinidis/rconrad6/Salinibacter_Assemblies
@@ -300,12 +300,14 @@ Step 4: Run KEGG Annotations with KofamScan
 
 Step 5: Combine Annotation Results
 	python ../00_Scripts/06h_Combine_Annotations.py -trb 03_ClstrRepSeq_TrEMBL_Annotated.tsv -spb 03_ClstrRepSeq_SwissProt_Annotated.tsv -kfs 03_ClstrRepSeq_KEGG_Annotated.tsv -o 04_ClstrRepSeq_Annotations.tsv
-		Total TrEMBL_KofamScan Double Annotation: 6681
-		Total TrEMBL Single Annotation: 1167
-		Total Triple Annotation: 1663
-		Total TrEMBL_SwissProt Double Annotation: 17
-		Total SwissProt_KofamScan Double Annotation: 7
-		Total KofamScan Single Annotation: 1973
+
+		Total TrEMBL_KofamScan Double Annotation: 1918
+		Total TrEMBL Single Annotation: 5930
+		Total Triple Annotation: 1314
+		Total TrEMBL_SwissProt Double Annotation: 366
+		Total SwissProt Single Annotation: 6
+		Total SwissProt_KofamScan Double Annotation: 1
+		Total KofamScan Single Annotation: 164
 
 Step 6: Add Un-annotated genes as NoMatch Hypotheticals
 	python ../00_Scripts/06i_Add_Unannotated_Genes.py -a 04_ClstrRepSeq_Annotations.tsv -q 01_Sruber_ClstrRepSeq_Proteins.faa -o 04_ClstrRepSeq_Annotations_NoMatch.tsv
@@ -460,13 +462,14 @@ Compare to Ecoli Annotations
 
 	1e: Combine Annotation Results
 		python ../00_Scripts/06h_Combine_Annotations.py -spb 01_Ecoli_ClstrRepSeq_SwissProt_Annotated.tsv -kfs 01_Ecoli_ClstrRepSeq_KEGG_Annotated.tsv -trb 01_Ecoli_ClstrRepSeq_TrEMBL_Annotated.tsv -o 02_Ecoli_ClstrRepSeq_Annotations.tsv
-			Total TrEMBL Single Annotation: 15059
-			Total TrEMBL_KofamScan Double Annotation: 30256
-			Total Triple Annotation: 29025
-			Total TrEMBL_SwissProt Double Annotation: 3729
-			Total SwissProt_KofamScan Double Annotation: 33
-			Total SwissProt Single Annotation: 5
-			Total KofamScan Single Annotation: 1142
+
+			Total TrEMBL Single Annotation: 38679
+			Total TrEMBL_KofamScan Double Annotation: 6636
+			Total Triple Annotation: 15881
+			Total TrEMBL_SwissProt Double Annotation: 16873
+			Total SwissProt_KofamScan Double Annotation: 12
+			Total SwissProt Single Annotation: 26
+			Total KofamScan Single Annotation: 106
 
 	1f: Add Un-annotated genes as NoMatch Hypotheticals
 		python ../00_Scripts/06i_Add_Unannotated_Genes.py -a 02_Ecoli_ClstrRepSeq_Annotations.tsv -q 00_Ecoli_ClstrRepSeq.faa -o 03_Ecoli_ClstrRepSeq_Annotations_NoMatch.tsv
@@ -489,6 +492,38 @@ Compare to Ecoli Annotations
 
 Update pangenome rarefaction curve with open/close model. remove intermediate pangenome categories.
 
+python 00_Scripts/Pangenome_Calculate_Model_Plot.py -m Sruber_Clstr_binary.tsv -n Salinibacter_ruber_Group_1 -c 0.9 -o Sruber -y 20000 -s 2000 -p 1000
+
+python 00_Scripts/10c_Pangenome_Model_Plot_dir.py -y 20000 -s 2000 -i 00_Summary/B_E_coli_Rarefaction_Results/ -o Ecoli -n Escherichia_coli_Draft
+
+python 00_Scripts/10c_Pangenome_Model_Plot_dir.py -y 20000 -s 2000 -i 00_Summary/B_B_thur_Rarefaction_Results/ -o Bthur -n Bacillus_thuringiensis_Draft
+
+python 00_Scripts/10c_Pangenome_Model_Plot_dir.py -y 20000 -s 2000 -i 00_Summary/B_M_tuber_Rarefaction_Results/ -o Mtuber -n Mycobacterium_tuberculosis_Draft
+
+python 00_Scripts/10c_Pangenome_Model_Plot_dir.py -y 20000 -s 2000 -i 00_Summary/B_P_aerug_Rarefaction_Results/ -o Paerug -n Pseudomonas_aeruginosa_Draft
+
+python 00_Scripts/10c_Pangenome_Model_Plot_dir.py -y 20000 -s 2000 -i 00_Summary/B_S_enterica_Rarefaction_Results/ -o Senter -n Salmonella_enterica_Draft
+
+python 00_Scripts/10c_Pangenome_Model_Plot_dir.py -y 20000 -s 2000 -i Ecoli_Closed/B_E_coli_Rarefaction_Results/ -o Ecoli_Complete -n Escherichia_coli_Complete
+
+### Compare pangenomes
+mkdir 00_Summary/E_Compare_Pangenomes
+
+python 00_Scripts/07_PGE_Rarefaction_Summary_Stats.py -od 00_Summary/E_Compare_Pangenomes/ -sd 00_Summary/A_B_thur_Rarefaction_Summary/
+python 00_Scripts/07_PGE_Rarefaction_Summary_Stats.py -od 00_Summary/E_Compare_Pangenomes/ -sd 00_Summary/A_E_coli_Rarefaction_Summary/
+python 00_Scripts/07_PGE_Rarefaction_Summary_Stats.py -od 00_Summary/E_Compare_Pangenomes/ -sd 00_Summary/A_M_tuber_Rarefaction_Summary/
+python 00_Scripts/07_PGE_Rarefaction_Summary_Stats.py -od 00_Summary/E_Compare_Pangenomes/ -sd 00_Summary/A_P_aerug_Rarefaction_Summary/
+python 00_Scripts/07_PGE_Rarefaction_Summary_Stats.py -od 00_Summary/E_Compare_Pangenomes/ -sd 00_Summary/A_S_enterica_Rarefaction_Summary/
+
+## adjust file names for Ecoli draft vs Ecoli Closed
+mv 00_Summary/E_Compare_Pangenomes/07_Escherichia_coli_rarefaction_summary_stats.tsv 00_Summary/E_Compare_Pangenomes/07_Escherichia_coli_rarefaction_summary_stats_draft.tsv 
+python 00_Scripts/07_PGE_Rarefaction_Summary_Stats.py -od 00_Summary/E_Compare_Pangenomes/ -sd Ecoli_Closed/A_E_coli_Rarefaction_Summary/
+mv 00_Summary/E_Compare_Pangenomes/07_Escherichia_coli_rarefaction_summary_stats.tsv 00_Summary/E_Compare_Pangenomes/07_Escherichia_coli_rarefaction_summary_stats_closed.tsv
+
+## manually adjust Ecoli names in tsv file
+## Add Sruber file manually
+
+python 00_Scripts/08_PGE_Compare_Pangenomes_with_error.py -cd 00_Summary/E_Compare_Pangenomes/ -op 00_PangenomeComparison_A
 
 ########################################################
 ########################################################

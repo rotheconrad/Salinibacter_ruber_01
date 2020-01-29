@@ -4,7 +4,9 @@
 
 This script takes KofamScan output file and returns a reformatted tab
 separated file (to match the other annotation formats of the pipeline)
-with the best matches based on the score column.
+of annotations with the '*' indicating the match was above the predefined
+threshold specified for the hmm model, and with the best matches based on
+the score column.
 
 This tool takes the following input parameters:
 
@@ -79,18 +81,20 @@ def besthit_filter_kofamscan(infile, outfile):
             scr = float(X[4])
             ev = X[5]
             an = ' '.join(X[6:])
-            if hq == '*': an = '* ' + an
+            if hq == '*':
 
-            # define what the new line looks like
-            new_line = f'{nm}\t{KO}\t{thrshld}\t{scr}\t{ev}\t{an}\n'
+                #an = '* ' + an
 
-            # Add new line to dictionary if it has the highest score
-            if nm in d:
-                old_scr = float(d[nm].split('\t')[3])
-                if scr > old_scr:
+                # define what the new line looks like
+                new_line = f'{nm}\t{KO}\t{thrshld}\t{scr}\t{ev}\t{an}\n'
+
+                # Add new line to dictionary if it has the highest score
+                if nm in d:
+                    old_scr = float(d[nm].split('\t')[3])
+                    if scr > old_scr:
+                        d[nm] = new_line
+                else:
                     d[nm] = new_line
-            else:
-                d[nm] = new_line
 
     # write new file
     with open(outfile, 'w') as o:

@@ -307,7 +307,7 @@ def model_pangenome_curve(dfout, Column):
     # Initialize dictionary to store model results
     params = {} # PowerLawModel for Pangenome curve
     # Model the Pangenome curve using a Powerlaw function: Ps = κn^γ
-    print('\nFitting PowerLaw function to {Column}')
+    print(f'\nFitting PowerLaw function to {Column}')
     print('Using Power Law Function K*N^\u03B3 ...')
     PLM = PowerLawModel() # Initialize the model
     # Guess starting values from the data
