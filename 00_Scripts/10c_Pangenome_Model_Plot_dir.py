@@ -103,7 +103,7 @@ def plot_pangenome_curve(
         horizontalalignment='center', transform=ax1.transAxes
         )
     ttext = (
-        f"Number of Genomes: {len(x)}  |  "
+        f"Number of Genomes: {len(x)+1}  |  "
         f"Number of Permutations: {prm}\n"
         f"Number of Random Trials {trials}"
         )
@@ -253,8 +253,8 @@ def plot_pangenome_curve(
     ax2.yaxis.grid(which="both", color='#d9d9d9', linestyle='--', linewidth=1)
     ax2.minorticks_on()
     ax2.tick_params(labelsize=22)
-    ax2.set_xticks(range(0, len(x)+1, 10))
-    ax2.set_xlim(-1, len(x)+1)
+    ax2.set_xticks(range(0, len(x)+2, 10))
+    ax2.set_xlim(-1, len(x)+2)
     for spine in ax2.spines.values(): spine.set_linewidth(2)
     ax2.set_axisbelow(True)
 
@@ -354,7 +354,8 @@ def collect_results(fdir, out):
         # Read results tsv and reconstruct dataframe
         with open(f'{fdir}/{file}', 'r') as f:
             skip_header = f.readline()
-            n = 1
+            skip_first_genome = f.readline()
+            n = 2
             for line in f:
                 # initialize empty dict for each line
                 d = {}

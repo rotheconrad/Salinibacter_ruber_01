@@ -102,7 +102,7 @@ def plot_pangenome_curve(
         horizontalalignment='center', transform=ax1.transAxes
         )
     ttext = (
-        f"Number of Genomes: {len(x)}  |  "
+        f"Number of Genomes: {len(x)+1}  |  "
         f"Number of Permutations: {prm}"
         )
     ax1.text(
@@ -251,8 +251,8 @@ def plot_pangenome_curve(
     ax2.yaxis.grid(which="both", color='#d9d9d9', linestyle='--', linewidth=1)
     ax2.minorticks_on()
     ax2.tick_params(labelsize=22)
-    ax2.set_xticks(range(0, len(x)+1, 10))
-    ax2.set_xlim(-1, len(x)+1)
+    ax2.set_xticks(range(0, len(x)+2, 10))
+    ax2.set_xlim(-1, len(x)+2)
     for spine in ax2.spines.values(): spine.set_linewidth(2)
     ax2.set_axisbelow(True)
 
@@ -355,12 +355,19 @@ def calculate_pangenome_curve(binary_matrix, prm, c, out):
         # Set convenient list of genome names (column names)
         genomes = dfrand.columns.tolist()
 
-        for n in range(N):
+        # Add first genome to dfprm
+        gnm = genomes[0]
+        dfprm[gnm] = dfrand[gnm]
+        # Start the pangenome count
+        pancurve = dfprm.sum(axis=1).values
+        panprev = (pancurve != 0).sum()
+
+        for n in range(1,N):
             # Then for each permutation we step through the columns
             # And calculate values for each genome addition.
 
             # Set new value for current number of genomes
-            nN = 1/(n+1)
+            nN = 1 / (n+1)
             # select current genome name from prm genomes list
             gnm = genomes[n]
             # add current genome column to dfprm to step the iteration
@@ -377,14 +384,10 @@ def calculate_pangenome_curve(binary_matrix, prm, c, out):
             # Grab genome length
             genlen = genes_per_genome[gnm]
             # Calculate new genes per genome / the number of genes in genome
-            if n > 0:
-                ngenes = pan - panprev
-                nratio = ngenes / genlen * 100
-                panprev = pan
-            else:
-                ngenes = pan 
-                nratio = 100.00
-                panprev = pan
+            ngenes = pan - panprev
+            nratio = ngenes / genlen * 100
+            panprev = pan
+
             # Define new row for dfout dataframe.
             newrow = [j+1, n+1, nN, pan, core, gspec, ngenes, nratio, genlen]
             # Add new row to data list
