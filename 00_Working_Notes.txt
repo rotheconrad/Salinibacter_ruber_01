@@ -492,9 +492,9 @@ Compare to Ecoli Annotations
 
 Update pangenome rarefaction curve with open/close model. remove intermediate pangenome categories.
 
-python 00_Scripts/Pangenome_Calculate_Model_Plot.py -m Sruber_Clstr_binary.tsv -n Salinibacter_ruber_Group_1 -c 0.9 -o Sruber -y 20000 -s 2000 -p 1000
+python 00_Scripts/10b_Pangenome_Calculate_Model_Plot.py -m Sruber_Clstr_binary.tsv -n Salinibacter_ruber_Group_1 -c 0.9 -o Sruber -y 20000 -s 2000 -p 1000
 
-python 00_Scripts/10c_Pangenome_Model_Plot_dir.py -y 20000 -s 2000 -i 00_Summary/B_E_coli_Rarefaction_Results/ -o Ecoli -n Escherichia_coli_Draft
+python 00_Scripts/10c_Pangenome_Model_Plot_dir.py -y 20000 -s 2000 -i 00_Summary/B_E_coli_Rarefaction_Results/ -o Ecoli_Draft -n Escherichia_coli_Draft
 
 python 00_Scripts/10c_Pangenome_Model_Plot_dir.py -y 20000 -s 2000 -i 00_Summary/B_B_thur_Rarefaction_Results/ -o Bthur -n Bacillus_thuringiensis_Draft
 
