@@ -77,7 +77,8 @@ def get_gene_tad_pancat(taddir, pancatfile, outdir):
 
     for file in file_list:
         file_base_name = file.split('/')[-1]
-        mtg = '_'.join(file_base_name.split('_')[:2])
+        #mtg = '_'.join(file_base_name.split('_')[:2])
+        mtg = file_base_name.split('_')[1]
 
         with open(f'{taddir}{file}', 'r') as f:
             headerA = f.readline()
@@ -91,12 +92,14 @@ def get_gene_tad_pancat(taddir, pancatfile, outdir):
 
     outfilename = outdir + '01_PanCats_TADs_byGene.tsv'
     header = '' # define semi global variable outside below local
+    smpl_order = []
 
     with open(pancatfile, 'r') as f, open(outfilename, 'w') as o:
         header = f.readline().rstrip().split('\t')
         header.append('Gene-Length')
         for m in metagenome_tad.keys():
             header.append(f'{m}-TAD')
+            smpl_order.append(m)
 
         o.write('\t'.join(header) + '\n')
 
@@ -105,13 +108,13 @@ def get_gene_tad_pancat(taddir, pancatfile, outdir):
             gene = X[0]
             X.append(gene_lengths[gene])
 
-            for metagenome, TADS in metagenome_tad.items():
-                X.append(TADS[gene])
+            for smpl in smpl_order:
+                X.append(metagenome_tad[smpl][gene])
 
             gene_tad_pancat[gene] = X
             o.write('\t'.join(X) + '\n')
 
-    return gene_tad_pancat, header
+    return gene_tad_pancat, header, smpl_order
 
 
 # PART 2
@@ -165,23 +168,26 @@ def get_cluster_averages(data):
 
 
 # PART 3
-def normalize_average_metagenomes(data, gStats, header, outdir):
+def normalize_average_metagenomes(data, gStats, header, smpl_order, outdir):
     # keep track of header: add mtgx-Normed
     header = header[1:]
-    avg_genome_tad = []
+    #avg_genome_tad = []
+    avg_genome_tad = {}
     normalized = {}
 
     # Retrieve the average genome tad for each metagenome
-    # append metagenome norm to header
     with open(gStats, 'r') as f:
         ignore_header = f.readline()
         for l in f:
             X = l.split('\t')
             mtg = X[0]
             tad = float(X[1])
-            header.append(f'{mtg}-NORM')
-            avg_genome_tad.append(tad)
+            #header.append(f'{mtg}-NORM')
+            #avg_genome_tad.append(tad)
+            avg_genome_tad[mtg] = tad
 
+    # Append new column names to header:
+    for mtg in smpl_order: header.append(f'{mtg}-NORM')
     # append column name to header
     # averaged, normalized, average tad (ANA-TAD)
     # averaged gene cluster tad per metagenome
@@ -193,8 +199,8 @@ def normalize_average_metagenomes(data, gStats, header, outdir):
     for clust, entry in data.items():
         tads = entry[4:]
         norms = []
-        for i, t in enumerate(tads):
-            normed = float(t) / avg_genome_tad[i]
+        for i, mtg in enumerate(smpl_order):
+            normed = float(tads[i]) / avg_genome_tad[mtg]
             norms.append(normed)
         # average the averages
         anatad = sum(norms) / len(norms)
@@ -347,7 +353,7 @@ def main():
 
     # PART 1
     print('01: Collecting Gene TADs and matching to PanCats.\n')
-    gene_tad_pancat, header = get_gene_tad_pancat(
+    gene_tad_pancat, header, smpl_order = get_gene_tad_pancat(
                                         args['TADgene_dir'],
                                         args['Genes_Clusters_PanCats'],
                                         outdir
@@ -363,6 +369,7 @@ def main():
                                         cluster_avgtad,
                                         args['Genome_Stats'],
                                         header,
+                                        smpl_order,
                                         outdir
                                         )
 
@@ -370,6 +377,7 @@ def main():
     print('04: Building Summary Plots ...\n\n')
     df = pd.read_csv(outfilename, sep='\t')
     _ = plot_cluster_data(df, outdir)
+
 
 if __name__ == "__main__":
     main()
