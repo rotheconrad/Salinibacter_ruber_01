@@ -62,15 +62,15 @@ def smpl_convert(smpl, x):
 #### have whatever name you would like.
     if x == 0:
         d = {
-            'E1_M13': 'Time-Zero',
-            'E1_M15': 'One-Week',
-            'E1_M16': 'One-Month'
+            'M13': 'Time-Zero',
+            'M15': 'One-Week',
+            'M16': 'One-Month'
             }
     elif x == 1:
         d = {
-            'Time-Zero': 'E1_M13',
-            'One-Week': 'E1_M15',
-            'One-Month': 'E1_M16'
+            'Time-Zero': 'M13',
+            'One-Week': 'M15',
+            'One-Month': 'M16'
             }
 #### The smpl needs to be taylored to the file name of the project #####
 
@@ -99,7 +99,7 @@ def gather_data(gtd):
 #### The smpl needs to be taylored to the file name of the project #####
 #### sample needs to match keys in smpl_convert function above.
             file_basename = X[0].split('/')[-1].split('_')
-            sample = '_'.join(file_basename[:2])
+            sample = file_basename[1]
             smpl = smpl_convert(sample, 0)
             genome = file_basename[7]
 #### The smpl needs to be taylored to the file name of the project #####

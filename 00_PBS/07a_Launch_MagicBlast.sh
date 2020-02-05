@@ -15,6 +15,7 @@ query_dir=$1
 db_dir=$2
 # output directory
 out_dir=$3
+prefix=$4
 
 # We will use the Group 1 genomes to launch the job array.
 db_array=(${db_dir}/*.fna)
@@ -24,12 +25,17 @@ db_number=`expr $db_count - 1`
 if [ ! -d ${out_dir} ]; then mkdir ${out_dir}; fi
 if [ ! -d 00_log ]; then mkdir 00_log; fi
 
-for f in ${query_dir}/*fastq
+for f in ${query_dir}/${prefix}_*fastq
   do
 	echo Running Magic Blast on metagenome `basename $f` against $db_count genomes
-	qsub -t 0-${db_number} -v query=${f},db_dir=${db_dir},out_dir=${out_dir} ${Script_Path}
+	ID=`basename $f | cut -d. -f1`
+	qsub -t 0-${db_number} -v ID=${ID},query=${f},db_dir=${db_dir},out_dir=${out_dir} ${Script_Path}
+
+	## If some jobs fail, rerun specific jobs
+	#qsub -t 88 -v ID=${ID},query=${f},db_dir=${db_dir},out_dir=${out_dir} ${Script_Path}
 done
 
 ## Run Log:
 ## bash 07a_Launch_MagicBlast.sh metagenome_dir Refgenome_dir output_dir
 ## bash 00_PBS/07a_Launch_MagicBlast.sh 00_Metagenome_ReadsTrimmed 01_Sruber_Group1_Genomes 07_MagicBlast_Metagenomes_to_Group1
+## bash 00_PBS/07a_Launch_MagicBlast.sh 00_Metagenome_ReadsTrimmed PGE_0001_S_ruber/03_FNA 07a_MagicBlast_Metagenomes_RandomGroup1

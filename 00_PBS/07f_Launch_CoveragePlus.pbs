@@ -1,0 +1,37 @@
+#/usr/bin/bash
+
+Script_Path=/gpfs/pace2/project/bio-konstantinidis/rconrad6/Salinibacter_Assemblies/00_PBS/07g_CoveragePlus.pbs
+
+mtg_dir=$1 # Directory with metagenome short reads used as MagicBlast Queries
+gnm_dir=$2 # Directory with the reference genomes used as MagicBlast databases (subjects)
+blst_dir=$3 # Directory with the best hit filtered tabular magic blast output
+pgn_dir=$4 # Directory containing the Prodigal gene predictions (Nucleotide or Amino Acid) for the reference genomes
+pident=$5 # percent identity for short read alignment cutoff
+tad=$6 # Truncated average depth value to calculate # set to 100 for no truncation
+out_dir=$7 # Directory to write output to
+prefix=$8
+
+blst_array=(${blst_dir}/${prefix}_*.blst)
+blst_count=${#blst_array[@]}
+blst_number=`expr $blst_count - 1`
+
+if [ ! -d ${out_dir} ]; then mkdir ${out_dir}; fi
+if [ ! -d ${out_dir}/ANIcontig ]; then mkdir ${out_dir}/ANIcontig; fi
+if [ ! -d ${out_dir}/ANIgene ]; then mkdir ${out_dir}/ANIgene; fi
+if [ ! -d ${out_dir}/TADcontig ]; then mkdir ${out_dir}/TADcontig; fi
+if [ ! -d ${out_dir}/TADgene ]; then mkdir ${out_dir}/TADgene; fi
+if [ ! -d ${out_dir}/GenomeByBp ]; then mkdir ${out_dir}/GenomeByBp; fi
+if [ ! -d ${out_dir}/GenomeSummary ]; then mkdir ${out_dir}/GenomeSummary; fi
+if [ ! -d 00_log ]; then mkdir 00_log; fi
+
+echo ${blst_array[@]} > ${out_dir}/file_list.txt
+
+echo Calculating Coverage Plus for $blst_count files.
+qsub -t 0-${blst_number}%100 -v mtgd=$1,rgd=$2,blstd=$3,prdgld=$4,pid=$5,tad=$6,outd=$7 ${Script_Path}
+
+## If some jobs fail, rerun specific jobs
+#qsub -t 204,205,206,207,208,209,210,211,212,213,214,215,216,217,218,219 -v mtgd=$1,rgd=$2,blstd=$3,prdgld=$4,pid=$5,tad=$6,outd=$7 ${Script_Path}
+
+## Run Log:
+## bash 00_PBS/07f_Launch_CoveragePlus.pbs metagenome_dir genome_dir blast_dir prodigal_dir pident tad out_dir
+## bash 00_PBS/07f_Launch_CoveragePlus.pbs 00_Metagenome_ReadsTrimmed PGE_0001_S_ruber/03_FNA 07a_MagicBlast_Metagenomes_RandomGroup1 PGE_0001_S_ruber/03_FNN 95 80 07d_CoveragePlus

@@ -102,7 +102,7 @@ def plot_pangenome_curve(
         horizontalalignment='center', transform=ax1.transAxes
         )
     ttext = (
-        f"Number of Genomes: {len(x)+1}  |  "
+        f"Number of Genomes: {len(x)}  |  "
         f"Number of Permutations: {prm}"
         )
     ax1.text(
@@ -251,8 +251,8 @@ def plot_pangenome_curve(
     ax2.yaxis.grid(which="both", color='#d9d9d9', linestyle='--', linewidth=1)
     ax2.minorticks_on()
     ax2.tick_params(labelsize=22)
-    ax2.set_xticks(range(0, len(x)+2, 10))
-    ax2.set_xlim(-1, len(x)+2)
+    ax2.set_xticks(range(0, len(x)+1, 10))
+    ax2.set_xlim(-1, len(x)+1)
     for spine in ax2.spines.values(): spine.set_linewidth(2)
     ax2.set_axisbelow(True)
 
@@ -305,7 +305,7 @@ def model_pangenome_curve(dfout, Column):
     # Initialize dictionary to store model results
     params = {} # PowerLawModel for Pangenome curve
     # Model the Pangenome curve using a Powerlaw function: Ps = κn^γ
-    print(f'\n\nFitting PowerLaw function to {Column}')
+    print('\n\nFitting PowerLaw function to {Column}')
     print('Using Power Law Function K*N^\u03B3 ...')
     PLM = PowerLawModel() # Initialize the model
     # Guess starting values from the data
@@ -335,8 +335,10 @@ def calculate_pangenome_curve(binary_matrix, prm, c, out):
             'Trial', 'n', 'n/N', 'Pangenome', 'CoreGenome',
             'GenomeSpecific', 'NewGenes', 'NewGeneRatio', 'GenomeLength'
             ]
-    # Initialize list to store new rows
-    data = []
+    # Initialize output data frame
+    dfout = pd.DataFrame(columns=colout)
+    # Initialize row counter for ouput dataframe
+    rowcount = 0
     # Set the total number of genomes to n
     N = df.shape[1]
     # Calculate the total number of genes per genome
@@ -355,19 +357,12 @@ def calculate_pangenome_curve(binary_matrix, prm, c, out):
         # Set convenient list of genome names (column names)
         genomes = dfrand.columns.tolist()
 
-        # Add first genome to dfprm
-        gnm = genomes[0]
-        dfprm[gnm] = dfrand[gnm]
-        # Start the pangenome count
-        pancurve = dfprm.sum(axis=1).values
-        panprev = (pancurve != 0).sum()
-
-        for n in range(1,N):
+        for n in range(N):
             # Then for each permutation we step through the columns
             # And calculate values for each genome addition.
 
             # Set new value for current number of genomes
-            nN = 1 / (n+1)
+            nN = 1/(n+1)
             # select current genome name from prm genomes list
             gnm = genomes[n]
             # add current genome column to dfprm to step the iteration
@@ -384,17 +379,21 @@ def calculate_pangenome_curve(binary_matrix, prm, c, out):
             # Grab genome length
             genlen = genes_per_genome[gnm]
             # Calculate new genes per genome / the number of genes in genome
-            ngenes = pan - panprev
-            nratio = ngenes / genlen * 100
-            panprev = pan
-
+            if n > 0:
+                ngenes = pan - panprev
+                nratio = ngenes / genlen * 100
+                panprev = pan
+            else:
+                ngenes = pan 
+                nratio = 100.00
+                panprev = pan
             # Define new row for dfout dataframe.
-            newrow = [j+1, n+1, nN, pan, core, gspec, ngenes, nratio, genlen]
-            # Add new row to data list
-            data.append(newrow)
-    # Convert data list to data frame
-    dfout = pd.DataFrame(data=data, columns=colout)
-    # Write Data Frame to file
+            z = [j+1, n+1, nN, pan, core, gspec, ngenes, nratio, genlen]
+            # Add new row to dfout dataframe
+            dfout.loc[rowcount] = z
+            # increment the rowcount
+            rowcount += 1
+
     dfout.to_csv(f'{out}_Pangenome_data.tsv', sep='\t')
 
     return dfout

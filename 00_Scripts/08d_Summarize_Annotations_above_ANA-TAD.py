@@ -58,10 +58,8 @@ def get_summaries(annoTAD, TAD_thld):
 
         for g in gn: # for each gene category in gn list calculation for total
 
-             # Select gene category
-            geneD = other[other[d].str.contains(g, case=False, regex=True)]
-            # Select remaining genes
-            other = other[~other[d].str.contains(g, case=False, regex=True)]
+            geneD = other[other[d].str.lower().str.contains(g)] # Select gene category
+            other = other[~other[d].str.lower().str.contains(g)] # Select remaining genes
 
             geneD_high = geneD[geneD['ANA-TAD'] >= TAD_thld] # High TAD genes
             geneD_low = geneD[geneD['ANA-TAD'] < TAD_thld] # Low TAD genes

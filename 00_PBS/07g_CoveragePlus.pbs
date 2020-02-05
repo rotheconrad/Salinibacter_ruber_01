@@ -1,0 +1,68 @@
+#PBS -N CovPlus
+#PBS -l nodes=1:ppn=1
+#PBS -l mem=5gb
+#PBS -l walltime=1:00:00
+#PBS -q iw-shared-6
+#PBS -o 00_log/07g_CovPlus_${outd}.out
+#PBS -e 00_log/07g_CovPlus_${outd}.err
+
+cd $PBS_O_WORKDIR
+
+CovPlus=/gpfs/pace2/project/bio-konstantinidis/rconrad6/Salinibacter_Assemblies/00_Scripts/07e_MagicBlast_CoveragePlus.py
+
+# Select Blast File
+blst_array=(`cat ${outd}/file_list.txt`)
+blst=${blst_array[$PBS_ARRAYID]}
+
+# Define Output prefix
+out=`basename $blst | cut -d. -f1`
+o=${outd}/${out}
+
+# Define metagenome file
+mtg=`echo $out | cut -d_ -f1-4`
+m=${mtgd}/${mtg}.fastq
+
+# Define Reference Genome File
+gnm=`echo $out | cut -d. -f1 | cut -d_ -f5-`
+g=${rgd}/${gnm}.fna
+
+# Define Prodigal Gene File
+p=${prdgld}/${gnm}.f??
+
+printf '\n\n'
+echo Blast File: $blst
+echo Output Dir: $outd
+echo Base Out: $out
+echo Out File: $o
+echo Base Mtg: $mtg
+echo Mtg File: $m
+echo Base Gnm: $gnm
+echo Gnm File: $g
+echo Prdgl File: $p
+printf '\n\n'
+
+if [ ! -s $o ]
+  then
+	python $CovPlus -m $m -g $g -b $blst -p $p -o $o -c $pid -d $tad
+fi
+
+if [ -s ${o}_genome.tsv ]
+  then
+
+	mv ${o}_genome.tsv ${outd}/GenomeSummary/${out}_genome.tsv
+	mv ${o}_genome_by_bp.tsv ${outd}/GenomeByBp/${out}_genome_by_bp.tsv
+	mv ${o}_gene_tad.tsv ${outd}/TADgene/${out}_gene_tad.tsv
+	mv ${o}_gene_ani.tsv ${outd}/ANIgene/${out}_gene_ani.tsv
+	mv ${o}_contig_tad.tsv ${outd}/TADcontig/${out}_contig_tad.tsv
+	mv ${o}_contig_ani.tsv ${outd}/ANIcontig/${out}_contig_ani.tsv
+
+fi
+
+## Check paths and names for moved output files
+echo ${outd}/GenomeSummary/${out}_genome.tsv
+echo ${outd}/GenomeByBp/${out}_genome_by_bp.tsv
+echo ${outd}/ANIcontig/${out}_gene_tad.tsv
+echo ${outd}/ANIgene/${out}_gene_ani.tsv
+echo ${outd}/TADcontig/${out}_contig_tad.tsv
+echo ${outd}/ANIcontig/${out}_contig_ani.tsv
+printf '\n\n'

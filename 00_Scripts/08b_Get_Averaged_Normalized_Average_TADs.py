@@ -92,7 +92,7 @@ def get_gene_tad_pancat(taddir, pancatfile, outdir):
 
     outfilename = outdir + '01_PanCats_TADs_byGene.tsv'
     header = '' # define semi global variable outside below local
-    smpl_order = []
+    smpl_order = [] # Keep metagenome samples in order.
 
     with open(pancatfile, 'r') as f, open(outfilename, 'w') as o:
         header = f.readline().rstrip().split('\t')
@@ -207,7 +207,7 @@ def normalize_average_metagenomes(data, gStats, header, smpl_order, outdir):
         # append new columns to data: mtgx-Norm, ANA-TAD
         for n in norms: entry.append(f'{n:.4f}')
         entry.append(f'{anatad:.4f}')
-        # populate dictionary with new volues {cluster: data}
+        # populate dictionary with new values {cluster: data}
         normalized[clust] = entry
 
     # Write new file for cluster ANATADs

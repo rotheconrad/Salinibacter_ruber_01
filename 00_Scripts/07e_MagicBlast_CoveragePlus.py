@@ -6,23 +6,30 @@ This tool takes the following input parameters:
 
     * Tabular Blast file containing results for 1 genome and 1 metagenome
     * Genome fasta file used as reference for blast search.
-    * Metagenome fasta file used as queries for blast search.
     * Prodigal fasta file of predicted gene nucleotide sequence:
-      Gene name format is xxx_GenomeID_Contig#_Gene# # start # end # xxx
+      Gene name format is xxx_xxx_xxx_xxx_Contig#_Gene# # start # end # x
       This script uses the start and end positions provided by prodigal
-      and the contig name/number to calculate the coverage by splitting
-      on the "_" delimiter and selecting [-2] for contig number and [-1]
-      for gene number which is the standard outut format for Prodigal.
+      and the contig name/number to calculate the coverage.
 
 This script returns the following files:
 
-    * 2 column tsv output of gene_name \t coverage
+    * 2 col tsv output of gene_name \t coverage
 
 This script requires the following packages:
 
     * argparse
     * collection.defaultdict
     * itertools
+
+This file can also be imported as a module and contains the follwing 
+functions:
+
+    * read_fasta - parses fasta file format into name, seq
+    * retrieve_gene_coverage - using gene position
+    * calc_genome_coverage - using genome length + tabblast file
+    * read_genome_lengths - reads genome length file returns dict
+    * operator - coordinates the other three functions
+    * main - the main function of the script
 
 -------------------------------------------
 Author :: Roth Conrad

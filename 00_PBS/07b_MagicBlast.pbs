@@ -2,9 +2,9 @@
 #PBS -l nodes=1:ppn=10
 #PBS -l mem=20gb
 #PBS -l walltime=2:00:00
-#PBS -q iw-shared-6
-#PBS -o 00_log/07b_magicblast_${out_dir}.out
-#PBS -e 00_log/07b_magicblast_${out_dir}.err
+#PBS -q microcluster #iw-shared-6
+#PBS -o 00_log/07b_magicblast_${ID}.out
+#PBS -e 00_log/07b_magicblast_${ID}.err
 
 cd $PBS_O_WORKDIR
 
@@ -24,21 +24,25 @@ echo 'query=' $query
 echo 'dbase=' $db
 echo 'out=' $out
 
-if [ ! -s $out ]
+if [ ! -s $out ] || [ ! -s $filtered_out ]
   then
 	magicblast -query $query -db $db -infmt fastq -num_threads 10 -no_unaligned -splice F -outfmt tabular -parse_deflines T -out $out
+  else
+	printf '\n\nComplete: Looks like MagicBlast already ran successfully for this metagenome / genome combo\n\n'
+
 fi
 
 if [ -s $out ] && [ ! -s $filtered_out ]
   then
 	printf '\n\nMagic Blast Complete. Filtering Results...\n\n'
-	python ${filter} -i ${out} -pml 0.9 -rl 70
+	shuf ${out} > ${out}.shuf
+	python ${filter} -i ${out}.shuf -pml 0.9 -rl 70
 fi
 
-if [ -s $filtered_out ]
+if [ -s $filtered_out ] && [ -s $out ]
   then
 	printf '\n\nResults Filtered. Removing unfiltered results...\n\n'
-	rm $out
+	rm $out ${out}.shuf
 fi
 
 # Other Flags available:

@@ -354,8 +354,8 @@ Step 3: Launch Magic Blast Array - includes Magic Blast Short Read Filter for re
 
 	# UnShaded
 	bash 00_PBS/07a_Launch_MagicBlast.sh 00_Metagenome_ReadsTrimmed PGE_0001_S_ruber/03_FNA 07b_MagicBlast_UnShaded E4
-	bash 00_PBS/07a_Launch_MagicBlast.sh 00_Metagenome_ReadsTrimmed PGE_0001_S_ruber/03_FNA 07b_MagicBlast_UnShaded E4_M16
 	
+
 	# Dilution
 	bash 00_PBS/07a_Launch_MagicBlast.sh 00_Metagenome_ReadsTrimmed PGE_0001_S_ruber/03_FNA 07c_MagicBlast_Dilution E6
 
@@ -377,15 +377,26 @@ Step 5: Calculate Coverage: 07e_MagicBlast_CoveragePlus.py
 	## the prodigal gene fasta files are were computer during the PGE: PGE_0001_S_ruber/03_FNN
 	## The tabular blast file names are underscore delimited with the first 4 positions indicating the metagenome and the second 4 positions indicating the reference genome or prodigal file.
 
+	# Control
 	bash 00_PBS/07f_Launch_CoveragePlus.pbs 00_Metagenome_ReadsTrimmed PGE_0001_S_ruber/03_FNA 07a_MagicBlast_Control PGE_0001_S_ruber/03_FNN 95 80 07a_CoveragePlus_Control E1
+
+	# UnShaded
 	bash 00_PBS/07f_Launch_CoveragePlus.pbs 00_Metagenome_ReadsTrimmed PGE_0001_S_ruber/03_FNA 07b_MagicBlast_UnShaded PGE_0001_S_ruber/03_FNN 95 80 07b_CoveragePlus_UnShaded E4
+
+	# Dilution
 	bash 00_PBS/07f_Launch_CoveragePlus.pbs 00_Metagenome_ReadsTrimmed PGE_0001_S_ruber/03_FNA 07c_MagicBlast_Dilution PGE_0001_S_ruber/03_FNN 95 80 07c_CoveragePlus_Dilution E6
 
 
 Step 6: Average Coverage/Abundance of genomes across samples.
+
+	# Control
 	python 00_Scripts/07h_Genome_Stats.py -gtd 07a_CoveragePlus_Control/GenomeSummary/ -out 07a_CoveragePlus_Control/07h_GenomeStats_Control
-	python 00_Scripts/07h_Genome_Stats.py -gtd 07b_CoveragePlus_Dilution/GenomeSummary/ -out 07b_CoveragePlus_Dilution/07h_GenomeStats_Dilution
-	python 00_Scripts/07h_Genome_Stats.py -gtd 07c_CoveragePlus_UnShaded/GenomeSummary/ -out 07c_CoveragePlus_UnShaded/07h_GenomeStats_UnShaded
+
+	# UnShaded
+	python 00_Scripts/07h_Genome_Stats.py -gtd 07b_CoveragePlus_UnShaded/GenomeSummary/ -out 07b_CoveragePlus_UnShaded/07h_GenomeStats_UnShaded
+
+	# Dilution
+	python 00_Scripts/07h_Genome_Stats.py -gtd 07c_CoveragePlus_Dilution/GenomeSummary/ -out 07c_CoveragePlus_Dilution/07h_GenomeStats_Dilution
 
 
 ########################################################
@@ -404,8 +415,8 @@ Then we need to run some scripts I wrote to combine these outputs.
 
 from: /gpfs/pace2/project/bio-konstantinidis/rconrad6/Salinibacter_Assemblies
 mkdir 08a_Gene_TAD_Annotation_PanCat_Control
-mkdir 08b_Gene_TAD_Annotation_PanCat_Dilution
-mkdir 08c_Gene_TAD_Annotation_PanCat_UnShaded
+mkdir 08b_Gene_TAD_Annotation_PanCat_UnShaded
+mkdir 08c_Gene_TAD_Annotation_PanCat_Dilution
 
 
 Step 00: Get genes, gene clusters, and pangenome category (PanCat) from PGE
@@ -427,25 +438,25 @@ Step 01: Get Averaged, Normalized Average TAD for each gene cluster (4 steps in 
 	3. Average the averaged normalized TAD of each gene cluster across samples.
 
 	# Control
-	python 00_Scripts/08b_Get_Averaged_Normalized_Average_TADs.py -t 07d_CoveragePlus_Control/TADgene/ -g 08a_Gene_TAD_Annotation_PanCat_Control/00_Genes_Clusters_PanCats.tsv -s 07d_CoveragePlus_Control/07h_GenomeStats.tsv -o 08a_Gene_TAD_Annotation_PanCat_Control/
-
-	# Dilution
-	python 00_Scripts/08b_Get_Averaged_Normalized_Average_TADs.py -t 07d_CoveragePlus_Dilution/TADgene/ -g 08a_Gene_TAD_Annotation_PanCat_Control/00_Genes_Clusters_PanCats.tsv -s 07d_CoveragePlus_Dilution/07h_GenomeStats.tsv -o 08b_Gene_TAD_Annotation_PanCat_Dilution/
+	python 00_Scripts/08b_Get_Averaged_Normalized_Average_TADs.py -t 07a_CoveragePlus_Control/TADgene/ -g 08a_Gene_TAD_Annotation_PanCat_Control/00_Genes_Clusters_PanCats.tsv -s 07a_CoveragePlus_Control/07h_GenomeStats_Control.tsv -o 08a_Gene_TAD_Annotation_PanCat_Control/
 
 	# UnShaded
-	python 00_Scripts/08b_Get_Averaged_Normalized_Average_TADs.py -t 07d_CoveragePlus_UnShaded/TADgene/ -g 08a_Gene_TAD_Annotation_PanCat_Control/00_Genes_Clusters_PanCats.tsv -s 07d_CoveragePlus_UnShaded/07h_GenomeStats_UnShaded.tsv -o 08c_Gene_TAD_Annotation_PanCat_UnShaded/
+	python 00_Scripts/08b_Get_Averaged_Normalized_Average_TADs.py -t 07b_CoveragePlus_UnShaded/TADgene/ -g 08a_Gene_TAD_Annotation_PanCat_Control/00_Genes_Clusters_PanCats.tsv -s 07b_CoveragePlus_UnShaded/07h_GenomeStats_UnShaded.tsv -o 08b_Gene_TAD_Annotation_PanCat_UnShaded/
+
+	# Dilution
+	python 00_Scripts/08b_Get_Averaged_Normalized_Average_TADs.py -t 07c_CoveragePlus_Dilution/TADgene/ -g 08a_Gene_TAD_Annotation_PanCat_Control/00_Genes_Clusters_PanCats.tsv -s 07c_CoveragePlus_Dilution/07h_GenomeStats_Dilution.tsv -o 08c_Gene_TAD_Annotation_PanCat_Dilution/
 
 
 Step 02: Match ANA-TAD to Gene Cluster Annotation
 
 	# Control
-	python 00_Scripts/08c_Match_ANA-TADs_toAnnotations.py -t 08_Gene_TAD_Annotation_PanCat/02_PanCats_ANATADs_byCluster.tsv -a 06_Annotations/04_ClstrRepSeq_Annotations_NoMatch.tsv -p 08_Gene_TAD_Annotation_PanCat/00_Genes_Clusters_PanCats.tsv -o 08_Gene_TAD_Annotation_PanCat/04_ClstrRepSeq_PanCat_ANATAD_Annotation.tsv
-
-	# Dilution
-	python 00_Scripts/08c_Match_ANA-TADs_toAnnotations.py -t 08b_Gene_TAD_Annotation_PanCat_Dilution/02_PanCats_ANATADs_byCluster.tsv -a 06_Annotations/04_ClstrRepSeq_Annotations_NoMatch.tsv -p 08a_Gene_TAD_Annotation_PanCat_Control/00_Genes_Clusters_PanCats.tsv -o 08b_Gene_TAD_Annotation_PanCat_Dilution/04_ClstrRepSeq_PanCat_ANATAD_Annotation.tsv
+	python 00_Scripts/08c_Match_ANA-TADs_toAnnotations.py -t 08a_Gene_TAD_Annotation_PanCat_Control/02_PanCats_ANATADs_byCluster.tsv -a 06_Annotations/04_ClstrRepSeq_Annotations_NoMatch.tsv -p 08a_Gene_TAD_Annotation_PanCat_Control/00_Genes_Clusters_PanCats.tsv -o 08a_Gene_TAD_Annotation_PanCat_Control/04_ClstrRepSeq_PanCat_ANATAD_Annotation.tsv
 
 	# UnShaded
-	python 00_Scripts/08c_Match_ANA-TADs_toAnnotations.py -t 08c_Gene_TAD_Annotation_PanCat_UnShaded/02_PanCats_ANATADs_byCluster.tsv -a 06_Annotations/04_ClstrRepSeq_Annotations_NoMatch.tsv -p 08a_Gene_TAD_Annotation_PanCat_Control/00_Genes_Clusters_PanCats.tsv -o 08c_Gene_TAD_Annotation_PanCat_UnShaded/04_ClstrRepSeq_PanCat_ANATAD_Annotation.tsv
+	python 00_Scripts/08c_Match_ANA-TADs_toAnnotations.py -t 08b_Gene_TAD_Annotation_PanCat_UnShaded/02_PanCats_ANATADs_byCluster.tsv -a 06_Annotations/04_ClstrRepSeq_Annotations_NoMatch.tsv -p 08a_Gene_TAD_Annotation_PanCat_Control/00_Genes_Clusters_PanCats.tsv -o 08b_Gene_TAD_Annotation_PanCat_UnShaded/04_ClstrRepSeq_PanCat_ANATAD_Annotation.tsv
+
+	# Dilution
+	python 00_Scripts/08c_Match_ANA-TADs_toAnnotations.py -t 08c_Gene_TAD_Annotation_PanCat_Dilution/02_PanCats_ANATADs_byCluster.tsv -a 06_Annotations/04_ClstrRepSeq_Annotations_NoMatch.tsv -p 08a_Gene_TAD_Annotation_PanCat_Control/00_Genes_Clusters_PanCats.tsv -o 08c_Gene_TAD_Annotation_PanCat_Dilution/04_ClstrRepSeq_PanCat_ANATAD_Annotation.tsv
 
 
 Step 03: Summarize Annotations by PanCat and Abundant Specific and Rare Genes
@@ -453,11 +464,11 @@ Step 03: Summarize Annotations by PanCat and Abundant Specific and Rare Genes
 	# Control
 	python 00_Scripts/08d_Summarize_Annotations_above_ANA-TAD.py -a 08a_Gene_TAD_Annotation_PanCat_Control/04_ClstrRepSeq_PanCat_ANATAD_Annotation.tsv -t 0.25 -o 08a_Gene_TAD_Annotation_PanCat_Control/05_ANA-TAD-0.25_Annotation_Summary
 
-	# Dilution
-	python 00_Scripts/08d_Summarize_Annotations_above_ANA-TAD.py -a 08b_Gene_TAD_Annotation_PanCat_Dilution/04_ClstrRepSeq_PanCat_ANATAD_Annotation.tsv -t 0.25 -o 08b_Gene_TAD_Annotation_PanCat_Dilution/05_ANA-TAD-0.25_Annotation_Summary
-
 	# UnShaded
-	python 00_Scripts/08d_Summarize_Annotations_above_ANA-TAD.py -a 08c_Gene_TAD_Annotation_PanCat_UnShaded/04_ClstrRepSeq_PanCat_ANATAD_Annotation.tsv -t 0.25 -o 08c_Gene_TAD_Annotation_PanCat_UnShaded/05_ANA-TAD-0.25_Annotation_Summary
+	python 00_Scripts/08d_Summarize_Annotations_above_ANA-TAD.py -a 08b_Gene_TAD_Annotation_PanCat_UnShaded/04_ClstrRepSeq_PanCat_ANATAD_Annotation.tsv -t 0.25 -o 08b_Gene_TAD_Annotation_PanCat_UnShaded/05_ANA-TAD-0.25_Annotation_Summary
+
+	# Dilution
+	python 00_Scripts/08d_Summarize_Annotations_above_ANA-TAD.py -a 08c_Gene_TAD_Annotation_PanCat_Dilution/04_ClstrRepSeq_PanCat_ANATAD_Annotation.tsv -t 0.25 -o 08c_Gene_TAD_Annotation_PanCat_Dilution/05_ANA-TAD-0.25_Annotation_Summary
 
 
 Alternate Step 01 for Dilution and Shaded - 

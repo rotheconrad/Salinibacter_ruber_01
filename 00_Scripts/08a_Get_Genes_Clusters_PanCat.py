@@ -74,7 +74,8 @@ def build_the_list(bnry, clstr, out):
     pan_category = get_category(bnry)
 
     with open(clstr, 'r') as f, open(out, 'w') as o:
-        o.write('Gene_Name\tCluster_Name\tPangenome_Category\tValue\n')
+        o.write('Gene_Name\tCluster_Name\tPangenome_Category\tn/N\n')
+        # n/N = number of genomes with gene in cluster / total genomes
 
         for l in f:
             if l.startswith('>'): cluster = '_'.join(l.rstrip()[1:].split(' '))
