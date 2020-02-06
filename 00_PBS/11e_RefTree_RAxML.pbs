@@ -1,0 +1,23 @@
+#PBS -N RefTree_RAxML
+#PBS -l nodes=1:ppn=2
+#PBS -l mem=10gb
+#PBS -l walltime=24:00:00
+#PBS -q microcluster
+#PBS -o 00_log/03_RefTree_RAxML.out
+#PBS -e 00_log/03_RefTree_RAxML.err
+
+cd $PBS_O_WORKDIR
+
+module load openmpi/1.8 raxml/8.0.19
+
+input_array=(${input_dir}/*.aln) 
+input=${input_array[$PBS_ARRAYID]}
+
+pre=`pwd`/${output_dir}
+out=`basename $input`.tree
+
+echo Input: $input
+echo OutDir: $pre
+echo Output: $out
+
+raxmlHPC-PTHREADS-SSE3 -s ${input} -n ${out} -w ${pre} -m GTRGAMMA -f a -N autoMRE -p 4564821 -T 2 -x 1235

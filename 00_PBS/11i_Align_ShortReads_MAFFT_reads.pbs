@@ -1,0 +1,25 @@
+#PBS -N 05_Align_ShortReads
+#PBS -l nodes=1:ppn=2
+#PBS -l mem=2gb
+#PBS -l walltime=12:00:00
+#PBS -q microcluster #iw-shared-6
+#PBS -o 00_log/05_Align_ShortReads/${sID}_MAFFT.out
+#PBS -e 00_log/05_Align_ShortReads/${sID}_MAFFT.err
+
+# module load mafft/7.245
+# I installed my own mafft locally using conda
+# conda install -c bioconda mafft
+
+cd $PBS_O_WORKDIR
+
+file_array=(${Short_Reads}/*.fasta)
+infile=${file_array[$PBS_ARRAYID]}
+fID=`basename $infile | cut -d. -f1`
+out=${Output_Dir}/${fID}_ShortReads.aln
+
+echo 'qID =' $qID
+echo 'query =' $query
+echo 'out =' $out
+
+
+mafft --nuc --thread 2 --reorder --adjustdirectionaccurately --keeplength --addfragments $infile $Ref_Aln > $out

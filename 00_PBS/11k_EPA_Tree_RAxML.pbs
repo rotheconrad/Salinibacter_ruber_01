@@ -1,0 +1,29 @@
+#PBS -N 06_EPA_Tree
+#PBS -l nodes=1:ppn=2
+#PBS -l mem=10gb
+#PBS -l walltime=72:00:00
+#PBS -q microcluster
+#PBS -o 00_log/06_EPA_Tree/${sID}.out
+#PBS -e 00_log/06_EPA_Tree/${sID}.err
+
+cd $PBS_O_WORKDIR
+
+module load openmpi/1.8 raxml/8.0.19
+
+input_array=(${ShortRead_Alns}/*.aln) 
+input=${input_array[$PBS_ARRAYID]}
+
+qID=`basename $input | cut -d. -f1`
+pre=`pwd`/${Output_Dir}
+out=${qID}.epa.tree
+
+echo Input Tree: $Ref_Tree
+echo Input: $input
+echo qID: $qID
+echo Output: $out
+echo OutDir: $pre
+
+raxmlHPC-PTHREADS-SSE3 -s ${input} -t ${Ref_Tree} -n ${out} -w ${pre} -m GTRGAMMA -f v -p 4564821 -T 2 -G 0.2
+
+# -t 1st_tree.nwk - used to pass in the original tree with full length sequences
+# -f v - selects short read placement algorithm onto original tree.
