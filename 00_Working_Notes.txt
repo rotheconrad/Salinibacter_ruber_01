@@ -321,11 +321,22 @@ Step 6: Add Un-annotated genes as NoMatch Hypotheticals
 
 from: /gpfs/pace2/project/bio-konstantinidis/rconrad6/Salinibacter_Assemblies
 
-Step 1: Get trimmed metagenome reads
+Step 1: Get trimmed metagenome reads and rename them:
+		################################################################################################################
+			Magic Blast cuts the query name at the first space character and reports this as the query ID.
+				Fastq files can be named as:
+				@D00468:261:HYTMHBCX2:1:1101:9119:31637 1:N:0:CAGAGAGG+ACTGCATA
+				@D00468:261:HYTMHBCX2:1:1101:9119:31637 2:N:0:CAGAGAGG+ACTGCATA
+			where the unique identifier can come after the space chacter.
+			Filtering for best hit and retrieving the fasta sequence becomes impossible once the unique identifier is lost.
+			Rename fastq files before running Magic Blast with fastq files.
+		################################################################################################################
 	## I have these already in Salinibacter_New_Metagenome directory.
 	## I used trimmomatic for adapter clipping and combined all reads 1P, 2P, 1U, and 2U
 	mkdir 00_Metagenome_ReadsTrimmed
 	cp /gpfs/pace2/project/bio-konstantinidis/rconrad6/Salinibacter_New_Metagenomes/00_ReadsTrimmed/E*combined.fastq 00_Metagenome_ReadsTrimmed/
+	cd 00_Metagenome_ReadsTrimmed/
+	for f in *.fastq; do id=`basename $f | cut -d. -f1`; qsub -v id=$id,input=$f ../00_PBS/07b_Rename_Fastq_Sequences.pbs; done
 
 Step 2: Build Magic Blast Databases for the 100 randomly selected Group 1 Genomes
 	## These genomes were selected as part of the pangenome analysi pipeline
@@ -355,7 +366,6 @@ Step 3: Launch Magic Blast Array - includes Magic Blast Short Read Filter for re
 	# UnShaded
 	bash 00_PBS/07a_Launch_MagicBlast.sh 00_Metagenome_ReadsTrimmed PGE_0001_S_ruber/03_FNA 07b_MagicBlast_UnShaded E4
 	
-
 	# Dilution
 	bash 00_PBS/07a_Launch_MagicBlast.sh 00_Metagenome_ReadsTrimmed PGE_0001_S_ruber/03_FNA 07c_MagicBlast_Dilution E6
 
@@ -471,9 +481,6 @@ Step 03: Summarize Annotations by PanCat and Abundant Specific and Rare Genes
 	python 00_Scripts/08d_Summarize_Annotations_above_ANA-TAD.py -a 08c_Gene_TAD_Annotation_PanCat_Dilution/04_ClstrRepSeq_PanCat_ANATAD_Annotation.tsv -t 0.25 -o 08c_Gene_TAD_Annotation_PanCat_Dilution/05_ANA-TAD-0.25_Annotation_Summary
 
 
-Alternate Step 01 for Dilution and Shaded - 
-
-
 ########################################################
 ########################################################
 ########################################################
@@ -586,6 +593,124 @@ mv 00_Summary/E_Compare_Pangenomes/07_Escherichia_coli_rarefaction_summary_stats
 ## Add Sruber file manually
 
 python 00_Scripts/08_PGE_Compare_Pangenomes_with_error.py -cd 00_Summary/E_Compare_Pangenomes/ -op 00_PangenomeComparison_A
+
+########################################################
+########################################################
+########################################################
+
+
+rpoB PieTrees:
+
+	Step 1: Identify the CD-HIT cluster annotated as rpoB.
+
+		This information is in the 08a_Gene_TAD_Annotation_PanCat_Control directory (or 06_Annotation) in the 04_ClstrRepSeq_PanCat_ANATAD_Annotation.tsv file (or 04_ClstrRepSeq_Annotation.tsv)
+
+		from: /gpfs/pace2/project/bio-konstantinidis/rconrad6/Salinibacter_Assemblies/08a_Gene_TAD_Annotation_PanCat_Control
+
+		# The long gene name for rpoB is RNA polymerase subunit beta
+		grep 'RNA polymerase subunit beta' 04_ClstrRepSeq_PanCat_ANATAD_Annotation.tsv
+		# This returns two matches
+		# looking at uniprot.org subunit beta' (D5HA36_SALRM) is rpoC
+		# DNA-directed RNA polymerase subunit beta (D5HA37_SALRM) is rpoB which is Cluster_188
+
+	Step 2: Retrieve fasta sequences for Cluster_188
+
+		# I wrote a python script to do this using the CD-HIT clstr file and the concatenated fasta file of all Salinibacter CDS that was input to CD-HIT to generate the clusters.
+		from: /gpfs/pace2/project/bio-konstantinidis/rconrad6/Salinibacter_Assemblies
+
+		mkdir 11_rpoB_PieTree
+		# my PGE scripts must have removed the 02_0001_S_ruber_Clustered_Genes.fnn concatenated CDS file. Remake it.
+		cat PGE_0001_S_ruber/03_FNN/* >> PGE_0001_S_ruber/02_0001_S_ruber_Clustered_Genes.fnn
+
+		# Now in the /gpfs/pace2/project/bio-konstantinidis/rconrad6/Salinibacter_Assemblies/PGE_0001_S_ruber directory we have the two files we need to retrieve nucleotide fasta sequence for any CD-HIT cluster.
+		# The two files are 02_0001_S_ruber_Clustered_Genes.fnn and 02_0001_S_ruber_Clustered_Genes.fnn.clstr
+		# Run the python script still from: /gpfs/pace2/project/bio-konstantinidis/rconrad6/Salinibacter_Assemblies
+
+		python 00_Scripts/11a_Pangenome_Get_Fasta_for_CD-HIT_clstr.py -c PGE_0001_S_ruber/02_0001_S_ruber_Clustered_Genes.fnn.clstr -f PGE_0001_S_ruber/02_0001_S_ruber_Clustered_Genes.fnn -n 188 -o 11_rpoB_PieTree/Sruber_All_rpoB_Cluster188.fasta
+
+		# This is a core gene cluster and contains 1 gene sequence for each of the 100 isolate draft genomes.
+		grep '>' 11_rpoB_PieTree/Sruber_All_rpoB_Cluster188.fasta
+
+	Step 3: Align rpoB sequences with Clustal Omega
+
+		from: /gpfs/pace2/project/bio-konstantinidis/rconrad6/Salinibacter_Assemblies/11_rpoB_PieTree
+		qsub -v id=rpoB,input=Sruber_All_rpoB_Cluster188.fasta,output=Sruber_All_rpoB_Cluster188.fasta.aln ../00_PBS/11c_Align_longSequences_ClustalOmega.pbs 
+
+	Step 4: Build a reference tree with the rpoB sequence alignment using RAxML
+
+		from: /gpfs/pace2/project/bio-konstantinidis/rconrad6/Salinibacter_Assemblies/11_rpoB_PieTree
+		qsub -v input=Sruber_All_rpoB_Cluster188.fasta.aln,id=rpoB ../00_PBS/11d_RefTree_RAxML.pbs
+
+	Step 5: Recruit short reads with MagicBlast, Fliter results, retrieve fasta sequence for short read blast matches
+
+		a. Blast and Magic Blast cut the query name at the first space character and report this as the query ID. Fastq files can be named as:
+			@D00468:261:HYTMHBCX2:1:1101:9119:31637 1:N:0:CAGAGAGG+ACTGCATA
+			@D00468:261:HYTMHBCX2:1:1101:9119:31637 2:N:0:CAGAGAGG+ACTGCATA
+			where the unique identifier can come after the space chacter.
+			Filtering for best hit and retrieving the fasta sequence becomes impossible once the unique identifier is lost.
+			Rename fastq files before running Magic Blast with fastq files if they have not been renamed already.
+
+		b. Make blast database of rpoB sequence fasta file
+			from: /gpfs/pace2/project/bio-konstantinidis/rconrad6/Salinibacter_Assemblies/11_rpoB_PieTree
+			makeblastdb -dbtype nucl -in Sruber_All_rpoB_Cluster188.fasta -out Sruber_All_rpoB_Cluster188.fasta -parse_seqids
+
+		c. Launch magic blast for each metagenome against rpoB sequences
+			# The PBS script also filters the blast output for besthit, percent match length of 0.9, and minimum read length of 70bp.
+			# In addition, it retrieves the short read fasta sequence matching the filtered blast output from the metagenome fastq files.
+
+			from: /gpfs/pace2/project/bio-konstantinidis/rconrad6/Salinibacter_Assemblies/
+			bash 00_PBS/11e_Recruit_ShortReads_Launch_MagicBlast.sh 00_Metagenome_ReadsTrimmed 11_rpoB_PieTree/Sruber_All_rpoB_Cluster188.fasta 11_rpoB_PieTree
+
+		d. Combine short reads for each treatment (ponds: Control, Dilution, UnShaded)
+			# Clean up files so far.
+			mkdir 00_RefTree
+			mv RAxML_* 00_RefTree/
+			mkdir 00_rpoB_Sequence
+			mv Sruber_All_rpoB_Cluster188.fasta* 00_rpoB_Sequence/
+			mkdir 00_ShortRead_Blast
+			mv *blst 00_ShortRead_Blast/
+			mkdir 00_ShortRead_Fasta
+			mv *fasta 00_ShortRead_Fasta/
+
+			# I appended the sample name E?_M? to the short read fasta sequence names when I filtered and retrieved them.
+			# Combine reads for each time series (E1, E4, E6)
+			for f in 00_ShortRead_Fasta/*; do n=`basename $f | cut -d_ -f1`; cat $f >> ${n}_Sruber_rpoB_ShortReads.fasta; done
+
+	Step 6: Add short read sequences to the reference tree alignment of rpoB sequences.
+
+		from: /gpfs/pace2/project/bio-konstantinidis/rconrad6/Salinibacter_Assemblies/
+		bash 00_PBS/11g_Align_ShortReads_Launch_MAFFT_reads.sh 11_rpoB_PieTree 11_rpoB_PieTree/00_rpoB_Sequence/Sruber_All_rpoB_Cluster188.fasta.aln 11_rpoB_PieTree
+
+	Step 7: Add short reads to reftree with RAxML Evolutionary Placement Algorithm (EPA)
+
+		bash 00_PBS/11i_EPA_Tree_Launch_RAxML.sh 11_rpoB_PieTree 11_rpoB_PieTree/00_RefTree/RAxML_bestTree.Sruber_All_rpoB_Cluster188.fasta.aln.tree 11_rpoB_PieTree
+
+	Step 8: Convert EPA Tree .jplace file for iTol
+
+        # For Pie Trees with multiple metagenomes in one tree choose an option besides -u to parse out the unique sample identifier from the short read names.
+
+
+
+        # Additionally use -m to included a metadate file with the sample name and a color option.
+
+        nano Jplace_Metadata.txt
+
+        name    color
+		M13     #7570b3
+		M15     #e7298a
+		M16     #66a61e
+
+        # When MAFFt reverse compliments reads during alignment it places and _R_ at the beginning of the read name
+        # This needs to be replaced for the pie read count to be correct
+        
+        for f in 06_EPA_Tree/*.jplace; do sed -i 's/_R_//g' $f; done
+
+
+
+		bash 00_PBS/11k_Convert_EPA_Tree_JPlace.sh 11_rpoB_PieTree 11_rpoB_PieTree
+
+	Step 9: Download from pace and upload .nwk file and itol files to itol
+
 
 ########################################################
 ########################################################
