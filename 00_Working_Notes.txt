@@ -559,7 +559,7 @@ Compare to Ecoli Annotations
 ########################################################
 ########################################################
 
-Update pangenome rarefaction curve with open/close model. remove intermediate pangenome categories.
+Updated pangenome rarefaction curve with open/close model. remove intermediate pangenome categories.
 
 python 00_Scripts/10b_Pangenome_Calculate_Model_Plot.py -m Sruber_Clstr_binary.tsv -n Salinibacter_ruber_Group_1 -c 0.9 -o Sruber -y 20000 -s 2000 -p 1000
 
@@ -689,7 +689,10 @@ rpoB PieTrees:
 
         # For Pie Trees with multiple metagenomes in one tree choose an option besides -u to parse out the unique sample identifier from the short read names.
 
-
+        # Dirty rename reads to work with JPlace.to_iToL.rb script and metadata
+        for f in *.jplace; do sed -i -r 's/(E.)_(M1.)_/\2-\1_/g' $f; done
+        for f in *nwk; do sed -i 's/S_ruber_randomG_//g' $f; done
+        for f in *.jplace; do sed -i 's/S_ruber_randomG_//g' $f; done
 
         # Additionally use -m to included a metadate file with the sample name and a color option.
 
@@ -711,21 +714,72 @@ rpoB PieTrees:
 
 	Step 9: Download from pace and upload .nwk file and itol files to itol
 
+	Step 10: Check the work.
+
+		EPA read placement Pie Values for most abundant isolate don't agree with genome specific coverage values for most abundant isolate
+		Check the blast file results from 00_ShortRead_Blast - these were the reads selected for the alignment. Lets see who blast matched them with.
+		The blast matches have been shuffled, and filtered for best hit, read length of 70 and percent match length of 0.9
+
+		for f in *blst; do n=`basename $f | cut -d. -f1`; awk -F '\t' '{print $2}' $f | sort | uniq -c > ${n}.uniq; done
 
 ########################################################
 ########################################################
 ########################################################
 
-Deep dive into contigs and genes
-	## I still need to do this.
+Contig fishing for selected isolate contigs containing genes of interest in the metagenomes
+
+mkdir 12_Contig_Fishing
+
+	Step 1: Grab contig fasta sequence.
+		python 00_Scripts/11a_Pangenome_Get_Fasta_for_CD-HIT_clstr.py -c PGE_0001_S_ruber/02_0001_S_ruber_Clustered_Genes.fnn.clstr -f PGE_0001_S_ruber/02_0001_S_ruber_Clustered_Genes.fnn -n 4220 -o 12_Contig_Fishing/Cluster_4220_G0057_238_1.fa
+
+		python 00_Scripts/11a_Pangenome_Get_Fasta_for_CD-HIT_clstr.py -c PGE_0001_S_ruber/02_0001_S_ruber_Clustered_Genes.fnn.clstr -f PGE_0001_S_ruber/02_0001_S_ruber_Clustered_Genes.fnn -n 6318 -o 12_Contig_Fishing/Cluster_6318_G0057_162_7.fa
+
+		python 00_Scripts/11a_Pangenome_Get_Fasta_for_CD-HIT_clstr.py -c PGE_0001_S_ruber/02_0001_S_ruber_Clustered_Genes.fnn.clstr -f PGE_0001_S_ruber/02_0001_S_ruber_Clustered_Genes.fnn -n 5773 -o 12_Contig_Fishing/Cluster_5773_G0057_111_3.fa
+
+		python 00_Scripts/11a_Pangenome_Get_Fasta_for_CD-HIT_clstr.py -c PGE_0001_S_ruber/02_0001_S_ruber_Clustered_Genes.fnn.clstr -f PGE_0001_S_ruber/02_0001_S_ruber_Clustered_Genes.fnn -n 3814 -o 12_Contig_Fishing/Cluster_3814_G0057_238_2.fa
+
+		python 00_Scripts/11a_Pangenome_Get_Fasta_for_CD-HIT_clstr.py -c PGE_0001_S_ruber/02_0001_S_ruber_Clustered_Genes.fnn.clstr -f PGE_0001_S_ruber/02_0001_S_ruber_Clustered_Genes.fnn -n 9138 -o 12_Contig_Fishing/Cluster_9138_G0057_111_1.fa
+
+		python 00_Scripts/11a_Pangenome_Get_Fasta_for_CD-HIT_clstr.py -c PGE_0001_S_ruber/02_0001_S_ruber_Clustered_Genes.fnn.clstr -f PGE_0001_S_ruber/02_0001_S_ruber_Clustered_Genes.fnn -n 11579 -o 12_Contig_Fishing/Cluster_11579_G0057_111_4.fa
+
+		python 00_Scripts/11a_Pangenome_Get_Fasta_for_CD-HIT_clstr.py -c PGE_0001_S_ruber/02_0001_S_ruber_Clustered_Genes.fnn.clstr -f PGE_0001_S_ruber/02_0001_S_ruber_Clustered_Genes.fnn -n 5498 -o 12_Contig_Fishing/Cluster_5498_G0057_162_4.fa
+
+	Step 2: Concatenate
+		mkdir 00_Select_Contigs
+		cat Cluster_* >> 00_Select_Contigs/Abundant_Genome_Specific_G0057.fasta
+		rm *fa
+
+	Step 3: Build Blast Database
+		cd 00_Select_Contigs
+		makeblastdb -dbtype nucl -in Abundant_Genome_Specific_G0057.fasta
+		cd ..
+
+	Step 4: Get assembled contigs from metagenomes
+		mkdir 01_Assembled_Metagenomes
+		from: /gpfs/pace2/project/bio-konstantinidis/rconrad6/Salinibacter_New_Metagenomes/01_SPAdes_Assemblies_Attmpt2
+		for f in E*/contigs.fasta; do n=`echo $f | cut -d/ -f1`; cp $f ../../Salinibacter_Assemblies/12_Contig_Fishing/01_Assembled_Metagenomes/${n}_contigs.fna; done
+
+	Step 5: Blast
+		bash ../00_PBS/12a_Launch_Select_Contig_Blast.sh 01_Assembled_Metagenomes fna 02_Blast_Results 00_Select_Contigs/Abundant_Genome_Specific_G0057.fasta 70
+		rm 12_Blast_query_list_02_Blast_Results.txt
+
+	Step 6: Filter Blast
+		for f in 02_Blast_Results/*.blast; do python ../00_Scripts/05c_Blast_Check_Filter.py -b $f -a 300 -p 70; done
+		cat 02_Blast_Results/*blst >> HighQuality_Matches.tsv
+
+Select Isolates: 57, 53
+
+########################################################
+########################################################
+########################################################
 
 
-* Update / Rerun 08d once annotation gene list is finalized
 
 
-
-
-
+########################################################
+########################################################
+########################################################
 
 
 
@@ -735,7 +789,9 @@ python MagicBlast02b_CoveragePlus.py -m ../00_Metagenome_ReadsTrimmed/E1_M15_S4_
 python MagicBlast02a_Coverage.py -m ../00_Metagenome_ReadsTrimmed/E1_M15_S4_combined.fastq -g ../PGE_0001_S_ruber/03_FNA/S_ruber_randomG_0001.fna -b ../07a_MagicBlast_Metagenomes_RandomGroup1/E1_M15_S4_combined_S_ruber_randomG_0001.fltrdBstHts.blst -c 95 -d 80 -o coverage
 
 
-
+########################################################
+########################################################
+########################################################
 
 
 
