@@ -175,10 +175,10 @@ def plot_gene_changes(
     ax.tick_params(axis='x', labelrotation=0)
     # set grid style
     ax.yaxis.grid(
-        which="minor", color='#f0f0f0', linestyle='--', linewidth=2.5
+        which="minor", color='#f0f0f0', linestyle='--', linewidth=1.5
         )
     ax.yaxis.grid(
-        which="major", color='#d9d9d9', linestyle='--', linewidth=3
+        which="major", color='#d9d9d9', linestyle='--', linewidth=2
         )
     ax.set_axisbelow(True)
 

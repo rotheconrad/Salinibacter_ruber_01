@@ -481,6 +481,34 @@ Step 03: Summarize Annotations by PanCat and Abundant Specific and Rare Genes
 	python 00_Scripts/08d_Summarize_Annotations_above_ANA-TAD.py -a 08c_Gene_TAD_Annotation_PanCat_Dilution/04_ClstrRepSeq_PanCat_ANATAD_Annotation.tsv -t 0.25 -o 08c_Gene_TAD_Annotation_PanCat_Dilution/05_ANA-TAD-0.25_Annotation_Summary
 
 
+Step 04: Plot Gene coverage Trends across metagenome time points and differences between Genome Specific, Rare, and Core Genes.
+
+	- Open 04_ClstrRepSeq_PanCat_ANATAD_Annotation.tsv in Microsoft Excel and explore the *-NORM columns to look for trends.
+	- Select gene clusters to highlight and prepare list for plotting script for each metagenome series.
+	- make file of selected genen clusters and colors for metagenome series for each PanCat
+	-> ClustersToPlot_Control_Specifi.txt, ClustersToPlot_UnShaded.txt, ClustersToPlot_Dilution_Specific.txt, ClustersToPlot_Dilution_Core.txt, ClustersToPlot_Dilution_Rare.txt
+	- Script takes 2 files - a metagenome order file and a file of cluster numbers and colors for the selected gene clusters. -> MetagenomeOrder.txt
+	- mkdir 08e_GeneChangeAcrossMetagenomes
+	- put the 4 text files from above into this new directeory
+	- cd 08e_GeneChangeAcrossMetagenomes
+
+	# Control
+	python ../00_Scripts/08e_PlotGeneChanges.py -i ../08a_Gene_TAD_Annotation_PanCat_Control/04_ClstrRepSeq_PanCat_ANATAD_Annotation.tsv -c ClustersToPlot_Control_Specific.txt -m MetagenomeOrder.txt -p Specific -o Control_Specific
+	python ../00_Scripts/08e_PlotGeneChanges.py -i ../08a_Gene_TAD_Annotation_PanCat_Control/04_ClstrRepSeq_PanCat_ANATAD_Annotation.tsv -c ClustersToPlot_Control_Rare.txt -m MetagenomeOrder.txt -p Rare -o Control_Rare
+	python ../00_Scripts/08e_PlotGeneChanges.py -i ../08a_Gene_TAD_Annotation_PanCat_Control/04_ClstrRepSeq_PanCat_ANATAD_Annotation.tsv -c ClustersToPlot_Control_Core.txt -m MetagenomeOrder.txt -p Core -o Control_Core	
+
+	# UnShaded
+	python ../00_Scripts/08e_PlotGeneChanges.py -i ../08b_Gene_TAD_Annotation_PanCat_UnShaded/04_ClstrRepSeq_PanCat_ANATAD_Annotation.tsv -c ClustersToPlot_UnShaded_Specific.txt -m MetagenomeOrder.txt -p Specific -o UnShaded_Specific
+	python ../00_Scripts/08e_PlotGeneChanges.py -i ../08b_Gene_TAD_Annotation_PanCat_UnShaded/04_ClstrRepSeq_PanCat_ANATAD_Annotation.tsv -c ClustersToPlot_UnShaded_Rare.txt -m MetagenomeOrder.txt -p Rare -o UnShaded_Rare
+	python ../00_Scripts/08e_PlotGeneChanges.py -i ../08b_Gene_TAD_Annotation_PanCat_UnShaded/04_ClstrRepSeq_PanCat_ANATAD_Annotation.tsv -c ClustersToPlot_UnShaded_Core.txt -m MetagenomeOrder.txt -p Core -o UnShaded_Core
+
+	# Dilution
+	python ../00_Scripts/08e_PlotGeneChanges.py -i ../08c_Gene_TAD_Annotation_PanCat_Dilution/04_ClstrRepSeq_PanCat_ANATAD_Annotation.tsv -c ClustersToPlot_Dilution_Specific.txt -m MetagenomeOrder.txt -p Specific -o Dilution_Specific
+	python ../00_Scripts/08e_PlotGeneChanges.py -i ../08c_Gene_TAD_Annotation_PanCat_Dilution/04_ClstrRepSeq_PanCat_ANATAD_Annotation.tsv -c ClustersToPlot_Dilution_Rare.txt -m MetagenomeOrder.txt -p Rare -o Dilution_Rare
+	python ../00_Scripts/08e_PlotGeneChanges.py -i ../08c_Gene_TAD_Annotation_PanCat_Dilution/04_ClstrRepSeq_PanCat_ANATAD_Annotation.tsv -c ClustersToPlot_Dilution_Core.txt -m MetagenomeOrder.txt -p Core -o Dilution_Core
+
+
+
 ########################################################
 ########################################################
 ########################################################
@@ -761,14 +789,23 @@ mkdir 12_Contig_Fishing
 		for f in E*/contigs.fasta; do n=`echo $f | cut -d/ -f1`; cp $f ../../Salinibacter_Assemblies/12_Contig_Fishing/01_Assembled_Metagenomes/${n}_contigs.fna; done
 
 	Step 5: Blast
-		bash ../00_PBS/12a_Launch_Select_Contig_Blast.sh 01_Assembled_Metagenomes fna 02_Blast_Results 00_Select_Contigs/Abundant_Genome_Specific_G0057.fasta 70
-		rm 12_Blast_query_list_02_Blast_Results.txt
+		bash ../00_PBS/12a_Launch_Select_Contig_Blast.sh 01_Assembled_Metagenomes fna 02_Metagenome_Blast_Results 00_Select_Contigs/Abundant_Genome_Specific_G0057.fasta 70
+		rm 12_Blast_query_list_02_Metagenome_Blast_Results.txt
+
+		bash ../00_PBS/12a_Launch_Select_Contig_Blast.sh ../01_Sruber_Group1_Genomes fna 03_DraftGenome_Blast_Results 00_Select_Contigs/Abundant_Genome_Specific_G0057.fasta 70
+		rm 12_Blast_query_list_03_DraftGenome_Blast_Results.txt
 
 	Step 6: Filter Blast
 		for f in 02_Blast_Results/*.blast; do python ../00_Scripts/05c_Blast_Check_Filter.py -b $f -a 300 -p 70; done
-		cat 02_Blast_Results/*blst >> HighQuality_Matches.tsv
+		cat 02_Metagenome_Blast_Results/*blst >> 02_Metagenome_HighQuality_Matches.tsv
 
-Select Isolates: 57, 53
+	Step 7: Look at other annotation on contig
+		I've identified 7 peak dilution genes that are from the same genome on 3 contigs.
+		Place the 3 contig names in a file. Grab other genes annotation from this contig.
+		from: /Users/rothconrad/Downloads/ReSearch/00_New_Salinibacter/01_Dilution
+		while read contig; do grep $contig E6_Dilution_Annotation_Abundance.tsv; done < 3_Contigs_Contain_7_Specific_Dilution_Peak_Genes.txt 
+
+
 
 ########################################################
 ########################################################
