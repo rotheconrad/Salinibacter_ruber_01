@@ -89,24 +89,31 @@ def gather_tad(file):
     """ process data from the TAD file into dict. returns dict """
 
     d = {}
+    tpoint = []
 
     with open(file, 'r') as f:
-        _ = f.readline()
+        header = f.readline().rstrip().split('\t')
+        tpoints = '\t'.join(header[7:10])
         for l in f:
             X = l.rstrip().split('\t')
             clstr = X[0]
-            data = f'{X[0]}\t{X[1]}\t{X[2]}\t{X[3]}\t{X[-1]}'
+            partA = '\t'.join(X[:4])
+            partB = '\t'.join(X[7:])
+            data = f'{partA}\t{partB}'
+            #data = f'{X[0]}\t{X[1]}\t{X[2]}\t{X[3]}\t{X[7]}\t{X[8]}\t{X[9]}\t{X[-1]}'
             d[clstr] = data
 
-    return d
+    return d, tpoints
 
 
 def combine_results(tad, ano, gcp, out):
     """ preocesses files and outputs combined results to tsv """
 
     # Parse the input files
-    # {Cluster_Name: [Cluster, PanCat, n/N, GeneLen, ANA-TAD]}
-    tad_dict = gather_tad(tad)
+    # The metagenome timepoints are not in order from the previous files.
+    # Label with tA, tB, and tC. User can specify order in the plot.
+    # {Cluster_Name: [Cluster, PanCat, n/N, GeneLen, tA, tB, tC, ANA-TAD]}
+    tad_dict, tpoints = gather_tad(tad)
     # {RepSeqName: Cluster_Name}
     gcp_dict = gather_gcp(gcp) # {RepSeqName: data}
     # {RepSeqName: [U-ID,TrEMBL,T-KO,U-ID,SwissProt,S-KO,KEGG,K-KO]}
@@ -114,8 +121,8 @@ def combine_results(tad, ano, gcp, out):
 
     # Set the output header
     header = (
-        'RepSeqName\tCluster\tPanCat\tn/N\tAvgLen\tANA-TAD\tU-ID\t'
-        'TrEMBL\tT-KO\tKEGG\tK-KO\tU-ID\tSwissProt\tS-KO'
+        f'RepSeqName\tCluster\tPanCat\tn/N\tAvgLen\t{tpoints}\tANA-TAD\t'
+        'U-ID\tTrEMBL\tT-KO\tKEGG\tK-KO\tU-ID\tSwissProt\tS-KO'
          )
 
     # Write new file
