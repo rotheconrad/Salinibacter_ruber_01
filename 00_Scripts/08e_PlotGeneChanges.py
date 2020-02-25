@@ -124,7 +124,8 @@ def plot_gene_changes(
                     morder,
                     xlabels,
                     pancat,
-                    outfile
+                    outfile,
+                    ptitle
                     ):
     ''' This function builds a line plot gene change across metagenomes'''
 
@@ -137,7 +138,7 @@ def plot_gene_changes(
 
     # plot title, labels, and text
     ax.set_title(
-        'Gene Change Across Metagenomes',
+        ' '.join(ptitle),
         color=H1, fontsize=50, y=1.02
         )
     ax.set_ylabel('Gene TAD / Avg Genome TAD', fontsize=28)
@@ -248,6 +249,14 @@ def main():
         type=str,
         required=True
         )
+    parser.add_argument(
+        '-t', '--plot_title',
+        help='What do you want the plot title to be?',
+        nargs='+',
+        metavar='',
+        type=str,
+        required=True
+        )
     args=vars(parser.parse_args())
 
     # Do the damn thing!
@@ -257,6 +266,7 @@ def main():
     infile = args['input_file']
     pancat = args['pangenome_category']
     outfile = args['output_file_name']
+    ptitle = args['plot_title']
 
     # Load files and parse data for the plot!
     clusters, colors = read_cluster_file(args['clusters_to_plot'])
@@ -265,7 +275,7 @@ def main():
                                                             infile,
                                                             clusters,
                                                             morder,
-                                                            pancat
+                                                            pancat,
                                                             )
 
 
@@ -278,7 +288,8 @@ def main():
                     morder,
                     xlabels,
                     pancat,
-                    outfile
+                    outfile,
+                    ptitle
                     )
 
     print(

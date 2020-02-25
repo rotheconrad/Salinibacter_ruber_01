@@ -503,7 +503,7 @@ Step 04: Plot Gene coverage Trends across metagenome time points and differences
 	python ../00_Scripts/08e_PlotGeneChanges.py -i ../08b_Gene_TAD_Annotation_PanCat_UnShaded/04_ClstrRepSeq_PanCat_ANATAD_Annotation.tsv -c ClustersToPlot_UnShaded_Core.txt -m MetagenomeOrder.txt -p Core -o UnShaded_Core
 
 	# Dilution
-	python ../00_Scripts/08e_PlotGeneChanges.py -i ../08c_Gene_TAD_Annotation_PanCat_Dilution/04_ClstrRepSeq_PanCat_ANATAD_Annotation.tsv -c ClustersToPlot_Dilution_Specific.txt -m MetagenomeOrder.txt -p Specific -o Dilution_Specific
+	python ../00_Scripts/08e_PlotGeneChanges.py -i ../08c_Gene_TAD_Annotation_PanCat_Dilution/04_ClstrRepSeq_PanCat_ANATAD_Annotation.tsv -c ClustersToPlot_Dilution_Specific.txt -m MetagenomeOrder.txt -p Specific -o Dilution_Specific -t Dilution Series Specific Gene Change
 	python ../00_Scripts/08e_PlotGeneChanges.py -i ../08c_Gene_TAD_Annotation_PanCat_Dilution/04_ClstrRepSeq_PanCat_ANATAD_Annotation.tsv -c ClustersToPlot_Dilution_Rare.txt -m MetagenomeOrder.txt -p Rare -o Dilution_Rare
 	python ../00_Scripts/08e_PlotGeneChanges.py -i ../08c_Gene_TAD_Annotation_PanCat_Dilution/04_ClstrRepSeq_PanCat_ANATAD_Annotation.tsv -c ClustersToPlot_Dilution_Core.txt -m MetagenomeOrder.txt -p Core -o Dilution_Core
 
