@@ -493,19 +493,19 @@ Step 04: Plot Gene coverage Trends across metagenome time points and differences
 	- cd 08e_GeneChangeAcrossMetagenomes
 
 	# Control
-	python ../00_Scripts/08e_PlotGeneChanges.py -i ../08a_Gene_TAD_Annotation_PanCat_Control/04_ClstrRepSeq_PanCat_ANATAD_Annotation.tsv -c ClustersToPlot_Control_Specific.txt -m MetagenomeOrder.txt -p Specific -o Control_Specific
-	python ../00_Scripts/08e_PlotGeneChanges.py -i ../08a_Gene_TAD_Annotation_PanCat_Control/04_ClstrRepSeq_PanCat_ANATAD_Annotation.tsv -c ClustersToPlot_Control_Rare.txt -m MetagenomeOrder.txt -p Rare -o Control_Rare
-	python ../00_Scripts/08e_PlotGeneChanges.py -i ../08a_Gene_TAD_Annotation_PanCat_Control/04_ClstrRepSeq_PanCat_ANATAD_Annotation.tsv -c ClustersToPlot_Control_Core.txt -m MetagenomeOrder.txt -p Core -o Control_Core	
+	python ../00_Scripts/08e_PlotGeneChanges.py -i ../08a_Gene_TAD_Annotation_PanCat_Control/04_ClstrRepSeq_PanCat_ANATAD_Annotation.tsv -c ClustersToPlot_Specific.txt -m MetagenomeOrder.txt -p Specific -o Control_Specific -t Control Series Specific Gene Change -y 9
+	python ../00_Scripts/08e_PlotGeneChanges.py -i ../08a_Gene_TAD_Annotation_PanCat_Control/04_ClstrRepSeq_PanCat_ANATAD_Annotation.tsv -c ClustersToPlot_Rare.txt -m MetagenomeOrder.txt -p Rare -o Control_Rare -t Control Series Rare Gene Change -y 9
+	python ../00_Scripts/08e_PlotGeneChanges.py -i ../08a_Gene_TAD_Annotation_PanCat_Control/04_ClstrRepSeq_PanCat_ANATAD_Annotation.tsv -c ClustersToPlot_Core.txt -m MetagenomeOrder.txt -p Core -o Control_Core	 -t Control Series Core Gene Change -y 9
 
 	# UnShaded
-	python ../00_Scripts/08e_PlotGeneChanges.py -i ../08b_Gene_TAD_Annotation_PanCat_UnShaded/04_ClstrRepSeq_PanCat_ANATAD_Annotation.tsv -c ClustersToPlot_UnShaded_Specific.txt -m MetagenomeOrder.txt -p Specific -o UnShaded_Specific
-	python ../00_Scripts/08e_PlotGeneChanges.py -i ../08b_Gene_TAD_Annotation_PanCat_UnShaded/04_ClstrRepSeq_PanCat_ANATAD_Annotation.tsv -c ClustersToPlot_UnShaded_Rare.txt -m MetagenomeOrder.txt -p Rare -o UnShaded_Rare
-	python ../00_Scripts/08e_PlotGeneChanges.py -i ../08b_Gene_TAD_Annotation_PanCat_UnShaded/04_ClstrRepSeq_PanCat_ANATAD_Annotation.tsv -c ClustersToPlot_UnShaded_Core.txt -m MetagenomeOrder.txt -p Core -o UnShaded_Core
+	python ../00_Scripts/08e_PlotGeneChanges.py -i ../08b_Gene_TAD_Annotation_PanCat_UnShaded/04_ClstrRepSeq_PanCat_ANATAD_Annotation.tsv -c ClustersToPlot_Specific.txt -m MetagenomeOrder.txt -p Specific -o UnShaded_Specific -t UnShade Series Specific Gene Change -y 9
+	python ../00_Scripts/08e_PlotGeneChanges.py -i ../08b_Gene_TAD_Annotation_PanCat_UnShaded/04_ClstrRepSeq_PanCat_ANATAD_Annotation.tsv -c ClustersToPlot_Rare.txt -m MetagenomeOrder.txt -p Rare -o UnShaded_Rare -t UnShade Series Rare Gene Change -y 9
+	python ../00_Scripts/08e_PlotGeneChanges.py -i ../08b_Gene_TAD_Annotation_PanCat_UnShaded/04_ClstrRepSeq_PanCat_ANATAD_Annotation.tsv -c ClustersToPlot_Core.txt -m MetagenomeOrder.txt -p Core -o UnShaded_Core -t UnShaded Series Core Gene Change -y 9
 
 	# Dilution
-	python ../00_Scripts/08e_PlotGeneChanges.py -i ../08c_Gene_TAD_Annotation_PanCat_Dilution/04_ClstrRepSeq_PanCat_ANATAD_Annotation.tsv -c ClustersToPlot_Dilution_Specific.txt -m MetagenomeOrder.txt -p Specific -o Dilution_Specific -t Dilution Series Specific Gene Change
-	python ../00_Scripts/08e_PlotGeneChanges.py -i ../08c_Gene_TAD_Annotation_PanCat_Dilution/04_ClstrRepSeq_PanCat_ANATAD_Annotation.tsv -c ClustersToPlot_Dilution_Rare.txt -m MetagenomeOrder.txt -p Rare -o Dilution_Rare
-	python ../00_Scripts/08e_PlotGeneChanges.py -i ../08c_Gene_TAD_Annotation_PanCat_Dilution/04_ClstrRepSeq_PanCat_ANATAD_Annotation.tsv -c ClustersToPlot_Dilution_Core.txt -m MetagenomeOrder.txt -p Core -o Dilution_Core
+	python ../00_Scripts/08e_PlotGeneChanges.py -i ../08c_Gene_TAD_Annotation_PanCat_Dilution/04_ClstrRepSeq_PanCat_ANATAD_Annotation.tsv -c ClustersToPlot_Specific.txt -m MetagenomeOrder.txt -p Specific -o Dilution_Specific -t Dilution Series Specific Gene Change -y 9
+	python ../00_Scripts/08e_PlotGeneChanges.py -i ../08c_Gene_TAD_Annotation_PanCat_Dilution/04_ClstrRepSeq_PanCat_ANATAD_Annotation.tsv -c ClustersToPlot_Rare.txt -m MetagenomeOrder.txt -p Rare -o Dilution_Rare -t Dilution Series Rare Gene Change -y 9
+	python ../00_Scripts/08e_PlotGeneChanges.py -i ../08c_Gene_TAD_Annotation_PanCat_Dilution/04_ClstrRepSeq_PanCat_ANATAD_Annotation.tsv -c ClustersToPlot_Core.txt -m MetagenomeOrder.txt -p Core -o Dilution_Core -t Dilution Series Core Gene Change -y 9
 
 
 

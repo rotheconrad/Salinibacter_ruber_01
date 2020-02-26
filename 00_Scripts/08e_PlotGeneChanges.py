@@ -125,7 +125,8 @@ def plot_gene_changes(
                     xlabels,
                     pancat,
                     outfile,
-                    ptitle
+                    ptitle,
+                    ymax
                     ):
     ''' This function builds a line plot gene change across metagenomes'''
 
@@ -172,8 +173,9 @@ def plot_gene_changes(
 
     # set the axis parameters / style
     ax.minorticks_on()
-    ax.tick_params(axis='both', labelsize=28)
-    ax.tick_params(axis='x', labelrotation=0)
+    ax.set_yticks(range(0, ymax+1))
+    ax.tick_params(axis='both', labelsize=18)
+    ax.tick_params(axis='x', labelrotation=15)
     # set grid style
     ax.yaxis.grid(
         which="minor", color='#f0f0f0', linestyle='--', linewidth=1.5
@@ -191,7 +193,7 @@ def plot_gene_changes(
         markerscale=2,
         ncol=1,
         loc='center left',
-        bbox_to_anchor=(0.98, 0.5),
+        bbox_to_anchor=(1.05, 0.5),
         fancybox=True,
         shadow=True,
         fontsize=18
@@ -257,6 +259,13 @@ def main():
         type=str,
         required=True
         )
+    parser.add_argument(
+        '-y', '--yaxis_max',
+        help='Set max value of y-axis (eg: 9)',
+        metavar='',
+        type=int,
+        required=True
+        )
     args=vars(parser.parse_args())
 
     # Do the damn thing!
@@ -267,6 +276,7 @@ def main():
     pancat = args['pangenome_category']
     outfile = args['output_file_name']
     ptitle = args['plot_title']
+    ymax = args['yaxis_max']
 
     # Load files and parse data for the plot!
     clusters, colors = read_cluster_file(args['clusters_to_plot'])
@@ -289,7 +299,8 @@ def main():
                     xlabels,
                     pancat,
                     outfile,
-                    ptitle
+                    ptitle,
+                    ymax
                     )
 
     print(
