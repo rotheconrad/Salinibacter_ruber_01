@@ -56,7 +56,7 @@ qsub -t 49 -v sample_list=01_Sample_List.txt,data_dir=00_DataTrimmed,out_dir=01_
 
 # Filter and rename assemblies
 
-for f in */contigs.fasta; do n=`echo $f | cut -d_ -f1`; python ../00_Scripts/01_SPAdes_Assembly_Filter_Rename_Stats.py -i $f -o ${n}_Draft_Genome.fna -g $n -l 1000; done >> ../01_Sruber_SPAdes_Assembly_Stats.txt
+for f in */contigs.fasta; do n=`echo $f | cut -d_ -f1`; python ../00_Scripts/01_SPAdes_Assembly_Filter_Rename_Stats.py -i $f -o ${n}_Draft_Genome.fna -g $n -l 1000 -c 2; done >> ../01_Sruber_SPAdes_Assembly_Stats.txt
 
 
 ########################################################
@@ -372,7 +372,14 @@ Step 3: Launch Magic Blast Array - includes Magic Blast Short Read Filter for re
 
 Step 4: Build RecPlots for visual inspection
 	## RecPlot version 4 from: https://github.com/KGerhardt/Recplot_4
-	qsub -v magicblasts=07a_MagicBlast_Metagenomes_to_Group1,genomes=01_Sruber_Group1_Genomes,outdir=07b_RecPlot_RecLim 00_PBS/07d_RecPlot.pbs
+	## cd /gpfs/pace2/project/bio-konstantinidis/rconrad6/apps
+	## module load git
+	## git clone https://github.com/KGerhardt/Recplot_4.git
+	##
+	## Update Recplot_4
+	## cd /gpfs/pace2/project/bio-konstantinidis/rconrad6/apps/Recplot_4
+	## module load git
+	## git pull origin master
 
 	qsub -v magicblasts=07a_MagicBlast_Control,genomes=PGE_0001_S_ruber/03_FNA,outdir=07a_RecPlot_Control 00_PBS/07d_RecPlot.pbs
 	qsub -v magicblasts=07b_MagicBlast_UnShaded,genomes=PGE_0001_S_ruber/03_FNA,outdir=07b_RecPlot_UnShaded 00_PBS/07d_RecPlot.pbs
@@ -469,7 +476,7 @@ Step 02: Match ANA-TAD to Gene Cluster Annotation
 	python 00_Scripts/08c_Match_ANA-TADs_toAnnotations.py -t 08c_Gene_TAD_Annotation_PanCat_Dilution/02_PanCats_ANATADs_byCluster.tsv -a 06_Annotations/04_ClstrRepSeq_Annotations_NoMatch.tsv -p 08a_Gene_TAD_Annotation_PanCat_Control/00_Genes_Clusters_PanCats.tsv -o 08c_Gene_TAD_Annotation_PanCat_Dilution/04_ClstrRepSeq_PanCat_ANATAD_Annotation.tsv
 
 
-Step 03: Summarize Annotations by PanCat and Abundant Specific and Rare Genes
+Step 03: Summarize Annotations by PanCat and Abundant Specific and Rare Genes with a plot showing ANA-TAD Boxplots for each n/N
 
 	# Control
 	python 00_Scripts/08d_Summarize_Annotations_above_ANA-TAD.py -a 08a_Gene_TAD_Annotation_PanCat_Control/04_ClstrRepSeq_PanCat_ANATAD_Annotation.tsv -t 0.25 -o 08a_Gene_TAD_Annotation_PanCat_Control/05_ANA-TAD-0.25_Annotation_Summary
@@ -485,29 +492,30 @@ Step 04: Plot Gene coverage Trends across metagenome time points and differences
 
 	- Open 04_ClstrRepSeq_PanCat_ANATAD_Annotation.tsv in Microsoft Excel and explore the *-NORM columns to look for trends.
 	- Select gene clusters to highlight and prepare list for plotting script for each metagenome series.
-	- make file of selected genen clusters and colors for metagenome series for each PanCat
-	-> ClustersToPlot_Control_Specifi.txt, ClustersToPlot_UnShaded.txt, ClustersToPlot_Dilution_Specific.txt, ClustersToPlot_Dilution_Core.txt, ClustersToPlot_Dilution_Rare.txt
+	- make a file containing a comma separated list of "selected gene clusters", "color for plot" for each PanCat (Specific, Rare, Core)
+	-> ClustersToPlot_Specific.txt, ClustersToPlot_Core.txt, ClustersToPlot_Rare.txt
+
 	- Script takes 2 files - a metagenome order file and a file of cluster numbers and colors for the selected gene clusters. -> MetagenomeOrder.txt
+	- MetagenomeOrder.txt should be a comma separated list of "metagenomeID, x-axis label"
+
 	- mkdir 08e_GeneChangeAcrossMetagenomes
 	- put the 4 text files from above into this new directeory
 	- cd 08e_GeneChangeAcrossMetagenomes
 
 	# Control
-	python ../00_Scripts/08e_PlotGeneChanges.py -i ../08a_Gene_TAD_Annotation_PanCat_Control/04_ClstrRepSeq_PanCat_ANATAD_Annotation.tsv -c ClustersToPlot_Specific.txt -m MetagenomeOrder.txt -p Specific -o Control_Specific -t Control Series Specific Gene Change -y 9
-	python ../00_Scripts/08e_PlotGeneChanges.py -i ../08a_Gene_TAD_Annotation_PanCat_Control/04_ClstrRepSeq_PanCat_ANATAD_Annotation.tsv -c ClustersToPlot_Rare.txt -m MetagenomeOrder.txt -p Rare -o Control_Rare -t Control Series Rare Gene Change -y 9
-	python ../00_Scripts/08e_PlotGeneChanges.py -i ../08a_Gene_TAD_Annotation_PanCat_Control/04_ClstrRepSeq_PanCat_ANATAD_Annotation.tsv -c ClustersToPlot_Core.txt -m MetagenomeOrder.txt -p Core -o Control_Core	 -t Control Series Core Gene Change -y 9
+	python ../00_Scripts/08e_PlotGeneChanges.py -i ../08a_Gene_TAD_Annotation_PanCat_Control/04_ClstrRepSeq_PanCat_ANATAD_Annotation.tsv -c ClustersToPlot_Specific.txt -m MetagenomeOrder.txt -p Specific -o Control_Specific -t Control Series Specific Gene Change -y 10 -w 80
+	python ../00_Scripts/08e_PlotGeneChanges.py -i ../08a_Gene_TAD_Annotation_PanCat_Control/04_ClstrRepSeq_PanCat_ANATAD_Annotation.tsv -c ClustersToPlot_Rare.txt -m MetagenomeOrder.txt -p Rare -o Control_Rare -t Control Series Rare Gene Change -y 10 -w 80
+	python ../00_Scripts/08e_PlotGeneChanges.py -i ../08a_Gene_TAD_Annotation_PanCat_Control/04_ClstrRepSeq_PanCat_ANATAD_Annotation.tsv -c ClustersToPlot_Core.txt -m MetagenomeOrder.txt -p Core -o Control_Core	 -t Control Series Core Gene Change -y 10 -w 80
 
 	# UnShaded
-	python ../00_Scripts/08e_PlotGeneChanges.py -i ../08b_Gene_TAD_Annotation_PanCat_UnShaded/04_ClstrRepSeq_PanCat_ANATAD_Annotation.tsv -c ClustersToPlot_Specific.txt -m MetagenomeOrder.txt -p Specific -o UnShaded_Specific -t UnShade Series Specific Gene Change -y 9
-	python ../00_Scripts/08e_PlotGeneChanges.py -i ../08b_Gene_TAD_Annotation_PanCat_UnShaded/04_ClstrRepSeq_PanCat_ANATAD_Annotation.tsv -c ClustersToPlot_Rare.txt -m MetagenomeOrder.txt -p Rare -o UnShaded_Rare -t UnShade Series Rare Gene Change -y 9
-	python ../00_Scripts/08e_PlotGeneChanges.py -i ../08b_Gene_TAD_Annotation_PanCat_UnShaded/04_ClstrRepSeq_PanCat_ANATAD_Annotation.tsv -c ClustersToPlot_Core.txt -m MetagenomeOrder.txt -p Core -o UnShaded_Core -t UnShaded Series Core Gene Change -y 9
+	python ../00_Scripts/08e_PlotGeneChanges.py -i ../08b_Gene_TAD_Annotation_PanCat_UnShaded/04_ClstrRepSeq_PanCat_ANATAD_Annotation.tsv -c ClustersToPlot_Specific.txt -m MetagenomeOrder.txt -p Specific -o UnShaded_Specific -t UnShade Series Specific Gene Change -y 10 -w 80
+	python ../00_Scripts/08e_PlotGeneChanges.py -i ../08b_Gene_TAD_Annotation_PanCat_UnShaded/04_ClstrRepSeq_PanCat_ANATAD_Annotation.tsv -c ClustersToPlot_Rare.txt -m MetagenomeOrder.txt -p Rare -o UnShaded_Rare -t UnShade Series Rare Gene Change -y 10 -w 80
+	python ../00_Scripts/08e_PlotGeneChanges.py -i ../08b_Gene_TAD_Annotation_PanCat_UnShaded/04_ClstrRepSeq_PanCat_ANATAD_Annotation.tsv -c ClustersToPlot_Core.txt -m MetagenomeOrder.txt -p Core -o UnShaded_Core -t UnShaded Series Core Gene Change -y 10 -w 80
 
 	# Dilution
-	python ../00_Scripts/08e_PlotGeneChanges.py -i ../08c_Gene_TAD_Annotation_PanCat_Dilution/04_ClstrRepSeq_PanCat_ANATAD_Annotation.tsv -c ClustersToPlot_Specific.txt -m MetagenomeOrder.txt -p Specific -o Dilution_Specific -t Dilution Series Specific Gene Change -y 9
-	python ../00_Scripts/08e_PlotGeneChanges.py -i ../08c_Gene_TAD_Annotation_PanCat_Dilution/04_ClstrRepSeq_PanCat_ANATAD_Annotation.tsv -c ClustersToPlot_Rare.txt -m MetagenomeOrder.txt -p Rare -o Dilution_Rare -t Dilution Series Rare Gene Change -y 9
-	python ../00_Scripts/08e_PlotGeneChanges.py -i ../08c_Gene_TAD_Annotation_PanCat_Dilution/04_ClstrRepSeq_PanCat_ANATAD_Annotation.tsv -c ClustersToPlot_Core.txt -m MetagenomeOrder.txt -p Core -o Dilution_Core -t Dilution Series Core Gene Change -y 9
-
-
+	python ../00_Scripts/08e_PlotGeneChanges.py -i ../08c_Gene_TAD_Annotation_PanCat_Dilution/04_ClstrRepSeq_PanCat_ANATAD_Annotation.tsv -c ClustersToPlot_Specific.txt -m MetagenomeOrder.txt -p Specific -o Dilution_Specific -t Dilution Series Specific Gene Change -y 10 -w 80
+	python ../00_Scripts/08e_PlotGeneChanges.py -i ../08c_Gene_TAD_Annotation_PanCat_Dilution/04_ClstrRepSeq_PanCat_ANATAD_Annotation.tsv -c ClustersToPlot_Rare.txt -m MetagenomeOrder.txt -p Rare -o Dilution_Rare -t Dilution Series Rare Gene Change -y 10 -w 80
+	python ../00_Scripts/08e_PlotGeneChanges.py -i ../08c_Gene_TAD_Annotation_PanCat_Dilution/04_ClstrRepSeq_PanCat_ANATAD_Annotation.tsv -c ClustersToPlot_Core.txt -m MetagenomeOrder.txt -p Core -o Dilution_Core -t Dilution Series Core Gene Change -y 10 -w 80
 
 ########################################################
 ########################################################
@@ -758,52 +766,60 @@ Contig fishing for selected isolate contigs containing genes of interest in the 
 
 mkdir 12_Contig_Fishing
 
-	Step 1: Grab contig fasta sequence.
-		python 00_Scripts/11a_Pangenome_Get_Fasta_for_CD-HIT_clstr.py -c PGE_0001_S_ruber/02_0001_S_ruber_Clustered_Genes.fnn.clstr -f PGE_0001_S_ruber/02_0001_S_ruber_Clustered_Genes.fnn -n 4220 -o 12_Contig_Fishing/Cluster_4220_G0057_238_1.fa
+	Step 01: Grab contig fasta sequence.
+		We can use the same files from 08e Step 04.
 
-		python 00_Scripts/11a_Pangenome_Get_Fasta_for_CD-HIT_clstr.py -c PGE_0001_S_ruber/02_0001_S_ruber_Clustered_Genes.fnn.clstr -f PGE_0001_S_ruber/02_0001_S_ruber_Clustered_Genes.fnn -n 6318 -o 12_Contig_Fishing/Cluster_6318_G0057_162_7.fa
-
-		python 00_Scripts/11a_Pangenome_Get_Fasta_for_CD-HIT_clstr.py -c PGE_0001_S_ruber/02_0001_S_ruber_Clustered_Genes.fnn.clstr -f PGE_0001_S_ruber/02_0001_S_ruber_Clustered_Genes.fnn -n 5773 -o 12_Contig_Fishing/Cluster_5773_G0057_111_3.fa
-
-		python 00_Scripts/11a_Pangenome_Get_Fasta_for_CD-HIT_clstr.py -c PGE_0001_S_ruber/02_0001_S_ruber_Clustered_Genes.fnn.clstr -f PGE_0001_S_ruber/02_0001_S_ruber_Clustered_Genes.fnn -n 3814 -o 12_Contig_Fishing/Cluster_3814_G0057_238_2.fa
-
-		python 00_Scripts/11a_Pangenome_Get_Fasta_for_CD-HIT_clstr.py -c PGE_0001_S_ruber/02_0001_S_ruber_Clustered_Genes.fnn.clstr -f PGE_0001_S_ruber/02_0001_S_ruber_Clustered_Genes.fnn -n 9138 -o 12_Contig_Fishing/Cluster_9138_G0057_111_1.fa
-
-		python 00_Scripts/11a_Pangenome_Get_Fasta_for_CD-HIT_clstr.py -c PGE_0001_S_ruber/02_0001_S_ruber_Clustered_Genes.fnn.clstr -f PGE_0001_S_ruber/02_0001_S_ruber_Clustered_Genes.fnn -n 11579 -o 12_Contig_Fishing/Cluster_11579_G0057_111_4.fa
-
-		python 00_Scripts/11a_Pangenome_Get_Fasta_for_CD-HIT_clstr.py -c PGE_0001_S_ruber/02_0001_S_ruber_Clustered_Genes.fnn.clstr -f PGE_0001_S_ruber/02_0001_S_ruber_Clustered_Genes.fnn -n 5498 -o 12_Contig_Fishing/Cluster_5498_G0057_162_4.fa
-
-	Step 2: Concatenate
+		cd 12_Contig_Fishing/
 		mkdir 00_Select_Contigs
-		cat Cluster_* >> 00_Select_Contigs/Abundant_Genome_Specific_G0057.fasta
-		rm *fa
 
-	Step 3: Build Blast Database
+		for f in ../08e_GeneChangeAcrossMetagenomes/ClustersToPlot_*; do o=`basename $f | cut -d. -f1`; python ../00_Scripts/12a_Pangenome_Get_RepFasta_for_CD-HIT_clstr.py -c ../PGE_0001_S_ruber/02_0001_S_ruber_Clustered_Genes.fnn.clstr -f ../PGE_0001_S_ruber/02_0001_S_ruber_Clustered_Genes.fnn -n $f -o 00_Select_Contigs/${o}.fna; done
+
+	Step 02: Get assembled contigs from metagenomes
+		mkdir 01_Assembled_Metagenomes
+		for f in /gpfs/pace2/project/bio-konstantinidis/rconrad6/Salinibacter_New_Metagenomes/01_SPAdes_Assemblies_Attmpt?/E*/contigs.fasta; do n=`echo $f | cut -d/ -f9`; cp $f 01_Assembled_Metagenomes/${n}_contigs.fna; done
+
+		# Filter assemblies for min contig length of 500.
+		for f in 01_Assembled_Metagenomes/*.fna; do n=`basename $f | cut -d. -f1`; u=`echo $n | cut -d_ -f1-3`; python ../00_Scripts/01_SPAdes_Assembly_Filter_Rename_Stats.py -i $f -o 01_Assembled_Metagenomes/${n}.fltrd.fna -g $u -l 400 -c 1.0; rm $f; done
+
+		ID 	Total Contigs 	Length Fail 	Cov Fail 	Pass 	N50 	Length(bp) 	%GC
+		E1_M13_S1	414146	213551	140967	59628	2482	97075382	61.92
+		E1_M15_S4	238300	121142	83399	33759	2308	52526426	62.47
+		E1_M16_S7	290122	144215	116417	29490	1927	40908142	59.40
+		E4_M13_S2	329417	170578	112463	46376	3236	88782984	60.55
+		E4_M15_S5	411794	220795	113670	77329	2340	118740837	60.30
+		E4_M16_S8	808441	429147	264642	114652	2260	174640518	59.17
+		E6_M13_S3	238612	133872	29135	75605	1475	85390757	60.07
+		E6_M15_S6	1081019	572176	353877	154966	2229	233839843	57.90
+		E6_M16_S9	201044	99358	75102	26584	1950	37023545	59.15
+
+	Step 02: Build Blast Database
+		module load python/2.7 boost/1.53.0 ncbi_blast/2.2.29
 		cd 00_Select_Contigs
-		makeblastdb -dbtype nucl -in Abundant_Genome_Specific_G0057.fasta
+		for f in *.fna; do makeblastdb -dbtype nucl -in $f; done
 		cd ..
 
-	Step 4: Get assembled contigs from metagenomes
-		mkdir 01_Assembled_Metagenomes
-		from: /gpfs/pace2/project/bio-konstantinidis/rconrad6/Salinibacter_New_Metagenomes/01_SPAdes_Assemblies_Attmpt2
-		for f in E*/contigs.fasta; do n=`echo $f | cut -d/ -f1`; cp $f ../../Salinibacter_Assemblies/12_Contig_Fishing/01_Assembled_Metagenomes/${n}_contigs.fna; done
+	Step 3: Blast
+		bash ../00_PBS/12b_Launch_Select_Contig_Blast.sh 01_Assembled_Metagenomes fna 02a_Core_Blast_Results 00_Select_Contigs/ClustersToPlot_Core.fna 70
+		bash ../00_PBS/12b_Launch_Select_Contig_Blast.sh 01_Assembled_Metagenomes fna 02b_Rare_Blast_Results 00_Select_Contigs/ClustersToPlot_Rare.fna 70
+		bash ../00_PBS/12b_Launch_Select_Contig_Blast.sh 01_Assembled_Metagenomes fna 02c_Specific_Blast_Results 00_Select_Contigs/ClustersToPlot_Specific.fna 70
 
-	Step 5: Blast
-		bash ../00_PBS/12a_Launch_Select_Contig_Blast.sh 01_Assembled_Metagenomes fna 02_Metagenome_Blast_Results 00_Select_Contigs/Abundant_Genome_Specific_G0057.fasta 70
-		rm 12_Blast_query_list_02_Metagenome_Blast_Results.txt
+		# Check Isolate Draft Genomes for Specific genes to ensure only 1 good match (that they really are specific genes)
+		bash ../00_PBS/12b_Launch_Select_Contig_Blast.sh ../01_Sruber_Group1_Genomes fna 03_DraftGenome_Specific_Results 00_Select_Contigs/ClustersToPlot_Specific.fna 70
 
-		bash ../00_PBS/12a_Launch_Select_Contig_Blast.sh ../01_Sruber_Group1_Genomes fna 03_DraftGenome_Blast_Results 00_Select_Contigs/Abundant_Genome_Specific_G0057.fasta 70
-		rm 12_Blast_query_list_03_DraftGenome_Blast_Results.txt
+		# Remove query lists
+		rm *.txt
 
-	Step 6: Filter Blast
-		for f in 02_Blast_Results/*.blast; do python ../00_Scripts/05c_Blast_Check_Filter.py -b $f -a 300 -p 70; done
-		cat 02_Metagenome_Blast_Results/*blst >> 02_Metagenome_HighQuality_Matches.tsv
+	Step 4: Filter Blast
+		for f in 02*_Blast_Results/*.blast; do python ../00_Scripts/05c_Blast_Check_Filter.py -b $f -a 300 -p 70; rm $f; done
+		for f in 03_DraftGenome_Specific_Results/*.blast; do python ../00_Scripts/05c_Blast_Check_Filter.py -b $f -a 300 -p 70; rm $f; done
+		
 
 	Step 7: Look at other annotation on contig
 		I've identified 7 peak dilution genes that are from the same genome on 3 contigs.
 		Place the 3 contig names in a file. Grab other genes annotation from this contig.
 		from: /Users/rothconrad/Downloads/ReSearch/00_New_Salinibacter/01_Dilution
 		while read contig; do grep $contig E6_Dilution_Annotation_Abundance.tsv; done < 3_Contigs_Contain_7_Specific_Dilution_Peak_Genes.txt 
+		# Copy and paste to file 3_Dilution_Peak_Contigs.xlsx
 
 
 

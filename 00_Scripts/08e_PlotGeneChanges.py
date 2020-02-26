@@ -50,6 +50,10 @@ def read_input_file(infile, clusters, morder, pancat):
     other_values = []
     corder = []
 
+    # calculate fraction above 2x
+    fraction = 0
+    total = 0
+
     # select PanCat
     if pancat == 'All': pancat = ['Rare', 'Common', 'Core', 'Specific']
     else: pancat = [pancat]
@@ -72,14 +76,21 @@ def read_input_file(infile, clusters, morder, pancat):
             name = X[trembl] # select TrEMBL annotation for legend
             ys = [float(X[i]) for i in corder] # Select *-NORM values in morder
 
+
             if clust in clusters:
                 pos = clusters.index(clust)
                 main_labels[pos] = name
                 main_values[pos] = ys
+                total += 1
+                if max(ys) > 2: fraction += 1
             elif pc in pancat:
                 other_values.append(ys)
+                total += 1
+                if max(ys) > 2: fraction += 1
 
-    return main_labels, main_values, other_values
+    fraction = fraction / total * 100
+
+    return main_labels, main_values, other_values, fraction
 
 
 def read_cluster_file(infile):
@@ -126,7 +137,9 @@ def plot_gene_changes(
                     pancat,
                     outfile,
                     ptitle,
-                    ymax
+                    ymax,
+                    fraction,
+                    lwm
                     ):
     ''' This function builds a line plot gene change across metagenomes'''
 
@@ -140,10 +153,18 @@ def plot_gene_changes(
     # plot title, labels, and text
     ax.set_title(
         ' '.join(ptitle),
-        color=H1, fontsize=50, y=1.02
+        color=H1, fontsize=36, y=1.02
         )
     ax.set_ylabel('Gene TAD / Avg Genome TAD', fontsize=28)
-    #ax.set_xlabel('Metagenome Sample / Time Point', fontsize=28)
+    ax.text(
+        0.98, 0.98, f'{fraction:.2f}% Genes above 2x',
+        horizontalalignment='right',
+        verticalalignment='top',
+        color='#252525',
+        fontsize=28,
+        fontweight='heavy',
+        transform=ax.transAxes
+        )
 
     # Plot List of Genes with colors
     for i, anno in enumerate(main_labels):
@@ -156,10 +177,14 @@ def plot_gene_changes(
             zorder=2
             )
 
-    # Plot Remaining gene category in light grey.
+    # Set other gene category label
     if pancat == 'All': other = 'All Other Genes'
     else: other = f'Other {pancat} Genes'
+    # Adjust with spaces to control legend width
+    legend_width = ' ' * (lwm - len(other))
+    other = other + legend_width
 
+    # Plot Remaining gene category in light grey.
     for ys in other_values:
         ax.plot(
             xlabels,
@@ -175,7 +200,7 @@ def plot_gene_changes(
     ax.minorticks_on()
     ax.set_yticks(range(0, ymax+1))
     ax.tick_params(axis='both', labelsize=18)
-    ax.tick_params(axis='x', labelrotation=15)
+    ax.tick_params(axis='x', labelrotation=0)
     # set grid style
     ax.yaxis.grid(
         which="minor", color='#f0f0f0', linestyle='--', linewidth=1.5
@@ -196,7 +221,9 @@ def plot_gene_changes(
         bbox_to_anchor=(1.05, 0.5),
         fancybox=True,
         shadow=True,
-        fontsize=18
+        fontsize=18,
+        borderpad=1.5,
+        labelspacing=1.5
         )
 
     # adjust layout, save, and close
@@ -261,10 +288,18 @@ def main():
         )
     parser.add_argument(
         '-y', '--yaxis_max',
-        help='Set max value of y-axis (eg: 9)',
+        help='Set max value of y-axis (eg: 10)',
         metavar='',
         type=int,
         required=True
+        )
+    parser.add_argument(
+        '-w', '--legend_width_multiplier',
+        help='Multiplier to control legend width (eg: 60)',
+        metavar='',
+        default=1,
+        type=int,
+        required=False
         )
     args=vars(parser.parse_args())
 
@@ -277,16 +312,17 @@ def main():
     outfile = args['output_file_name']
     ptitle = args['plot_title']
     ymax = args['yaxis_max']
+    lwm = args['legend_width_multiplier']
 
     # Load files and parse data for the plot!
     clusters, colors = read_cluster_file(args['clusters_to_plot'])
     morder, xlabels = read_metagenome_order(args['metagenome_order'])
-    main_labels, main_values, other_values = read_input_file(
-                                                            infile,
-                                                            clusters,
-                                                            morder,
-                                                            pancat,
-                                                            )
+    main_labels, main_values, other_values, fraction = read_input_file(
+                                                                    infile,
+                                                                    clusters,
+                                                                    morder,
+                                                                    pancat,
+                                                                    )
 
 
     # Plot it up son!
@@ -300,7 +336,9 @@ def main():
                     pancat,
                     outfile,
                     ptitle,
-                    ymax
+                    ymax,
+                    fraction,
+                    lwm
                     )
 
     print(

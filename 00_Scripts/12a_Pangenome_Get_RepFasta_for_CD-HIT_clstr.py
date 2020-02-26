@@ -1,21 +1,27 @@
 #!/usr/bin/env python
 
-'''Get Fasta Sequence for CD-HIT Cluster
+'''Get Representative Fasta Sequence for CD-HIT Cluster
 
-Takes the *.fnn.clstr file from CD-HIT(-EST) and the concatenated
-genes file used as input to CD-HIT and returns a fasta file of
-sequences for the user specified gene clusters.
+This script was written to retrieve the fasta sequence of selected gene
+clusters from the CD-HIT (https://github.com/weizhongli/cdhit/wiki)
+output files.
 
-This tool takes the following input parameters:
+It takes the *.fnn.clstr file and the representative sequences *.fnn file
+from CD-HIT(-EST) along with a text file containing 1 cluster number per
+line and returns a fasta file of the representative sequences for the
+user-specified gene clusters.
+
+This script takes the following input parameters:
 
     * clstr - CD-HIT cluster file (str)
-    * fasta - CD-HIT input fasta file (str)
-    * cnumb - Cluster number to get fasta sequences for. (int)
+    * fasta - CD-HIT representative sequences fasta file (str)
+    * clist - Text file containing 1 cluster number per line. (str)
     * out - name for the output fasta file(str)
 
 This script returns the following files:
 
-    * fasta file of cnumb sequneces with name {out}
+    * fasta file containing the representative sequence for the requested
+      gene clusters.
 
 This script requires the following packages:
 
@@ -32,9 +38,9 @@ functions:
 Author :: Roth Conrad
 Email :: rotheconrad@gatech.edu
 GitHub :: https://github.com/rotheconrad
-Date Created :: November 4th, 2019
+Date Created :: February 26th, 2020
 License :: GNU GPLv3
-Copyright 2019 Roth Conrad
+Copyright 2020 Roth Conrad
 All rights reserved
 -------------------------------------------
 '''
@@ -55,7 +61,7 @@ def read_fasta(fp):
 
 
 def get_seq_fasta(fasta, seqs, out):
-    ''' Read fasta file and retrieve the matching sequencing '''
+    ''' Read fasta file and retrieve and the matching sequences '''
 
     with open(fasta, 'r') as f, open(out, 'w') as o:
         for name, seq in read_fasta(f):
@@ -64,23 +70,29 @@ def get_seq_fasta(fasta, seqs, out):
                 o.write(f"{name}\n{seq}\n")
 
 
-def get_seqs_in_clstr(clstr, cnumb):
+def get_clstr_rep_seqs(clstr, clist):
     ''' reads CD-HIT clstr file and retrieves seq names '''
 
     seqs = {}
+    cnumbs = []
+
+    with open(clist, 'r') as f:
+        for l in f: cnumbs.append(l.rstrip().split(', ')[0])
 
     with open(clstr, 'r') as f:
-
         for l in f:
 
             if l.startswith('>'):
-                cluster = int(l.rstrip().split(' ')[1])
+                cluster = 'Cluster_' + l.rstrip().split(' ')[1]
 
-            if not l.startswith('>') and cluster == cnumb:
-                gene = l.split(', ')[1].split('...')[0]
-                seqs[gene] = ''
+            if not l.startswith('>') and cluster in cnumbs:
+                X = l.rstrip().split(', ')[1].split('... ')
+                gene = X[0]
+                isrep = X[1]
+                if isrep == '*': seqs[gene] = ''
 
     return seqs
+
 
 def main():
 
@@ -97,15 +109,15 @@ def main():
         )
     parser.add_argument(
         '-f', '--fasta_file',
-        help='Please specify the input fasta file!',
+        help='Please specify the CD-HIT representative sequence fasta file!',
         metavar='',
         type=str,
         )
     parser.add_argument(
-        '-n', '--cluster_number',
-        help='Please specify the cluster number (ex: 9)!',
+        '-n', '--cluster_number_list',
+        help='Please specify the file with selected cluster numbers!',
         metavar='',
-        type=int,
+        type=str,
         )
     parser.add_argument(
         '-o', '--output_file',
@@ -116,16 +128,16 @@ def main():
     args=vars(parser.parse_args())
 
     clstr = args['cluster_file']
-    cnumb = args['cluster_number']
+    clist = args['cluster_number_list']
     fasta = args['fasta_file']
     out = args['output_file']
 
     # Retrieve the list of sequence names for cnumb cluster
-    print(f'Retrieving the sequence names for cluster {cnumb}...')
-    seqs = get_seqs_in_clstr(clstr, cnumb)
+    print(f'Retrieving representative sequence names for cluster {clist}...')
+    seqs = get_clstr_rep_seqs(clstr, clist)
 
     # Retrieve the fasta sequences for seq names in seqs. Write fasta output.
-    print(f'Retrieving fasta sequences for cluster {cnumb} and writing to {out}')
+    print(f'Retrieving fasta sequences and writing to {out}')
     get_seq_fasta(fasta, seqs, out)
 
 
