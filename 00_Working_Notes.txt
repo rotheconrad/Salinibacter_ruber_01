@@ -338,6 +338,7 @@ Step 1: Get trimmed metagenome reads and rename them:
 	cd 00_Metagenome_ReadsTrimmed/
 	for f in *.fastq; do id=`basename $f | cut -d. -f1`; qsub -v id=$id,input=$f ../00_PBS/07b_Rename_Fastq_Sequences.pbs; done
 
+
 Step 2: Build Magic Blast Databases for the 100 randomly selected Group 1 Genomes
 	## These genomes were selected as part of the pangenome analysi pipeline
 	## They are located in the folder: PGE_0001_S_ruber/03_FNA/
@@ -352,6 +353,7 @@ Step 2: Build Magic Blast Databases for the 100 randomly selected Group 1 Genome
 
 		## For Random Group1 Genomes from the Pangenome Clustering Experiment
 		for f in PGE_0001_S_ruber/03_FNA/*.fna; do makeblastdb -dbtype nucl -in $f -out $f -parse_seqids; done
+
 
 Step 3: Launch Magic Blast Array - includes Magic Blast Short Read Filter for results
 	
@@ -385,6 +387,7 @@ Step 4: Build RecPlots for visual inspection
 	qsub -v magicblasts=07b_MagicBlast_UnShaded,genomes=PGE_0001_S_ruber/03_FNA,outdir=07b_RecPlot_UnShaded 00_PBS/07d_RecPlot.pbs
 	qsub -v magicblasts=07c_MagicBlast_Dilution,genomes=PGE_0001_S_ruber/03_FNA,outdir=07c_RecPlot_Dilution 00_PBS/07d_RecPlot.pbs
 
+
 Step 5: Calculate Coverage: 07e_MagicBlast_CoveragePlus.py
 	## Show script options: python 00_Scripts/07e_MagicBlast_CoveragePlus.py -h
 	## Coverage is reported as TAD80 by genome, contig, and gene. Relative abundance is also reported.
@@ -403,6 +406,19 @@ Step 5: Calculate Coverage: 07e_MagicBlast_CoveragePlus.py
 	# Dilution
 	bash 00_PBS/07f_Launch_CoveragePlus.pbs 00_Metagenome_ReadsTrimmed PGE_0001_S_ruber/03_FNA 07c_MagicBlast_Dilution PGE_0001_S_ruber/03_FNN 95 80 07c_CoveragePlus_Dilution E6
 
+#######################################################################################################################################
+############ Repeat Step 5 with pID threshold gradient 96, 97, 98, 99, 100 for Dilution Series to test if peak disappears. ############
+#######################################################################################################################################
+
+	# Dilution
+	bash 00_PBS/07f_Launch_CoveragePlus.pbs 00_Metagenome_ReadsTrimmed PGE_0001_S_ruber/03_FNA 07c_MagicBlast_Dilution PGE_0001_S_ruber/03_FNN 96 80 07c_CoveragePlus_Dilution_pID96 E6
+	bash 00_PBS/07f_Launch_CoveragePlus.pbs 00_Metagenome_ReadsTrimmed PGE_0001_S_ruber/03_FNA 07c_MagicBlast_Dilution PGE_0001_S_ruber/03_FNN 97 80 07c_CoveragePlus_Dilution_pID97 E6
+	bash 00_PBS/07f_Launch_CoveragePlus.pbs 00_Metagenome_ReadsTrimmed PGE_0001_S_ruber/03_FNA 07c_MagicBlast_Dilution PGE_0001_S_ruber/03_FNN 98 80 07c_CoveragePlus_Dilution_pID98 E6
+	bash 00_PBS/07f_Launch_CoveragePlus.pbs 00_Metagenome_ReadsTrimmed PGE_0001_S_ruber/03_FNA 07c_MagicBlast_Dilution PGE_0001_S_ruber/03_FNN 99 80 07c_CoveragePlus_Dilution_pID99 E6
+	bash 00_PBS/07f_Launch_CoveragePlus.pbs 00_Metagenome_ReadsTrimmed PGE_0001_S_ruber/03_FNA 07c_MagicBlast_Dilution PGE_0001_S_ruber/03_FNN 100 80 07c_CoveragePlus_Dilution_pID100 E6
+
+#######################################################################################################################################
+
 
 Step 6: Average Coverage/Abundance of genomes across samples.
 
@@ -414,6 +430,20 @@ Step 6: Average Coverage/Abundance of genomes across samples.
 
 	# Dilution
 	python 00_Scripts/07h_Genome_Stats.py -gtd 07c_CoveragePlus_Dilution/GenomeSummary/ -out 07c_CoveragePlus_Dilution/07h_GenomeStats_Dilution
+
+#######################################################################################################################################
+############ Repeat Step 6 with pID threshold gradient 96, 97, 98, 99, 100 for Dilution Series to test if peak disappears. ############
+#######################################################################################################################################
+
+	# Dilution
+	python 00_Scripts/07h_Genome_Stats.py -gtd 07c_CoveragePlus_Dilution_pID96/GenomeSummary/ -out 07c_CoveragePlus_Dilution_pID96/07h_GenomeStats_Dilution
+	python 00_Scripts/07h_Genome_Stats.py -gtd 07c_CoveragePlus_Dilution_pID97/GenomeSummary/ -out 07c_CoveragePlus_Dilution_pID97/07h_GenomeStats_Dilution
+	python 00_Scripts/07h_Genome_Stats.py -gtd 07c_CoveragePlus_Dilution_pID98/GenomeSummary/ -out 07c_CoveragePlus_Dilution_pID98/07h_GenomeStats_Dilution
+	python 00_Scripts/07h_Genome_Stats.py -gtd 07c_CoveragePlus_Dilution_pID99/GenomeSummary/ -out 07c_CoveragePlus_Dilution_pID99/07h_GenomeStats_Dilution
+	python 00_Scripts/07h_Genome_Stats.py -gtd 07c_CoveragePlus_Dilution_pID100/GenomeSummary/ -out 07c_CoveragePlus_Dilution_pID100/07h_GenomeStats_Dilution
+
+#######################################################################################################################################
+
 
 
 ########################################################
@@ -463,6 +493,25 @@ Step 01: Get Averaged, Normalized Average TAD for each gene cluster (4 steps in 
 	# Dilution
 	python 00_Scripts/08b_Get_Averaged_Normalized_Average_TADs.py -t 07c_CoveragePlus_Dilution/TADgene/ -g 08a_Gene_TAD_Annotation_PanCat_Control/00_Genes_Clusters_PanCats.tsv -s 07c_CoveragePlus_Dilution/07h_GenomeStats_Dilution.tsv -o 08c_Gene_TAD_Annotation_PanCat_Dilution/
 
+#######################################################################################################################################
+############ Repeat Step 1 with pID threshold gradient 96, 97, 98, 99, 100 for Dilution Series to test if peak disappears. ############
+#######################################################################################################################################
+
+	# Dilution
+	mkdir 08c_Gene_TAD_Annotation_PanCat_Dilution_pID96
+	mkdir 08c_Gene_TAD_Annotation_PanCat_Dilution_pID97
+	mkdir 08c_Gene_TAD_Annotation_PanCat_Dilution_pID98
+	mkdir 08c_Gene_TAD_Annotation_PanCat_Dilution_pID99
+	mkdir 08c_Gene_TAD_Annotation_PanCat_Dilution_pID100
+
+	python 00_Scripts/08b_Get_Averaged_Normalized_Average_TADs.py -t 07c_CoveragePlus_Dilution_pID96/TADgene/ -g 08a_Gene_TAD_Annotation_PanCat_Control/00_Genes_Clusters_PanCats.tsv -s 07c_CoveragePlus_Dilution_pID96/07h_GenomeStats_Dilution.tsv -o 08c_Gene_TAD_Annotation_PanCat_Dilution_pID96/
+	python 00_Scripts/08b_Get_Averaged_Normalized_Average_TADs.py -t 07c_CoveragePlus_Dilution_pID97/TADgene/ -g 08a_Gene_TAD_Annotation_PanCat_Control/00_Genes_Clusters_PanCats.tsv -s 07c_CoveragePlus_Dilution_pID97/07h_GenomeStats_Dilution.tsv -o 08c_Gene_TAD_Annotation_PanCat_Dilution_pID97/
+	python 00_Scripts/08b_Get_Averaged_Normalized_Average_TADs.py -t 07c_CoveragePlus_Dilution_pID98/TADgene/ -g 08a_Gene_TAD_Annotation_PanCat_Control/00_Genes_Clusters_PanCats.tsv -s 07c_CoveragePlus_Dilution_pID98/07h_GenomeStats_Dilution.tsv -o 08c_Gene_TAD_Annotation_PanCat_Dilution_pID98/
+	python 00_Scripts/08b_Get_Averaged_Normalized_Average_TADs.py -t 07c_CoveragePlus_Dilution_pID99/TADgene/ -g 08a_Gene_TAD_Annotation_PanCat_Control/00_Genes_Clusters_PanCats.tsv -s 07c_CoveragePlus_Dilution_pID99/07h_GenomeStats_Dilution.tsv -o 08c_Gene_TAD_Annotation_PanCat_Dilution_pID99/
+	python 00_Scripts/08b_Get_Averaged_Normalized_Average_TADs.py -t 07c_CoveragePlus_Dilution_pID100/TADgene/ -g 08a_Gene_TAD_Annotation_PanCat_Control/00_Genes_Clusters_PanCats.tsv -s 07c_CoveragePlus_Dilution_pID100/07h_GenomeStats_Dilution.tsv -o 08c_Gene_TAD_Annotation_PanCat_Dilution_pID100/
+
+#######################################################################################################################################
+
 
 Step 02: Match ANA-TAD to Gene Cluster Annotation
 
@@ -474,6 +523,19 @@ Step 02: Match ANA-TAD to Gene Cluster Annotation
 
 	# Dilution
 	python 00_Scripts/08c_Match_ANA-TADs_toAnnotations.py -t 08c_Gene_TAD_Annotation_PanCat_Dilution/02_PanCats_ANATADs_byCluster.tsv -a 06_Annotations/04_ClstrRepSeq_Annotations_NoMatch.tsv -p 08a_Gene_TAD_Annotation_PanCat_Control/00_Genes_Clusters_PanCats.tsv -o 08c_Gene_TAD_Annotation_PanCat_Dilution/04_ClstrRepSeq_PanCat_ANATAD_Annotation.tsv
+
+#######################################################################################################################################
+############ Repeat Step 2 with pID threshold gradient 96, 97, 98, 99, 100 for Dilution Series to test if peak disappears. ############
+#######################################################################################################################################
+
+	# Dilution
+	python 00_Scripts/08c_Match_ANA-TADs_toAnnotations.py -t 08c_Gene_TAD_Annotation_PanCat_Dilution_pID96/02_PanCats_ANATADs_byCluster.tsv -a 06_Annotations/04_ClstrRepSeq_Annotations_NoMatch.tsv -p 08a_Gene_TAD_Annotation_PanCat_Control/00_Genes_Clusters_PanCats.tsv -o 08c_Gene_TAD_Annotation_PanCat_Dilution_pID96/04_ClstrRepSeq_PanCat_ANATAD_Annotation.tsv
+	python 00_Scripts/08c_Match_ANA-TADs_toAnnotations.py -t 08c_Gene_TAD_Annotation_PanCat_Dilution_pID97/02_PanCats_ANATADs_byCluster.tsv -a 06_Annotations/04_ClstrRepSeq_Annotations_NoMatch.tsv -p 08a_Gene_TAD_Annotation_PanCat_Control/00_Genes_Clusters_PanCats.tsv -o 08c_Gene_TAD_Annotation_PanCat_Dilution_pID97/04_ClstrRepSeq_PanCat_ANATAD_Annotation.tsv
+	python 00_Scripts/08c_Match_ANA-TADs_toAnnotations.py -t 08c_Gene_TAD_Annotation_PanCat_Dilution_pID98/02_PanCats_ANATADs_byCluster.tsv -a 06_Annotations/04_ClstrRepSeq_Annotations_NoMatch.tsv -p 08a_Gene_TAD_Annotation_PanCat_Control/00_Genes_Clusters_PanCats.tsv -o 08c_Gene_TAD_Annotation_PanCat_Dilution_pID98/04_ClstrRepSeq_PanCat_ANATAD_Annotation.tsv
+	python 00_Scripts/08c_Match_ANA-TADs_toAnnotations.py -t 08c_Gene_TAD_Annotation_PanCat_Dilution_pID99/02_PanCats_ANATADs_byCluster.tsv -a 06_Annotations/04_ClstrRepSeq_Annotations_NoMatch.tsv -p 08a_Gene_TAD_Annotation_PanCat_Control/00_Genes_Clusters_PanCats.tsv -o 08c_Gene_TAD_Annotation_PanCat_Dilution_pID99/04_ClstrRepSeq_PanCat_ANATAD_Annotation.tsv
+	python 00_Scripts/08c_Match_ANA-TADs_toAnnotations.py -t 08c_Gene_TAD_Annotation_PanCat_Dilution_pID100/02_PanCats_ANATADs_byCluster.tsv -a 06_Annotations/04_ClstrRepSeq_Annotations_NoMatch.tsv -p 08a_Gene_TAD_Annotation_PanCat_Control/00_Genes_Clusters_PanCats.tsv -o 08c_Gene_TAD_Annotation_PanCat_Dilution_pID100/04_ClstrRepSeq_PanCat_ANATAD_Annotation.tsv
+
+#######################################################################################################################################
 
 
 Step 03: Summarize Annotations by PanCat and Abundant Specific and Rare Genes with a plot showing ANA-TAD Boxplots for each n/N
@@ -516,6 +578,69 @@ Step 04: Plot Gene coverage Trends across metagenome time points and differences
 	python ../00_Scripts/08e_PlotGeneChanges.py -i ../08c_Gene_TAD_Annotation_PanCat_Dilution/04_ClstrRepSeq_PanCat_ANATAD_Annotation.tsv -c ClustersToPlot_Specific.txt -m MetagenomeOrder.txt -p Specific -o Dilution_Specific -t Dilution Series Specific Gene Change -y 10 -w 80
 	python ../00_Scripts/08e_PlotGeneChanges.py -i ../08c_Gene_TAD_Annotation_PanCat_Dilution/04_ClstrRepSeq_PanCat_ANATAD_Annotation.tsv -c ClustersToPlot_Rare.txt -m MetagenomeOrder.txt -p Rare -o Dilution_Rare -t Dilution Series Rare Gene Change -y 10 -w 80
 	python ../00_Scripts/08e_PlotGeneChanges.py -i ../08c_Gene_TAD_Annotation_PanCat_Dilution/04_ClstrRepSeq_PanCat_ANATAD_Annotation.tsv -c ClustersToPlot_Core.txt -m MetagenomeOrder.txt -p Core -o Dilution_Core -t Dilution Series Core Gene Change -y 10 -w 80
+
+#######################################################################################################################################
+############ Repeat Step 4 with pID threshold gradient 96, 97, 98, 99, 100 for Dilution Series to test if peak disappears. ############
+#######################################################################################################################################
+
+	
+	# Dilution 96% ID
+	mkdir 08e_GeneChangeAcrossMetagenomes_pID96
+	cp 08e_GeneChangeAcrossMetagenomes/*txt 08e_GeneChangeAcrossMetagenomes_pID96/
+	cd 08e_GeneChangeAcrossMetagenomes_pID96/
+
+	python ../00_Scripts/08e_PlotGeneChanges.py -i ../08c_Gene_TAD_Annotation_PanCat_Dilution_pID96/04_ClstrRepSeq_PanCat_ANATAD_Annotation.tsv -c ClustersToPlot_Specific.txt -m MetagenomeOrder.txt -p Specific -o Dilution_Specific -t Dilution Series Specific Gene Change 96% ID -y 10 -w 80
+	python ../00_Scripts/08e_PlotGeneChanges.py -i ../08c_Gene_TAD_Annotation_PanCat_Dilution_pID96/04_ClstrRepSeq_PanCat_ANATAD_Annotation.tsv -c ClustersToPlot_Rare.txt -m MetagenomeOrder.txt -p Rare -o Dilution_Rare -t Dilution Series Rare Gene Change 96% ID -y 10 -w 80
+	python ../00_Scripts/08e_PlotGeneChanges.py -i ../08c_Gene_TAD_Annotation_PanCat_Dilution_pID96/04_ClstrRepSeq_PanCat_ANATAD_Annotation.tsv -c ClustersToPlot_Core.txt -m MetagenomeOrder.txt -p Core -o Dilution_Core -t Dilution Series Core Gene Change 96% ID -y 10 -w 80
+
+	cd ..
+
+	# Dilution 97% ID
+	mkdir 08e_GeneChangeAcrossMetagenomes_pID97
+	cp 08e_GeneChangeAcrossMetagenomes/*txt 08e_GeneChangeAcrossMetagenomes_pID97/
+	cd 08e_GeneChangeAcrossMetagenomes_pID97/
+
+	python ../00_Scripts/08e_PlotGeneChanges.py -i ../08c_Gene_TAD_Annotation_PanCat_Dilution_pID97/04_ClstrRepSeq_PanCat_ANATAD_Annotation.tsv -c ClustersToPlot_Specific.txt -m MetagenomeOrder.txt -p Specific -o Dilution_Specific -t Dilution Series Specific Gene Change 97% ID -y 10 -w 80
+	python ../00_Scripts/08e_PlotGeneChanges.py -i ../08c_Gene_TAD_Annotation_PanCat_Dilution_pID97/04_ClstrRepSeq_PanCat_ANATAD_Annotation.tsv -c ClustersToPlot_Rare.txt -m MetagenomeOrder.txt -p Rare -o Dilution_Rare -t Dilution Series Rare Gene Change 97% ID -y 10 -w 80
+	python ../00_Scripts/08e_PlotGeneChanges.py -i ../08c_Gene_TAD_Annotation_PanCat_Dilution_pID97/04_ClstrRepSeq_PanCat_ANATAD_Annotation.tsv -c ClustersToPlot_Core.txt -m MetagenomeOrder.txt -p Core -o Dilution_Core -t Dilution Series Core Gene Change 97% ID -y 10 -w 80
+
+	cd ..
+
+	# Dilution 98% ID
+	mkdir 08e_GeneChangeAcrossMetagenomes_pID98
+	cp 08e_GeneChangeAcrossMetagenomes/*txt 08e_GeneChangeAcrossMetagenomes_pID98/
+	cd 08e_GeneChangeAcrossMetagenomes_pID98/
+
+	python ../00_Scripts/08e_PlotGeneChanges.py -i ../08c_Gene_TAD_Annotation_PanCat_Dilution_pID98/04_ClstrRepSeq_PanCat_ANATAD_Annotation.tsv -c ClustersToPlot_Specific.txt -m MetagenomeOrder.txt -p Specific -o Dilution_Specific -t Dilution Series Specific Gene Change 98% ID -y 10 -w 80
+	python ../00_Scripts/08e_PlotGeneChanges.py -i ../08c_Gene_TAD_Annotation_PanCat_Dilution_pID98/04_ClstrRepSeq_PanCat_ANATAD_Annotation.tsv -c ClustersToPlot_Rare.txt -m MetagenomeOrder.txt -p Rare -o Dilution_Rare -t Dilution Series Rare Gene Change 98% ID -y 10 -w 80
+	python ../00_Scripts/08e_PlotGeneChanges.py -i ../08c_Gene_TAD_Annotation_PanCat_Dilution_pID98/04_ClstrRepSeq_PanCat_ANATAD_Annotation.tsv -c ClustersToPlot_Core.txt -m MetagenomeOrder.txt -p Core -o Dilution_Core -t Dilution Series Core Gene Change 98% ID -y 10 -w 80
+
+	cd ..
+
+	# Dilution 99% ID
+	mkdir 08e_GeneChangeAcrossMetagenomes_pID99
+	cp 08e_GeneChangeAcrossMetagenomes/*txt 08e_GeneChangeAcrossMetagenomes_pID99/
+	cd 08e_GeneChangeAcrossMetagenomes_pID99/
+
+	python ../00_Scripts/08e_PlotGeneChanges.py -i ../08c_Gene_TAD_Annotation_PanCat_Dilution_pID99/04_ClstrRepSeq_PanCat_ANATAD_Annotation.tsv -c ClustersToPlot_Specific.txt -m MetagenomeOrder.txt -p Specific -o Dilution_Specific -t Dilution Series Specific Gene Change 99% ID -y 10 -w 80
+	python ../00_Scripts/08e_PlotGeneChanges.py -i ../08c_Gene_TAD_Annotation_PanCat_Dilution_pID99/04_ClstrRepSeq_PanCat_ANATAD_Annotation.tsv -c ClustersToPlot_Rare.txt -m MetagenomeOrder.txt -p Rare -o Dilution_Rare -t Dilution Series Rare Gene Change 99% ID -y 10 -w 80
+	python ../00_Scripts/08e_PlotGeneChanges.py -i ../08c_Gene_TAD_Annotation_PanCat_Dilution_pID99/04_ClstrRepSeq_PanCat_ANATAD_Annotation.tsv -c ClustersToPlot_Core.txt -m MetagenomeOrder.txt -p Core -o Dilution_Core -t Dilution Series Core Gene Change 99% ID -y 10 -w 80
+
+	cd ..
+
+	# Dilution 100% ID
+	mkdir 08e_GeneChangeAcrossMetagenomes_pID100
+	cp 08e_GeneChangeAcrossMetagenomes/*txt 08e_GeneChangeAcrossMetagenomes_pID100/
+	cd 08e_GeneChangeAcrossMetagenomes_pID100/
+
+	python ../00_Scripts/08e_PlotGeneChanges.py -i ../08c_Gene_TAD_Annotation_PanCat_Dilution_pID100/04_ClstrRepSeq_PanCat_ANATAD_Annotation.tsv -c ClustersToPlot_Specific.txt -m MetagenomeOrder.txt -p Specific -o Dilution_Specific -t Dilution Series Specific Gene Change 100% ID -y 10 -w 80
+	python ../00_Scripts/08e_PlotGeneChanges.py -i ../08c_Gene_TAD_Annotation_PanCat_Dilution_pID100/04_ClstrRepSeq_PanCat_ANATAD_Annotation.tsv -c ClustersToPlot_Rare.txt -m MetagenomeOrder.txt -p Rare -o Dilution_Rare -t Dilution Series Rare Gene Change 100% ID -y 10 -w 80
+	python ../00_Scripts/08e_PlotGeneChanges.py -i ../08c_Gene_TAD_Annotation_PanCat_Dilution_pID100/04_ClstrRepSeq_PanCat_ANATAD_Annotation.tsv -c ClustersToPlot_Core.txt -m MetagenomeOrder.txt -p Core -o Dilution_Core -t Dilution Series Core Gene Change 100% ID -y 10 -w 80
+
+	cd ..
+
+#######################################################################################################################################
+
 
 ########################################################
 ########################################################
@@ -766,7 +891,7 @@ Contig fishing for selected isolate contigs containing genes of interest in the 
 
 mkdir 12_Contig_Fishing
 
-	Step 01: Grab contig fasta sequence.
+	Step 01: Grab representative fasta sequences for selected gene clusters.
 		We can use the same files from 08e Step 04.
 
 		cd 12_Contig_Fishing/
@@ -813,6 +938,64 @@ mkdir 12_Contig_Fishing
 		for f in 02*_Blast_Results/*.blast; do python ../00_Scripts/05c_Blast_Check_Filter.py -b $f -a 300 -p 70; rm $f; done
 		for f in 03_DraftGenome_Specific_Results/*.blast; do python ../00_Scripts/05c_Blast_Check_Filter.py -b $f -a 300 -p 70; rm $f; done
 		
+
+	Step 5: Build plot of results - # of contigs and ANI values with a swarm plot of %ID matches per gene.
+
+		### CORE ##################
+		### - from local directory: /Users/rothconrad/Downloads/ReSearch/00_New_Salinibacter/12_ContigFishing/02a_Core_Blast_Results
+		# Control 
+		python ../12_ContigFishing_Summary_Plot.py -b E1_M13_ClustersToPlot_Core.filtered_best_hits.blst.tsv -a ../../08a_Gene_TAD_Annotation_PanCat_Control/04_ClstrRepSeq_PanCat_ANATAD_Annotation.tsv
+		python ../12_ContigFishing_Summary_Plot.py -b E1_M15_ClustersToPlot_Core.filtered_best_hits.blst.tsv -a ../../08a_Gene_TAD_Annotation_PanCat_Control/04_ClstrRepSeq_PanCat_ANATAD_Annotation.tsv
+		python ../12_ContigFishing_Summary_Plot.py -b E1_M16_ClustersToPlot_Core.filtered_best_hits.blst.tsv -a ../../08a_Gene_TAD_Annotation_PanCat_Control/04_ClstrRepSeq_PanCat_ANATAD_Annotation.tsv
+
+		# UnShaded - from local directory
+		python ../12_ContigFishing_Summary_Plot.py -b E4_M13_ClustersToPlot_Core.filtered_best_hits.blst.tsv -a ../../08b_Gene_TAD_Annotation_PanCat_UnShaded/04_ClstrRepSeq_PanCat_ANATAD_Annotation.tsv
+		python ../12_ContigFishing_Summary_Plot.py -b E4_M15_ClustersToPlot_Core.filtered_best_hits.blst.tsv -a ../../08b_Gene_TAD_Annotation_PanCat_UnShaded/04_ClstrRepSeq_PanCat_ANATAD_Annotation.tsv
+		python ../12_ContigFishing_Summary_Plot.py -b E4_M16_ClustersToPlot_Core.filtered_best_hits.blst.tsv -a ../../08b_Gene_TAD_Annotation_PanCat_UnShaded/04_ClstrRepSeq_PanCat_ANATAD_Annotation.tsv
+
+		# Dilution - from local directory
+		python ../12_ContigFishing_Summary_Plot.py -b E6_M13_ClustersToPlot_Core.filtered_best_hits.blst.tsv -a ../../08c_Gene_TAD_Annotation_PanCat_Dilution/04_ClstrRepSeq_PanCat_ANATAD_Annotation.tsv
+		python ../12_ContigFishing_Summary_Plot.py -b E6_M15_ClustersToPlot_Core.filtered_best_hits.blst.tsv -a ../../08c_Gene_TAD_Annotation_PanCat_Dilution/04_ClstrRepSeq_PanCat_ANATAD_Annotation.tsv
+		python ../12_ContigFishing_Summary_Plot.py -b E6_M16_ClustersToPlot_Core.filtered_best_hits.blst.tsv -a ../../08c_Gene_TAD_Annotation_PanCat_Dilution/04_ClstrRepSeq_PanCat_ANATAD_Annotation.tsv
+		###################################################################################################################################################################################################
+
+		### RARE ##################
+		### - from local directory: /Users/rothconrad/Downloads/ReSearch/00_New_Salinibacter/12_ContigFishing/02b_Rare_Blast_Results
+		# Control 
+		python ../12_ContigFishing_Summary_Plot.py -b E1_M13_ClustersToPlot_Rare.filtered_best_hits.blst.tsv -a ../../08a_Gene_TAD_Annotation_PanCat_Control/04_ClstrRepSeq_PanCat_ANATAD_Annotation.tsv
+		python ../12_ContigFishing_Summary_Plot.py -b E1_M15_ClustersToPlot_Rare.filtered_best_hits.blst.tsv -a ../../08a_Gene_TAD_Annotation_PanCat_Control/04_ClstrRepSeq_PanCat_ANATAD_Annotation.tsv
+		python ../12_ContigFishing_Summary_Plot.py -b E1_M16_ClustersToPlot_Rare.filtered_best_hits.blst.tsv -a ../../08a_Gene_TAD_Annotation_PanCat_Control/04_ClstrRepSeq_PanCat_ANATAD_Annotation.tsv
+
+		# UnShaded - from local directory
+		python ../12_ContigFishing_Summary_Plot.py -b E4_M13_ClustersToPlot_Rare.filtered_best_hits.blst.tsv -a ../../08b_Gene_TAD_Annotation_PanCat_UnShaded/04_ClstrRepSeq_PanCat_ANATAD_Annotation.tsv
+		python ../12_ContigFishing_Summary_Plot.py -b E4_M15_ClustersToPlot_Rare.filtered_best_hits.blst.tsv -a ../../08b_Gene_TAD_Annotation_PanCat_UnShaded/04_ClstrRepSeq_PanCat_ANATAD_Annotation.tsv
+		python ../12_ContigFishing_Summary_Plot.py -b E4_M16_ClustersToPlot_Rare.filtered_best_hits.blst.tsv -a ../../08b_Gene_TAD_Annotation_PanCat_UnShaded/04_ClstrRepSeq_PanCat_ANATAD_Annotation.tsv
+
+		# Dilution - from local directory
+		python ../12_ContigFishing_Summary_Plot.py -b E6_M13_ClustersToPlot_Rare.filtered_best_hits.blst.tsv -a ../../08c_Gene_TAD_Annotation_PanCat_Dilution/04_ClstrRepSeq_PanCat_ANATAD_Annotation.tsv
+		python ../12_ContigFishing_Summary_Plot.py -b E6_M15_ClustersToPlot_Rare.filtered_best_hits.blst.tsv -a ../../08c_Gene_TAD_Annotation_PanCat_Dilution/04_ClstrRepSeq_PanCat_ANATAD_Annotation.tsv
+		python ../12_ContigFishing_Summary_Plot.py -b E6_M16_ClustersToPlot_Rare.filtered_best_hits.blst.tsv -a ../../08c_Gene_TAD_Annotation_PanCat_Dilution/04_ClstrRepSeq_PanCat_ANATAD_Annotation.tsv
+		###################################################################################################################################################################################################
+
+		### Specific ##################
+		### - from local directory: /Users/rothconrad/Downloads/ReSearch/00_New_Salinibacter/12_ContigFishing/02c_Specific_Blast_Results
+		# Control 
+		python ../12_ContigFishing_Summary_Plot.py -b E1_M13_ClustersToPlot_Specific.filtered_best_hits.blst.tsv -a ../../08a_Gene_TAD_Annotation_PanCat_Control/04_ClstrRepSeq_PanCat_ANATAD_Annotation.tsv
+		python ../12_ContigFishing_Summary_Plot.py -b E1_M15_ClustersToPlot_Specific.filtered_best_hits.blst.tsv -a ../../08a_Gene_TAD_Annotation_PanCat_Control/04_ClstrRepSeq_PanCat_ANATAD_Annotation.tsv
+		python ../12_ContigFishing_Summary_Plot.py -b E1_M16_ClustersToPlot_Specific.filtered_best_hits.blst.tsv -a ../../08a_Gene_TAD_Annotation_PanCat_Control/04_ClstrRepSeq_PanCat_ANATAD_Annotation.tsv
+
+		# UnShaded - from local directory
+		python ../12_ContigFishing_Summary_Plot.py -b E4_M13_ClustersToPlot_Specific.filtered_best_hits.blst.tsv -a ../../08b_Gene_TAD_Annotation_PanCat_UnShaded/04_ClstrRepSeq_PanCat_ANATAD_Annotation.tsv
+		python ../12_ContigFishing_Summary_Plot.py -b E4_M15_ClustersToPlot_Specific.filtered_best_hits.blst.tsv -a ../../08b_Gene_TAD_Annotation_PanCat_UnShaded/04_ClstrRepSeq_PanCat_ANATAD_Annotation.tsv
+		python ../12_ContigFishing_Summary_Plot.py -b E4_M16_ClustersToPlot_Specific.filtered_best_hits.blst.tsv -a ../../08b_Gene_TAD_Annotation_PanCat_UnShaded/04_ClstrRepSeq_PanCat_ANATAD_Annotation.tsv
+
+		# Dilution - from local directory
+		python ../12_ContigFishing_Summary_Plot.py -b E6_M13_ClustersToPlot_Specific.filtered_best_hits.blst.tsv -a ../../08c_Gene_TAD_Annotation_PanCat_Dilution/04_ClstrRepSeq_PanCat_ANATAD_Annotation.tsv
+		python ../12_ContigFishing_Summary_Plot.py -b E6_M15_ClustersToPlot_Specific.filtered_best_hits.blst.tsv -a ../../08c_Gene_TAD_Annotation_PanCat_Dilution/04_ClstrRepSeq_PanCat_ANATAD_Annotation.tsv
+		python ../12_ContigFishing_Summary_Plot.py -b E6_M16_ClustersToPlot_Specific.filtered_best_hits.blst.tsv -a ../../08c_Gene_TAD_Annotation_PanCat_Dilution/04_ClstrRepSeq_PanCat_ANATAD_Annotation.tsv
+		###################################################################################################################################################################################################
+
+
 
 	Step 7: Look at other annotation on contig
 		I've identified 7 peak dilution genes that are from the same genome on 3 contigs.
