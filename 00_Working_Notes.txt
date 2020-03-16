@@ -919,7 +919,7 @@ mkdir 12_Contig_Fishing
 
 	Step 02: Build Blast Database
 		module load python/2.7 boost/1.53.0 ncbi_blast/2.2.29
-		cd 00_Select_Contigs
+		cd 01_Assembled_Metagenomes
 		for f in *.fna; do makeblastdb -dbtype nucl -in $f; done
 		cd ..
 
@@ -928,8 +928,20 @@ mkdir 12_Contig_Fishing
 		bash ../00_PBS/12b_Launch_Select_Contig_Blast.sh 01_Assembled_Metagenomes fna 02b_Rare_Blast_Results 00_Select_Contigs/ClustersToPlot_Rare.fna 70
 		bash ../00_PBS/12b_Launch_Select_Contig_Blast.sh 01_Assembled_Metagenomes fna 02c_Specific_Blast_Results 00_Select_Contigs/ClustersToPlot_Specific.fna 70
 
+		for db in 01_Assembled_Metagenomes/E*.fna; do bash ../00_PBS/12b_Launch_Select_Contig_Blast.sh 00_Select_Contigs fna 02aa_Blast_Results $db 70; done
+
+		## For combined assemblies and Genes
+		make directory 06_CombinedGenes_CombinedMetagenomes_Fishing
+		place selected genes and combined metagenome file in 06_CombinedGenes_CombinedMetagenomes_Fishing directory
+		cd 06_CombinedGenes_CombinedMetagenomes_Fishing
+		module load python/2.7 boost/1.53.0 ncbi_blast/2.2.29
+		makeblastdb -dbtype nucl -in 00_MetagenomeAssemblies.fasta 
+
+
+
 		# Check Isolate Draft Genomes for Specific genes to ensure only 1 good match (that they really are specific genes)
 		bash ../00_PBS/12b_Launch_Select_Contig_Blast.sh ../01_Sruber_Group1_Genomes fna 03_DraftGenome_Specific_Results 00_Select_Contigs/ClustersToPlot_Specific.fna 70
+		# The result is that they are truly specific - only coming from one draft genome. This is good. it means the clustering method is working.
 
 		# Remove query lists
 		rm *.txt
@@ -1022,6 +1034,8 @@ mkdir 12_Contig_Fishing
 			nano 05_Contig_Synteny_Test/Sruber_randomG_0057_111_Matches.txt
 			nano 05_Contig_Synteny_Test/Sruber_randomG_0057_238_1.txt
 			nano Sruber_randomG_0001_42_5_Matches.txt
+			nano 05_Contig_Synteny_Test/Sruber_randomG_0001_81_3_Matches.txt
+
 		### Retrieve fasta sequence for selected contigs - my contigs are named with E?_M1?_S?_* which is the metagenome sample name I can use to retrieve the sequence.
 		### Additionally the metagenome assemblies are the fasta file format where each sequence is on only a single line. Not the gross wrapped sequence fasta format.
 		while read contig; do mtg=`echo $contig | cut -d_ -f1-3`; grep -A 1 $contig 01_Assembled_Metagenomes/${mtg}_contigs.fltrd.fna >> 05_Contig_Synteny_Test/Sruber_randomG_0057_111_Matches.fasta; done < 05_Contig_Synteny_Test/Sruber_randomG_0057_111_Matches.txt
@@ -1029,6 +1043,8 @@ mkdir 12_Contig_Fishing
 		while read contig; do mtg=`echo $contig | cut -d_ -f1-3`; grep -A 1 $contig 01_Assembled_Metagenomes/${mtg}_contigs.fltrd.fna >> 05_Contig_Synteny_Test/Sruber_randomG_0057_238_1_Matches.fasta; done < 05_Contig_Synteny_Test/Sruber_randomG_0057_238_1_Matches.txt
 
 		while read contig; do mtg=`echo $contig | cut -d_ -f1-3`; grep -A 1 $contig 01_Assembled_Metagenomes/${mtg}_contigs.fltrd.fna >> 05_Contig_Synteny_Test/Sruber_randomG_0001_42_5_Matches.fasta; done < 05_Contig_Synteny_Test/Sruber_randomG_0001_42_5_Matches.txt
+
+		while read contig; do mtg=`echo $contig | cut -d_ -f1-3`; grep -A 1 $contig 01_Assembled_Metagenomes/${mtg}_contigs.fltrd.fna >> 05_Contig_Synteny_Test/Sruber_randomG_0001_81_3_Matches.fasta; done < 05_Contig_Synteny_Test/Sruber_randomG_0001_81_3_Matches.txt
 
 		### Run Prodigal to predict genes - lets cluster with amino acid at 60% id
 		cd 05_Contig_Synteny_Test/
@@ -1038,6 +1054,7 @@ mkdir 12_Contig_Fishing
 
 		prodigal -f gff -i Sruber_randomG_0001_42_5_Matches.fasta -d Sruber_randomG_0001_42_5_Matches.fnn -a Sruber_randomG_0001_42_5_Matches.faa
 
+		prodigal -f gff -i Sruber_randomG_0001_81_3_Matches.fasta -d Sruber_randomG_0001_81_3_Matches.fnn -a Sruber_randomG_0001_81_3_Matches.faa
 
 		### Run CD-HIT-EST to cluster genes
 		cd-hit-est -i Sruber_randomG_0057_111_Matches.fnn -o Sruber_randomG_0057_111_Matches.cdhit.fnn -c 0.9 -n 8 -G 0 -g 1 -aS 0.7 -d 0
@@ -1046,12 +1063,19 @@ mkdir 12_Contig_Fishing
 
 		cd-hit -i Sruber_randomG_0001_42_5_Matches.faa -o Sruber_randomG_0001_42_5_Matches.cdhit.faa -c 0.4 -n 2 -G 0 -g 1 -aS 0.7 -d 0
 
+		cd-hit -i Sruber_randomG_0001_81_3_Matches.faa -o Sruber_randomG_0001_81_3_Matches.cdhit.faa -c 0.4 -n 2 -G 0 -g 1 -aS 0.7 -d 0
+
 		### write the script to build the plot from this nonsense
 
-		python ../12e_ContigSynteny_Plot.py -c Sruber_randomG_0057_238_1_Matches.fasta -p Sruber_randomG_0057_238_1_Matches.faa -r Sruber_randomG_0057_238_1_Matches.cdhit.faa.clstr -o Sruber_randomG_0057_238_1_Matches.png -y
+		python 04a_ContigSynteny_Plot.py -c Sruber_randomG_0001_81_3_Matches.fasta -p Sruber_randomG_0001_81_3_Matches.faa -r Sruber_randomG_0001_81_3_Matches.cdhit.faa.clstr -o Sruber_randomG_0001_81_3_Matches.SyntenyPlot.png -y
 
-		python ../12e_ContigSynteny_Plot.py -c Sruber_randomG_0001_42_5_Matches.fasta -p Sruber_randomG_0001_42_5_Matches.faa -r Sruber_randomG_0001_42_5_Matches.cdhit.faa.clstr -o Sruber_randomG_0001_42_5_Matches.png -y
+		python ../04a_ContigSynteny_Plot.py -c ContigSequenceMatchesFor_S_ruber_randomG_0002_50_8.fasta -p ContigSequenceMatchesFor_S_ruber_randomG_0002_50_8_genes.faa -r ContigSequenceMatchesFor_S_ruber_randomG_0002_50_8_genes.cdhit.faa.clstr -o ContigSequenceMatchesFor_S_ruber_randomG_0002_50_8_Synteny_Plot.png -y
 
+		python 04a_ContigSynteny_Plot.py -c Sruber_randomG_0001_42_5_Matches.fasta -p Sruber_randomG_0001_42_5_Matches.faa -r Sruber_randomG_0001_42_5_Matches.cdhit.faa.clstr -o Sruber_randomG_0001_42_5_Matches.SyntenyPlot.png -y
+
+		python 04a_ContigSynteny_Plot.py -c Sruber_randomG_0057_238_1_Matches.fasta -p Sruber_randomG_0057_238_1_Matches.faa -r Sruber_randomG_0057_238_1_Matches.cdhit.faa.clstr -o Sruber_randomG_0057_238_1_Matches.SyntenyPlot.png -y
+
+		python 04a_ContigSynteny_Plot.py -c Sruber_randomG_0057_111_Matches.fasta -p Sruber_randomG_0057_111_Matches.fnn -r Sruber_randomG_0057_111_Matches.cdhit.fnn.clstr -o Sruber_randomG_0057_111_Matches.SyntenyPlot.png -y
 
 	Step X: Look at other annotation on contig
 		I've identified 7 peak dilution genes that are from the same genome on 3 contigs.
