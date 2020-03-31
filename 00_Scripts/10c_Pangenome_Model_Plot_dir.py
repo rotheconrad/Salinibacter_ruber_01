@@ -8,6 +8,10 @@ files from the PGE_0000_Summary folder output by the PGE pipeline.
 It models and plots the Pangnome curves from the multiple random trials
 (experiments) sampled by the PGE pipeline.
 
+Pangenome modelling based on:
+Zhang et. al. 2018, 10.3389/fmicb.2018.00577
+Tettelin et. al. 2008, https://doi.org/10.1016/j.mib.2008.09.006
+
 -------------------------------------------
 Author :: Roth Conrad & Carlos Ruiz
 Email :: rotheconrad@gatech.edu, cruizperez3@gatech.edu

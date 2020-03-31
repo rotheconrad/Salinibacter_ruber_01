@@ -8,6 +8,10 @@ first line (row), and gene IDs should in the first column. All other
 values should be either a 0 for gene absent in the genome (column) or
 1 for gene is present in the genome.
 
+Pangenome modelling based on:
+Zhang et. al. 2018, 10.3389/fmicb.2018.00577
+Tettelin et. al. 2008, https://doi.org/10.1016/j.mib.2008.09.006
+
 -------------------------------------------
 Author :: Roth Conrad & Carlos Ruiz
 Email :: rotheconrad@gatech.edu, cruizperez3@gatech.edu

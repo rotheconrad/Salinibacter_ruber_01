@@ -9,6 +9,8 @@ Adapter Clipping of Raw Reads
 
 bash 00_PBS/00a_Launch_Trimmomatic_Array.sh 00_DataC *fastq 00_DataTrimmed
 
+
+
 ########################################################
 ########################################################
 
@@ -37,6 +39,9 @@ qsub -t 23,25,102 -v sample_list=01_Sample_List.txt,data_dir=00_DataTrimmed,out_
 
 ########################################################
 
+################################################################################################################################################
+############## THIS IS THE FINAL ASSEMBLY USED FOR ANALYSIS ####################################################################################
+################################################################################################################################################
 # I decided to test using the unpaired data. You can pass these to spades separately for each paired end set.
 # Concatenate each unpaired set into single file and move unpaired data back with the paired data.
 
@@ -57,6 +62,10 @@ qsub -t 49 -v sample_list=01_Sample_List.txt,data_dir=00_DataTrimmed,out_dir=01_
 # Filter and rename assemblies
 
 for f in */contigs.fasta; do n=`echo $f | cut -d_ -f1`; python ../00_Scripts/01_SPAdes_Assembly_Filter_Rename_Stats.py -i $f -o ${n}_Draft_Genome.fna -g $n -l 1000 -c 2; done >> ../01_Sruber_SPAdes_Assembly_Stats.txt
+
+
+################################################################################################################################################
+################################################################################################################################################
 
 
 ########################################################
@@ -204,12 +213,62 @@ qsub -v input=03_Concatenated_Tree/Srube_All_Ess_Aln.cat.fa,output=03_Concatenat
 
 PGE: Pangenome Analysis (Pangenome Experiment - PGE) :: Sruber / Ecoli / Others
 
+# Working notes: /gpfs/pace2/project/bio-konstantinidis/rconrad6/Core-Pan_Genomes/NOTES
+
+## Downloaded genome collections:
+
+Bacillus_thuringiensis_Both 433
+Burkholderia_pseudomallei_Contig_Scaffold 1484
+Campylobacter_jejuni_Contigs 19688
+Escherichia_coli_Complete 878
+Escherichia_coli_Contig 11167
+Klebsiella_pneumoniae_Contigs 4751
+Listeria_monocytogenes_Scaffold 1046
+Mycobacterium_tuberculosis_Contigs 1865
+Prochlorococcus_Contigs 1
+Pseudomonas_aeruginosa_Contig 3264
+Pseudomonas_sp286_Contigs 1538
+Rhizobiales_bacterium_Both 1
+Salinibacter_JGI_SP 1
+Salmonella_enterica_Scaffold 3037
+Staphylococcus_aureus_Contig 4203
+Streptococcus_pneumoniae_Contig 5061
+
+
+## Run pangenome analysis for a single random trial of 100 randomly selected genomes for the S. ruber genome collection.
+
 bash 00_Run_Pangenome_Experiment/00_Run_Pangenome_Experiment.sh 1 100 01_Sruber_Group1_Genomes/ Salinibacter_ruber S_ruber 97.5 100 300
+
+
+### Forgot to take notes:
+Ran scripts 03b_AllvAll_ANIvFragments_Correlations.py
+Ran 10b_Pangenome_Calculate_Model_Plot.py
+
+python ../00_GitProject/Salinibacter_ruber_01/00_Scripts/03c_AllvAll_FastANIvFragments_Correlation_dir.py -csd 00_Summary/C_S_ruber_Correlation_Summary/ -org Salinibacter_ruber_Draft -op Sruber_Draft
+                xs           ys
+count  9904.000000  9904.000000
+mean     97.982612     0.808457
+std       0.366168     0.037990
+min      97.169400     0.665430
+25%      97.753700     0.783505
+50%      97.906600     0.809095
+75%      98.113125     0.834674
+max      99.999900     0.992392
+ANI mean: 97.98261224757674 ANI median: 97.9066
+Frag mean: 0.8084568546814183 Frag median: 0.8090946015803855
+
+# Build the shared gene content clustermap 
+
+
+
+### NEED TO RUN CD-HIT CLUSTER TESTS and plot repeat genome representatives per cluster - look for params with lowest value
 
 
 ## Ecoli and others. Downloaded from NCBI Assembly database Oct 28 2019
 ## Located in directory: /gpfs/pace2/project/bio-konstantinidis/rconrad6/Core-Pan_Genomes
 ## All draft genomes to match our Sruber draft genomes plus closed Ecoli genomes into addition to Ecoli draft to assess difference between closed and draft.
+
+### Run pangenome analysis for 100 random trials, 100 randomly selelcted genomes each trial for the following genome collections.
 
 bash 00_Run_Pangenome_Experiment/00_Run_Pangenome_Experiment.sh 100 100 GENOMES/Escherichia_coli_Complete/ Escherichia_coli E_coli 97.5 100 300
 
@@ -223,6 +282,69 @@ bash 00_Run_Pangenome_Experiment/00_Run_Pangenome_Experiment.sh 100 100 GENOMES/
 
 bash 00_Run_Pangenome_Experiment/00_Run_Pangenome_Experiment.sh 100 100 GENOMES/Escherichia_coli_Contig/ Escherichia_coli E_coli 97.5 100 300
 
+
+## FastANI Correlations
+From local directory: /Users/rothconrad/Downloads/ReSearch/00_New_Salinibacter/00_Pangenome
+
+# Ecoli Draft
+python ../00_GitProject/Salinibacter_ruber_01/00_Scripts/03c_AllvAll_FastANIvFragments_Correlation_dir.py -csd 00_Summary/C_E_coli_Correlation_Summary/ -org Escherichia_coli_Draft -op Ecoli_Draft
+                  xs             ys
+count  990050.000000  990050.000000
+mean       98.373429       0.860510
+std         0.588561       0.048227
+min        95.811500       0.231590
+25%        97.870000       0.834437
+50%        98.342700       0.864174
+75%        98.781800       0.890492
+max        99.999900       1.000000
+ANI mean: 98.37342887581434 ANI median: 98.3427
+Frag mean: 0.8605098791605534 Frag median: 0.864174454829
+
+# Bthur Draft
+python ../00_GitProject/Salinibacter_ruber_01/00_Scripts/03c_AllvAll_FastANIvFragments_Correlation_dir.py -csd 00_Summary/C_B_thur_Correlation_Summary/ -org Bacillus_thuringiensis_Draft -op Bthur_Draft
+                  xs             ys
+count  990000.000000  990000.000000
+mean       98.444346       0.870102
+std         0.492286       0.042780
+min        97.305600       0.609321
+25%        97.969100       0.845238
+50%        98.561200       0.871636
+75%        98.776700       0.898599
+max        99.993900       0.995713
+ANI mean: 98.44434571777775 ANI median: 98.5612
+Frag mean: 0.8701019817829854 Frag median: 0.871635610766
+
+# Senterica Draft
+python ../00_GitProject/Salinibacter_ruber_01/00_Scripts/03c_AllvAll_FastANIvFragments_Correlation_dir.py -csd 00_Summary/C_S_enterica_Correlation_Summary/ -org Salmonella_enterica_Draft -op Senter_Draft
+                  xs             ys
+count  990282.000000  990282.000000
+mean       98.734112       0.913279
+std         0.727773       0.047575
+min        96.253500       0.213333
+25%        98.206200       0.879571
+50%        98.320500       0.903982
+75%        98.981675       0.947498
+max        99.999900       1.000000
+ANI mean: 98.7341118697502 ANI median: 98.3205
+Frag mean: 0.9132789536355904 Frag median: 0.9039820545945001
+
+# Ecoli Complete
+python ../00_GitProject/Salinibacter_ruber_01/00_Scripts/03c_AllvAll_FastANIvFragments_Correlation_dir.py -csd Ecoli_Closed/C_E_coli_Correlation_Summary/ -org Escherichia_coli_Complete -op Ecoli_Complete
+                  xs             ys
+count  989940.000000  989940.000000
+mean       98.420672       0.862728
+std         0.622082       0.057519
+min        97.094200       0.645500
+25%        98.000100       0.824748
+50%        98.351700       0.864366
+75%        98.796400       0.906032
+max        99.999900       1.000000
+ANI mean: 98.42067168616283 ANI median: 98.3517
+Frag mean: 0.8627283747308304 Frag median: 0.864366448543
+
+### Forgot to take notes:
+Ran 10c_Pangenome_Model_Plot_dir.py
+Ran script that builds bar plot with error of pangenome stats.
 
 
 ########################################################
@@ -568,6 +690,20 @@ Step 04: Plot Gene coverage Trends across metagenome time points and differences
 	python ../00_Scripts/08e_PlotGeneChanges.py -i ../08a_Gene_TAD_Annotation_PanCat_Control/04_ClstrRepSeq_PanCat_ANATAD_Annotation.tsv -c ClustersToPlot_Specific.txt -m MetagenomeOrder.txt -p Specific -o Control_Specific -t Control Series Specific Gene Change -y 10 -w 80
 	python ../00_Scripts/08e_PlotGeneChanges.py -i ../08a_Gene_TAD_Annotation_PanCat_Control/04_ClstrRepSeq_PanCat_ANATAD_Annotation.tsv -c ClustersToPlot_Rare.txt -m MetagenomeOrder.txt -p Rare -o Control_Rare -t Control Series Rare Gene Change -y 10 -w 80
 	python ../00_Scripts/08e_PlotGeneChanges.py -i ../08a_Gene_TAD_Annotation_PanCat_Control/04_ClstrRepSeq_PanCat_ANATAD_Annotation.tsv -c ClustersToPlot_Core.txt -m MetagenomeOrder.txt -p Core -o Control_Core	 -t Control Series Core Gene Change -y 10 -w 80
+
+	########## Generate summary values for abstract and paper ######################
+	in python (v3.6)
+	import pandas as pd
+	df = pd.readcsv('04_ClstrRepSeq_PanCat_ANATAD_Annotation.tsv', sep='\t')
+	df.describe()
+	dfspec = df[df.PanCat == 'Specific']
+	dfspec.describe()
+	dfspecHi = dfspec[dfspec['ANA-TAD'] >= 0.05]
+	dfspecLow = dfspec[dfspec['ANA-TAD'] < 0.05]
+	len(dfspecHi) -> 926
+	len(dfspecLow) -> 3904
+	926/4830*100 -> 19.171842650103518
+	################################################################################
 
 	# UnShaded
 	python ../00_Scripts/08e_PlotGeneChanges.py -i ../08b_Gene_TAD_Annotation_PanCat_UnShaded/04_ClstrRepSeq_PanCat_ANATAD_Annotation.tsv -c ClustersToPlot_Specific.txt -m MetagenomeOrder.txt -p Specific -o UnShaded_Specific -t UnShade Series Specific Gene Change -y 10 -w 80
