@@ -1,11 +1,14 @@
 Working notes / commands:
 
+
+
+Assemble draft genomes from Sal. ruber isolate sequencing.
+
 from: /gpfs/pace2/project/bio-konstantinidis/rconrad6/Salinibacter_Assemblies
 
-Adapter Clipping of Raw Reads
+Adapter Clipping of Raw Reads for isolate sequencing draft genome assembly.
 
-# Did not do quality trimming. Using SPAdes read error correction
-# Adapter Clipping/light trimming only
+# Adapter Clipping/light trimming. Using SPAdes read error correction.
 
 bash 00_PBS/00a_Launch_Trimmomatic_Array.sh 00_DataC *fastq 00_DataTrimmed
 
@@ -53,13 +56,13 @@ for f in *fastq; do n=`basename $f | cut -d_ -f1-2`; echo $f; cat $f >> ../${n}_
 
 bash 00_PBS/01a_Launch_Assemble_SPAdes.sh 01_Sample_List.txt 00_DataTrimmed 01_SPAdes_Assemblies_Trim 2
 
-# Rerun fails
+# Rerun fails - failure do to not enough RAM or random PACE hiccup.
 
 qsub -t 49 -v sample_list=01_Sample_List.txt,data_dir=00_DataTrimmed,out_dir=01_SPAdes_Assemblies_Trim 00_PBS/01d_Assemble_SPAdes.pbs
 
 ########################################################
 
-# Filter and rename assemblies
+# Filter (contigs >= 1000 bp) and rename assemblies
 
 for f in */contigs.fasta; do n=`echo $f | cut -d_ -f1`; python ../00_Scripts/01_SPAdes_Assembly_Filter_Rename_Stats.py -i $f -o ${n}_Draft_Genome.fna -g $n -l 1000 -c 2; done >> ../01_Sruber_SPAdes_Assembly_Stats.txt
 
@@ -71,6 +74,8 @@ for f in */contigs.fasta; do n=`echo $f | cut -d_ -f1`; python ../00_Scripts/01_
 ########################################################
 ########################################################
 ########################################################
+
+Mash distance analysis to test similiarity between genomes. NMDS plots.
 
 Mash Distance: 01_Sruber_Selected_Genomes
 
@@ -113,6 +118,8 @@ python ../00_Scripts/02b_Mash_Plot_Dist_Matrix_NMDS.py -i Mash_Distance_Matrix_R
 ########################################################
 ########################################################
 
+Assess draft genomes using MiGA
+
 MiGA Clade of our Draft Genomes:
 
 qsub -v 00_PBS/03_MiGA_Clade.pbs
@@ -140,7 +147,7 @@ python ../00_Scripts/03b_AllvAll_ANIvFragments_Correlation.py -ani AllvsAll_ANI_
 ########################################################
 ########################################################
 
-Check Assemblies for Halorubrum
+Check Assemblies for Halorubrum (the co-occuring archaea's) contamination.
 
 bash 00_PBS/05a_Launch_Blast_Check.sh 01_Sruber_Selected_Genomes *fna 05_Blast_Check_Blasts 01_Halorubrum_NCBI_Genomes/00_Halorubrum_DB.fna
 
@@ -239,8 +246,6 @@ Streptococcus_pneumoniae_Contig 5061
 
 bash 00_Run_Pangenome_Experiment/00_Run_Pangenome_Experiment.sh 1 100 01_Sruber_Group1_Genomes/ Salinibacter_ruber S_ruber 97.5 100 300
 
-
-### Forgot to take notes:
 Ran scripts 03b_AllvAll_ANIvFragments_Correlations.py
 Ran 10b_Pangenome_Calculate_Model_Plot.py
 
@@ -1172,6 +1177,9 @@ mkdir 12_Contig_Fishing
 			nano Sruber_randomG_0001_42_5_Matches.txt
 			nano 05_Contig_Synteny_Test/Sruber_randomG_0001_81_3_Matches.txt
 
+			# Selected for publication
+			nano 05_Contig_Synteny_Test/Sruber_randomG_0057_238_2_Matches.txt
+
 		### Retrieve fasta sequence for selected contigs - my contigs are named with E?_M1?_S?_* which is the metagenome sample name I can use to retrieve the sequence.
 		### Additionally the metagenome assemblies are the fasta file format where each sequence is on only a single line. Not the gross wrapped sequence fasta format.
 		while read contig; do mtg=`echo $contig | cut -d_ -f1-3`; grep -A 1 $contig 01_Assembled_Metagenomes/${mtg}_contigs.fltrd.fna >> 05_Contig_Synteny_Test/Sruber_randomG_0057_111_Matches.fasta; done < 05_Contig_Synteny_Test/Sruber_randomG_0057_111_Matches.txt
@@ -1181,6 +1189,9 @@ mkdir 12_Contig_Fishing
 		while read contig; do mtg=`echo $contig | cut -d_ -f1-3`; grep -A 1 $contig 01_Assembled_Metagenomes/${mtg}_contigs.fltrd.fna >> 05_Contig_Synteny_Test/Sruber_randomG_0001_42_5_Matches.fasta; done < 05_Contig_Synteny_Test/Sruber_randomG_0001_42_5_Matches.txt
 
 		while read contig; do mtg=`echo $contig | cut -d_ -f1-3`; grep -A 1 $contig 01_Assembled_Metagenomes/${mtg}_contigs.fltrd.fna >> 05_Contig_Synteny_Test/Sruber_randomG_0001_81_3_Matches.fasta; done < 05_Contig_Synteny_Test/Sruber_randomG_0001_81_3_Matches.txt
+
+		# Selected for publication
+		while read contig; do mtg=`echo $contig | cut -d_ -f1-3`; grep -A 1 $contig 01_Assembled_Metagenomes/${mtg}_contigs.fltrd.fna >> 05_Contig_Synteny_Test/Sruber_randomG_0057_238_2_Matches.fasta; done < 05_Contig_Synteny_Test/Sruber_randomG_0057_238_2_Matches.txt
 
 		### Run Prodigal to predict genes - lets cluster with amino acid at 60% id
 		cd 05_Contig_Synteny_Test/
@@ -1192,6 +1203,9 @@ mkdir 12_Contig_Fishing
 
 		prodigal -f gff -i Sruber_randomG_0001_81_3_Matches.fasta -d Sruber_randomG_0001_81_3_Matches.fnn -a Sruber_randomG_0001_81_3_Matches.faa
 
+		# Selected for publication
+		prodigal -f gff -i Sruber_randomG_0057_238_2_Matches.fasta -d Sruber_randomG_0057_238_2_Matches.fnn -a Sruber_randomG_0057_238_2_Matches.faa
+
 		### Run CD-HIT-EST to cluster genes
 		cd-hit-est -i Sruber_randomG_0057_111_Matches.fnn -o Sruber_randomG_0057_111_Matches.cdhit.fnn -c 0.9 -n 8 -G 0 -g 1 -aS 0.7 -d 0
 		
@@ -1200,6 +1214,10 @@ mkdir 12_Contig_Fishing
 		cd-hit -i Sruber_randomG_0001_42_5_Matches.faa -o Sruber_randomG_0001_42_5_Matches.cdhit.faa -c 0.4 -n 2 -G 0 -g 1 -aS 0.7 -d 0
 
 		cd-hit -i Sruber_randomG_0001_81_3_Matches.faa -o Sruber_randomG_0001_81_3_Matches.cdhit.faa -c 0.4 -n 2 -G 0 -g 1 -aS 0.7 -d 0
+
+		# Selected for publication
+		cd-hit -i Sruber_randomG_0057_238_2_Matches.faa -o Sruber_randomG_0057_238_2_Matches.cdhit.faa -c 0.4 -n 2 -G 0 -g 1 -aS 0.7 -d 0
+
 
 		### write the script to build the plot from this nonsense
 
@@ -1212,6 +1230,10 @@ mkdir 12_Contig_Fishing
 		python 04a_ContigSynteny_Plot.py -c Sruber_randomG_0057_238_1_Matches.fasta -p Sruber_randomG_0057_238_1_Matches.faa -r Sruber_randomG_0057_238_1_Matches.cdhit.faa.clstr -o Sruber_randomG_0057_238_1_Matches.SyntenyPlot.png -y
 
 		python 04a_ContigSynteny_Plot.py -c Sruber_randomG_0057_111_Matches.fasta -p Sruber_randomG_0057_111_Matches.fnn -r Sruber_randomG_0057_111_Matches.cdhit.fnn.clstr -o Sruber_randomG_0057_111_Matches.SyntenyPlot.png -y
+
+		# Selected for publication
+		python ../04a_ContigSynteny_Plot.py -c Sruber_randomG_0057_238_2_Matches.fasta -p Sruber_randomG_0057_238_2_Matches.faa -r Sruber_randomG_0057_238_2_Matches.cdhit.faa.clstr -o Sruber_randomG_0057_238_2_Matches.SyntenyPlot.png -y
+
 
 	Step X: Look at other annotation on contig
 		I've identified 7 peak dilution genes that are from the same genome on 3 contigs.
